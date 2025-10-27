@@ -2,15 +2,16 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Animated as RNAnimated, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { MonsterState } from '../store/appState';
+import { Ionicons } from '@expo/vector-icons';
 
-// Conditional imports for native vs web
-let LottieView: any;
-let Lottie: any;
-
-if (Platform.OS === 'web') {
-  Lottie = require('react-lottie').default;
-} else {
-  LottieView = require('lottie-react-native').default;
+// Only import LottieView for native platforms
+let LottieView: any = null;
+if (Platform.OS !== 'web') {
+  try {
+    LottieView = require('lottie-react-native').default;
+  } catch (e) {
+    console.log('Lottie not available');
+  }
 }
 
 interface MonsterAnimatorProps {
