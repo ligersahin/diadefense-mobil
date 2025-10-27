@@ -1,14 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Animated as RNAnimated } from 'react-native';
-import { Text } from '@ui-kitten/components';
+import LottieView from 'lottie-react-native';
 import * as Haptics from 'expo-haptics';
 import { MonsterState } from '../store/appState';
-import { Ionicons } from '@expo/vector-icons';
 
 interface MonsterAnimatorProps {
   state: MonsterState;
   energy: number;
   loop?: boolean;
+  size?: number;
 }
 
 export const MonsterAnimator: React.FC<MonsterAnimatorProps> = ({
