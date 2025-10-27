@@ -19,7 +19,6 @@ export default function RootLayout() {
   
   return (
     <>
-      <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={currentTheme}>
         <SafeAreaProvider>
           <Stack screenOptions={{ headerShown: false }}>
