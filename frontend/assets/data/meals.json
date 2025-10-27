@@ -1,0 +1,151 @@
+{
+  "meals": [
+    {
+      "day": 1,
+      "breakfast": {
+        "title": "Avocado Egg Toast",
+        "description": "Whole grain toast with mashed avocado, poached egg, and herbal tea",
+        "calories": 350,
+        "protein": 15
+      },
+      "lunch": {
+        "title": "Grilled Salmon with Vegetables",
+        "description": "Fresh salmon fillet with roasted vegetables and quinoa",
+        "calories": 450,
+        "protein": 35
+      },
+      "dinner": {
+        "title": "Zucchini Soup",
+        "description": "Creamy zucchini soup with olive oil drizzle and whole grain bread",
+        "calories": 300,
+        "protein": 12
+      }
+    },
+    {
+      "day": 2,
+      "breakfast": {
+        "title": "Greek Yogurt Bowl",
+        "description": "Plain Greek yogurt with walnuts, chia seeds, and fresh berries",
+        "calories": 320,
+        "protein": 18
+      },
+      "lunch": {
+        "title": "Chicken & Chickpea Salad",
+        "description": "Grilled chicken breast with chickpeas, greens, and lemon vinaigrette",
+        "calories": 420,
+        "protein": 32
+      },
+      "dinner": {
+        "title": "Lentil Stew",
+        "description": "Red lentil stew with vegetables and turmeric",
+        "calories": 340,
+        "protein": 16
+      }
+    },
+    {
+      "day": 3,
+      "breakfast": {
+        "title": "Oatmeal with Almonds",
+        "description": "Steel-cut oats with almond butter, cinnamon, and apple slices",
+        "calories": 360,
+        "protein": 12
+      },
+      "lunch": {
+        "title": "Turkey Wrap",
+        "description": "Whole wheat wrap with turkey, hummus, and fresh vegetables",
+        "calories": 400,
+        "protein": 28
+      },
+      "dinner": {
+        "title": "Baked Cod with Greens",
+        "description": "Herb-crusted cod with steamed greens and olive oil",
+        "calories": 320,
+        "protein": 30
+      }
+    },
+    {
+      "day": 4,
+      "breakfast": {
+        "title": "Spinach Omelet",
+        "description": "Three-egg omelet with spinach, feta, and whole grain toast",
+        "calories": 340,
+        "protein": 22
+      },
+      "lunch": {
+        "title": "Mediterranean Bowl",
+        "description": "Quinoa bowl with grilled vegetables, olives, and tahini sauce",
+        "calories": 430,
+        "protein": 14
+      },
+      "dinner": {
+        "title": "Vegetable Curry",
+        "description": "Mixed vegetable curry with chickpeas and brown rice",
+        "calories": 380,
+        "protein": 15
+      }
+    },
+    {
+      "day": 5,
+      "breakfast": {
+        "title": "Chia Pudding",
+        "description": "Chia seeds soaked in almond milk with fresh fruit and nuts",
+        "calories": 310,
+        "protein": 10
+      },
+      "lunch": {
+        "title": "Tuna Nicoise Salad",
+        "description": "Fresh tuna with green beans, eggs, olives, and olive oil",
+        "calories": 440,
+        "protein": 34
+      },
+      "dinner": {
+        "title": "Stuffed Bell Peppers",
+        "description": "Bell peppers stuffed with ground turkey, quinoa, and vegetables",
+        "calories": 360,
+        "protein": 26
+      }
+    },
+    {
+      "day": 6,
+      "breakfast": {
+        "title": "Smoothie Bowl",
+        "description": "Green smoothie bowl with spinach, banana, and topped with seeds",
+        "calories": 330,
+        "protein": 14
+      },
+      "lunch": {
+        "title": "Grilled Chicken Caesar",
+        "description": "Romaine lettuce with grilled chicken, parmesan, and light dressing",
+        "calories": 410,
+        "protein": 35
+      },
+      "dinner": {
+        "title": "Baked Eggplant",
+        "description": "Layers of eggplant with tomato sauce and mozzarella",
+        "calories": 340,
+        "protein": 18
+      }
+    },
+    {
+      "day": 7,
+      "breakfast": {
+        "title": "Breakfast Burrito",
+        "description": "Whole wheat tortilla with scrambled eggs, black beans, and salsa",
+        "calories": 370,
+        "protein": 20
+      },
+      "lunch": {
+        "title": "Shrimp Stir-Fry",
+        "description": "Garlic shrimp with mixed vegetables and brown rice",
+        "calories": 430,
+        "protein": 30
+      },
+      "dinner": {
+        "title": "Mushroom Risotto",
+        "description": "Creamy mushroom risotto with parmesan and fresh herbs",
+        "calories": 390,
+        "protein": 12
+      }
+    }
+  ]
+}
