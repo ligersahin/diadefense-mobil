@@ -1,8 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, Animated as RNAnimated } from 'react-native';
-import LottieView from 'lottie-react-native';
+import { View, StyleSheet, Animated as RNAnimated, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { MonsterState } from '../store/appState';
+
+// Conditional imports for native vs web
+let LottieView: any;
+let Lottie: any;
+
+if (Platform.OS === 'web') {
+  Lottie = require('react-lottie').default;
+} else {
+  LottieView = require('lottie-react-native').default;
+}
 
 interface MonsterAnimatorProps {
   state: MonsterState;
