@@ -1,40 +1,49 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { Theme } from '../../src/config/theme';
 
 export default function TabLayout() {
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={{
-        tabBarActiveTintColor: '#10B981',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: Theme.primary,
+        tabBarInactiveTintColor: "#94A3B8",
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: Theme.surface,
           borderTopWidth: 1,
-          borderTopColor: '#E5E7EB',
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8
+          borderTopColor: Theme.border,
+          height: 92,
+          paddingTop: 12,
+          paddingBottom: 20,
+          elevation: 0,
+          shadowOpacity: 0
         },
         tabBarLabelStyle: {
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: '600'
         },
-        headerStyle: {
-          backgroundColor: '#10B981'
+        tabBarItemStyle: {
+          paddingHorizontal: 4,
+          flex: 1
         },
-        headerTintColor: '#FFFFFF',
+        headerStyle: {
+          backgroundColor: Theme.primary
+        },
+        headerTintColor: Theme.surface,
         headerTitleStyle: {
           fontWeight: 'bold'
-        }
+        },
+        headerShown: false
       }}
     >
       <Tabs.Screen
-        name="today"
+        name="index"
         options={{
           title: 'Bugün',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="home-outline" size={24} color={color} />
           )
         }}
       />
@@ -42,35 +51,38 @@ export default function TabLayout() {
         name="program"
         options={{
           title: 'Program',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="restaurant" size={size} color={color} />
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="clipboard-outline" size={24} color={color} />
           )
         }}
       />
       <Tabs.Screen
         name="defense"
         options={{
-          title: 'Savunma Paneli',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="shield" size={size} color={color} />
+          title: 'Savunma',
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="shield-checkmark-outline" size={24} color={color} />
           )
         }}
       />
       <Tabs.Screen
         name="tracking"
         options={{
-          title: 'İzleme',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="stats-chart" size={size} color={color} />
+          title: 'Verilerim',
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="pulse-outline" size={24} color={color} />
           )
         }}
       />
       <Tabs.Screen
         name="info"
         options={{
-          title: 'Bilgi',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="information-circle" size={size} color={color} />
+          title: 'Eğitim',
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="book-outline" size={24} color={color} />
           )
         }}
       />

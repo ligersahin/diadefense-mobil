@@ -1,14 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Image, Modal, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Animated, Image, Modal, Pressable, TextInput, findNodeHandle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDefenseProgram } from '../../src/context/DefenseProgramContext';
 import { moodFromDefenseScore, MonsterMood } from '../../src/components/MonsterAvatar';
 import { Card } from '../../src/components/Card';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useNavigation } from 'expo-router';
 import DefiAvatar from "../../src/components/DefiAvatar";
-
-console.log("ROUTE_HIT__TODAY__MARKER_A__2026_02_28");
+import DefiBanner from '../../src/components/DefiBanner';
+import { Theme } from '../../src/config/theme';
+import AppHeader from '../../src/components/AppHeader';
+import { getLocalDateISO } from '../../src/utils/dateISO';
 
 export default function TodayScreen() {
   const {
@@ -39,13 +40,25 @@ export default function TodayScreen() {
   } = useDefenseProgram();
 
   const router = useRouter();
+  const navigation = useNavigation();
   const { focus } = useLocalSearchParams();
   const scrollViewRef = useRef<ScrollView>(null);
-  const [mealsYPosition, setMealsYPosition] = useState<number | null>(null);
+  type SectionKey = 'meals' | 'supplements' | 'water' | 'activity';
+  type SectionRef = React.RefObject<React.ElementRef<typeof View> | null>;
+  const sectionRefs = useRef<Record<SectionKey, SectionRef>>({
+    meals: React.createRef<React.ElementRef<typeof View>>(),
+    supplements: React.createRef<React.ElementRef<typeof View>>(),
+    water: React.createRef<React.ElementRef<typeof View>>(),
+    activity: React.createRef<React.ElementRef<typeof View>>(),
+  });
+  const lastHandledFocusRef = useRef<string | null>(null);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [waterModalOpen, setWaterModalOpen] = useState(false);
   const [activityModalOpen, setActivityModalOpen] = useState(false);
   const [sleepModalOpen, setSleepModalOpen] = useState(false);
+  const [waterInput, setWaterInput] = useState('');
+  const [activityInput, setActivityInput] = useState('');
+  const [sleepInput, setSleepInput] = useState('');
 
   const getMonsterImage = (mood: MonsterMood) => {
     switch (mood) {
@@ -60,28 +73,49 @@ export default function TodayScreen() {
     }
   };
 
-  useEffect(() => {
-    if (focus === 'meals' && mealsYPosition !== null && scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ y: mealsYPosition, animated: true });
-    }
-  }, [focus, mealsYPosition]);
+  const focusValue =
+    typeof focus === "string" ? focus : Array.isArray(focus) ? focus[0] : null;
+  const normalizedFocus = focusValue === 'steps' ? 'activity' : focusValue;
 
-  if (!currentDayPlan) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.centered}>
-          <Text style={styles.title}>Program Başlatılmadı</Text>
-          <Text style={styles.subtitle}>Ayarlar'dan programı başlatın</Text>
-          <TouchableOpacity 
-            style={styles.startButton}
-            onPress={() => router.push('/settings')}
-          >
-            <Text style={styles.startButtonText}>Ayarlara Git</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    );
-  }
+  useEffect(() => {
+    if (!normalizedFocus) return;
+    if (lastHandledFocusRef.current === normalizedFocus) return;
+
+    const targetRef = (sectionRefs.current as Record<string, SectionRef>)[normalizedFocus];
+    if (!targetRef?.current) return;
+
+    const timeout = setTimeout(() => {
+      try {
+        const scrollNodeHandle = scrollViewRef.current ? findNodeHandle(scrollViewRef.current) : null;
+        if (!scrollNodeHandle) return;
+
+        targetRef.current?.measureLayout(
+          scrollNodeHandle,
+          (_x: number, y: number) => {
+            scrollViewRef.current?.scrollTo({ y, animated: true });
+            lastHandledFocusRef.current = normalizedFocus;
+          },
+          () => {
+            // TODO: ölçüm başarısız olduğunda sessizce yoksay.
+          }
+        );
+      } catch {
+        // TODO: measureLayout başarısızsa sessizce yoksay.
+      }
+    }, 250);
+
+    return () => clearTimeout(timeout);
+  }, [normalizedFocus]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('tabPress', () => {
+      if (navigation.isFocused()) {
+        scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const dayMeals = completedMeals[currentDayIndex] || [];
   const todaySupps = completedSupplements[currentDayIndex] || [];
@@ -93,25 +127,13 @@ export default function TodayScreen() {
   // Filter and deduplicate completed meals to only include safe meal slots
   const todayMeals = Array.from(new Set(dayMeals.filter(slot => safeMealSlots.has(slot))));
   const totalMeals = safeMeals.length;
-  const totalSupps = currentDayPlan.supplements.length;
-
-  const defiOpacity = scrollY.interpolate({
-    inputRange: [0, 120],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
-
-  const defiScale = scrollY.interpolate({
-    inputRange: [0, 120],
-    outputRange: [1, 0.92],
-    extrapolate: 'clamp',
-  });
+  const totalSupps = currentDayPlan?.supplements?.length || 0;
+  const todayISO = useMemo(() => getLocalDateISO(), []);
+  const defiBannerMessage = useMemo(() => defiMessage ? { title: 'Defi', body: defiMessage } : null, [defiMessage]);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <View pointerEvents="none" style={{ position:'absolute', top:10, left:10, zIndex:9999, backgroundColor:'black', paddingHorizontal:10, paddingVertical:6, borderRadius:6 }}>
-        <Text style={{ color:'white', fontWeight:'800' }}>MARKER__TODAY__2026_02_28</Text>
-      </View>
+    <View style={styles.container}>
+      <AppHeader title="Bugün" subtitle="Günün görevleri ve takibi" />
       <Animated.ScrollView 
         ref={scrollViewRef}
         style={styles.scrollView}
@@ -123,36 +145,35 @@ export default function TodayScreen() {
         )}
         scrollEventThrottle={16}
       >
-        <Animated.View
-          style={{
-            alignItems: "center",
-            paddingTop: 8,
-            paddingBottom: 0,
-            marginBottom: -6,
-            opacity: defiOpacity,
-            transform: [{ scale: defiScale }],
-          }}
-        >
-          <DefiAvatar size={165} />
-        </Animated.View>
-        {/* Defi Daily Message Card */}
-        <View style={styles.defiCard}>
-          <View style={styles.defiTextContainer}>
-            <Text style={styles.defiTitle}>Defi'nin Bugünkü Mesajı</Text>
-            <Text style={styles.defiMessage}>
-              "Bugün metabolizmanı desteklemek için düzenli beslen ve her öğünden sonra kısa yürüyüşlerle kan şekerini dengele."
-            </Text>
+        {/* Defi Hero Card */}
+        <View style={styles.defiHeroCard}>
+          <View style={styles.defiHeroRow}>
+            <View style={styles.defiHeroAvatarWrap}>
+              <DefiAvatar size={120} />
+            </View>
+            <View style={styles.defiHeroMessageWrap}>
+              <DefiBanner
+                message={defiBannerMessage}
+                screenId="today"
+                enableTypewriter={true}
+                enableIdleReplay={false}
+                todayISO={todayISO}
+                onOpenPlan={() => router.push('/(tabs)/defense')}
+                onHidden={() => {}}
+                variant="plain"
+              />
+            </View>
           </View>
         </View>
 
         {/* Today's Meal Plan Card */}
         <TouchableOpacity 
-          style={styles.mealCtaCard}
-          onPress={() => router.push('/menus')}
+            style={styles.mealCtaCard}
+            onPress={() => router.push('/menus')}
           activeOpacity={0.85}
         >
           <View style={styles.mealCtaLeft}>
-            <View style={styles.mealCtaIcon}>
+            <View style={styles.sharedIconChip}>
               <Ionicons name="restaurant" size={20} color="#10B981" />
             </View>
             <View style={styles.mealCtaText}>
@@ -175,7 +196,7 @@ export default function TodayScreen() {
             <View style={styles.monsterMiniIcon}>
               <Image
                 source={getMonsterImage(moodFromDefenseScore(defenseScore))}
-                style={{ width: 70, height: 70 }}
+                style={{ width: 36, height: 36 }}
                 resizeMode="contain"
               />
             </View>
@@ -191,126 +212,116 @@ export default function TodayScreen() {
           <Ionicons name="chevron-forward" size={22} color="#9CA3AF" />
         </TouchableOpacity>
 
-        {/* Warning Banner */}
-        {(defenseScore < 40 || monsterState === 'angry') && (
-          <TouchableOpacity
-            style={styles.warningBanner}
-            onPress={() => router.push('/(tabs)/defense')}
-            activeOpacity={0.85}
-          >
-            <Ionicons name="warning" size={18} color="#D97706" style={styles.warningBannerIcon} />
-            <Text style={styles.warningBannerText}>
-              Dikkat: Canavar güçlendi. Programı takip et.
-            </Text>
-          </TouchableOpacity>
-        )}
-
         {/* Günlük Görevler */}
         <Text style={styles.sectionTitle}>Günlük Görevler</Text>
 
         {/* Menüler */}
-        <TouchableOpacity 
-          style={styles.taskCard}
-          onPress={() => router.push('/menus')}
-          onLayout={(event) => {
-            const { y } = event.nativeEvent.layout;
-            setMealsYPosition(y);
-          }}
-        >
-          <View style={styles.taskIcon}>
-            <Ionicons name="restaurant" size={28} color="#10B981" />
-          </View>
-          <View style={styles.taskContent}>
-            <Text style={styles.taskTitle}>Menüler</Text>
-            <Text style={styles.taskSubtitle}>
-              {todayMeals.length} / {totalMeals} öğün tamamlandı
-            </Text>
-            <View style={styles.progressBar}>
-              <View style={[
-                styles.progressBarFill,
-                { width: `${mealRatio * 100}%` }
-              ]} />
+        <View ref={sectionRefs.current.meals}>
+          <TouchableOpacity
+            style={styles.taskCard}
+            onPress={() => router.push('/menus')}
+          >
+            <View style={styles.sharedIconChip}>
+              <Ionicons name="restaurant" size={20} color="#10B981" />
             </View>
-          </View>
-          <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
-        </TouchableOpacity>
+            <View style={styles.taskContent}>
+              <Text style={styles.taskTitle}>Menüler</Text>
+              <Text style={styles.taskSubtitle}>
+                {todayMeals.length} / {totalMeals} öğün tamamlandı
+              </Text>
+              <View style={styles.progressBar}>
+                <View style={[
+                  styles.progressBarFill,
+                  { width: `${mealRatio * 100}%` }
+                ]} />
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
 
         {/* Supplementler */}
-        <TouchableOpacity 
-          style={styles.taskCard}
-          onPress={() => router.push('/supplements')}
-        >
-          <View style={styles.taskIcon}>
-            <Ionicons name="medical" size={28} color="#8B5CF6" />
-          </View>
-          <View style={styles.taskContent}>
-            <Text style={styles.taskTitle}>Supplementler</Text>
-            <Text style={styles.taskSubtitle}>
-              {todaySupps.length} / {totalSupps} alındı
-            </Text>
-            <View style={styles.progressBar}>
-              <View style={[
-                styles.progressBarFill,
-                { width: `${supplementRatio * 100}%`, backgroundColor: '#8B5CF6' }
-              ]} />
+        <View ref={sectionRefs.current.supplements}>
+          <TouchableOpacity
+            style={styles.taskCard}
+            onPress={() => router.push('/supplements')}
+          >
+            <View style={styles.sharedIconChip}>
+              <Ionicons name="medical" size={20} color="#8B5CF6" />
             </View>
-          </View>
-          <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
-        </TouchableOpacity>
+            <View style={styles.taskContent}>
+              <Text style={styles.taskTitle}>Supplementler</Text>
+              <Text style={styles.taskSubtitle}>
+                {todaySupps.length} / {totalSupps} alındı
+              </Text>
+              <View style={styles.progressBar}>
+                <View style={[
+                  styles.progressBarFill,
+                  { width: `${supplementRatio * 100}%`, backgroundColor: '#8B5CF6' }
+                ]} />
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
 
         {/* Su */}
-        <TouchableOpacity 
-          style={styles.taskCard}
-          onPress={() => setWaterModalOpen(true)}
-        >
-          <View style={styles.taskIcon}>
-            <Ionicons name="water" size={28} color="#3B82F6" />
-          </View>
-          <View style={styles.taskContent}>
-            <Text style={styles.taskTitle}>Su İçme</Text>
-            <Text style={styles.taskSubtitle}>
-              {Math.round(waterRatio * 100)}% tamamlandı
-            </Text>
-            <View style={styles.progressBar}>
-              <View style={[
-                styles.progressBarFill,
-                { width: `${waterRatio * 100}%`, backgroundColor: '#3B82F6' }
-              ]} />
+        <View ref={sectionRefs.current.water}>
+          <TouchableOpacity 
+            style={styles.taskCard}
+            onPress={() => setWaterModalOpen(true)}
+          >
+            <View style={styles.sharedIconChip}>
+              <Ionicons name="water" size={20} color="#3B82F6" />
             </View>
-          </View>
-          <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
-        </TouchableOpacity>
+            <View style={styles.taskContent}>
+              <Text style={styles.taskTitle}>Su İçme</Text>
+              <Text style={styles.taskSubtitle}>
+                {Math.round(waterRatio * 100)}% tamamlandı
+              </Text>
+              <View style={styles.progressBar}>
+                <View style={[
+                  styles.progressBarFill,
+                  { width: `${waterRatio * 100}%`, backgroundColor: '#3B82F6' }
+                ]} />
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
 
         {/* Spor/Aktivite */}
-        <TouchableOpacity 
-          style={styles.taskCard}
-          onPress={() => setActivityModalOpen(true)}
-        >
-          <View style={styles.taskIcon}>
-            <Ionicons name="walk" size={28} color="#F59E0B" />
-          </View>
-          <View style={styles.taskContent}>
-            <Text style={styles.taskTitle}>Aktivite</Text>
-            <Text style={styles.taskSubtitle}>
-              {Math.round(activityRatio * 100)}% tamamlandı
-            </Text>
-            <View style={styles.progressBar}>
-              <View style={[
-                styles.progressBarFill,
-                { width: `${activityRatio * 100}%`, backgroundColor: '#F59E0B' }
-              ]} />
+        <View ref={sectionRefs.current.activity}>
+          <TouchableOpacity
+            style={styles.taskCard}
+            onPress={() => setActivityModalOpen(true)}
+          >
+            <View style={styles.sharedIconChip}>
+              <Ionicons name="walk" size={20} color="#F59E0B" />
             </View>
-          </View>
-          <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
-        </TouchableOpacity>
+            <View style={styles.taskContent}>
+              <Text style={styles.taskTitle}>Aktivite</Text>
+              <Text style={styles.taskSubtitle}>
+                {Math.round(activityRatio * 100)}% tamamlandı
+              </Text>
+              <View style={styles.progressBar}>
+                <View style={[
+                  styles.progressBarFill,
+                  { width: `${activityRatio * 100}%`, backgroundColor: '#F59E0B' }
+                ]} />
+              </View>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+          </TouchableOpacity>
+        </View>
 
         {/* Uyku */}
         <TouchableOpacity 
           style={styles.taskCard}
           onPress={() => setSleepModalOpen(true)}
         >
-          <View style={styles.taskIcon}>
-            <Ionicons name="moon" size={28} color="#6366F1" />
+          <View style={styles.sharedIconChip}>
+            <Ionicons name="moon" size={20} color="#6366F1" />
           </View>
           <View style={styles.taskContent}>
             <Text style={styles.taskTitle}>Uyku</Text>
@@ -343,6 +354,14 @@ export default function TodayScreen() {
         >
           <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
             <Text style={styles.modalTitle}>Su Ekle</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="ml"
+              keyboardType="numeric"
+              value={waterInput}
+              onChangeText={setWaterInput}
+            />
+            <Text style={styles.modalHint}>Öneri: 2000 ml</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.quickButton}
@@ -362,20 +381,25 @@ export default function TodayScreen() {
               >
                 <Text style={styles.quickButtonText}>+500 ml</Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.quickButton}
-                onPress={() => {
-                  addWaterByDay(currentDayIndex, 750);
-                  setWaterModalOpen(false);
-                }}
-              >
-                <Text style={styles.quickButtonText}>+750 ml</Text>
-              </TouchableOpacity>
             </View>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => {
+                const value = parseInt(waterInput, 10);
+                if (!Number.isNaN(value) && value > 0) {
+                  addWaterByDay(currentDayIndex, value);
+                }
+                setWaterInput('');
+                setWaterModalOpen(false);
+              }}
+            >
+              <Text style={styles.primaryButtonText}>Kaydet</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.resetButton}
               onPress={() => {
                 resetWaterByDay(currentDayIndex);
+                setWaterInput('');
                 setWaterModalOpen(false);
               }}
             >
@@ -404,6 +428,14 @@ export default function TodayScreen() {
         >
           <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
             <Text style={styles.modalTitle}>Aktivite Ekle</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="dakika"
+              keyboardType="numeric"
+              value={activityInput}
+              onChangeText={setActivityInput}
+            />
+            <Text style={styles.modalHint}>Öneri: 30 dk</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.quickButton}
@@ -417,15 +449,6 @@ export default function TodayScreen() {
               <TouchableOpacity
                 style={styles.quickButton}
                 onPress={() => {
-                  addActivityByDay(currentDayIndex, 20);
-                  setActivityModalOpen(false);
-                }}
-              >
-                <Text style={styles.quickButtonText}>+20 dk</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.quickButton}
-                onPress={() => {
                   addActivityByDay(currentDayIndex, 30);
                   setActivityModalOpen(false);
                 }}
@@ -434,9 +457,23 @@ export default function TodayScreen() {
               </TouchableOpacity>
             </View>
             <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => {
+                const value = parseInt(activityInput, 10);
+                if (!Number.isNaN(value) && value > 0) {
+                  addActivityByDay(currentDayIndex, value);
+                }
+                setActivityInput('');
+                setActivityModalOpen(false);
+              }}
+            >
+              <Text style={styles.primaryButtonText}>Kaydet</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
               style={styles.resetButton}
               onPress={() => {
                 resetActivityByDay(currentDayIndex);
+                setActivityInput('');
                 setActivityModalOpen(false);
               }}
             >
@@ -465,6 +502,14 @@ export default function TodayScreen() {
         >
           <Pressable style={styles.modalCard} onPress={(e) => e.stopPropagation()}>
             <Text style={styles.modalTitle}>Uyku Gir</Text>
+            <TextInput
+              style={styles.modalInput}
+              placeholder="saat"
+              keyboardType="numeric"
+              value={sleepInput}
+              onChangeText={setSleepInput}
+            />
+            <Text style={styles.modalHint}>Öneri: 7-8 saat</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
                 style={styles.quickButton}
@@ -473,7 +518,7 @@ export default function TodayScreen() {
                   setSleepModalOpen(false);
                 }}
               >
-                <Text style={styles.quickButtonText}>6s</Text>
+                <Text style={styles.quickButtonText}>6</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.quickButton}
@@ -482,7 +527,7 @@ export default function TodayScreen() {
                   setSleepModalOpen(false);
                 }}
               >
-                <Text style={styles.quickButtonText}>7s</Text>
+                <Text style={styles.quickButtonText}>7</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.quickButton}
@@ -491,34 +536,27 @@ export default function TodayScreen() {
                   setSleepModalOpen(false);
                 }}
               >
-                <Text style={styles.quickButtonText}>8s</Text>
+                <Text style={styles.quickButtonText}>8</Text>
               </TouchableOpacity>
             </View>
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.quickButton}
-                onPress={() => {
-                  addSleepByDay(currentDayIndex, 0.5);
-                  setSleepModalOpen(false);
-                }}
-              >
-                <Text style={styles.quickButtonText}>+0.5s</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.quickButton}
-                onPress={() => {
-                  addSleepByDay(currentDayIndex, 1);
-                  setSleepModalOpen(false);
-                }}
-              >
-                <Text style={styles.quickButtonText}>+1s</Text>
-              </TouchableOpacity>
-              <View style={styles.quickButton} />
-            </View>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={() => {
+                const value = parseFloat(sleepInput);
+                if (!Number.isNaN(value) && value > 0) {
+                  setSleepByDay(currentDayIndex, value);
+                }
+                setSleepInput('');
+                setSleepModalOpen(false);
+              }}
+            >
+              <Text style={styles.primaryButtonText}>Kaydet</Text>
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.resetButton}
               onPress={() => {
                 resetSleepByDay(currentDayIndex);
+                setSleepInput('');
                 setSleepModalOpen(false);
               }}
             >
@@ -533,21 +571,22 @@ export default function TodayScreen() {
           </Pressable>
         </Pressable>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6'
+    backgroundColor: '#F5F6F8'
   },
   scrollView: {
     flex: 1
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 32
+    paddingTop: 18,
+    paddingBottom: 120,
+    paddingHorizontal: 20
   },
   monsterSection: {
     alignItems: 'center'
@@ -579,16 +618,68 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 6
   },
-  defiCard: {
+  // Shared card style
+  sharedCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.06,
-    shadowRadius: 6,
+    shadowRadius: 8,
     elevation: 2
+  },
+  // Shared icon chip style
+  sharedIconChip: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12
+  },
+  defiHeroCard: {
+    backgroundColor: 'rgba(15, 90, 78, 0.08)',
+    borderRadius: 20,
+    paddingVertical: 12,
+    paddingLeft: 8,
+    paddingRight: 12,
+    marginBottom: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(15, 90, 78, 0.12)',
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 2,
+  },
+  defiHeroRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  defiHeroAvatarWrap: {
+    marginRight: 6,
+  },
+  defiHeroMessageWrap: {
+    flex: 1,
+  },
+  defiCard: {
+    backgroundColor: '#FAFBFC',
+    borderRadius: 24,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(15, 23, 42, 0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 18,
+    elevation: 6,
+    position: 'relative'
   },
   defiSection: {
     alignItems: 'center'
@@ -596,14 +687,36 @@ const styles = StyleSheet.create({
   speechBubble: {
     marginTop: 16,
     padding: 16,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Theme.surface,
     borderRadius: 12,
     width: '100%'
   },
   defiMessage: {
+    fontSize: 18,
+    color: '#0F172A',
+    lineHeight: 26,
+    fontWeight: '500',
+    marginBottom: 12
+  },
+  defiSignature: {
     fontSize: 14,
-    color: '#4B5563',
-    lineHeight: 20
+    color: '#94A3B8',
+    textAlign: 'right',
+    marginTop: 4,
+    fontWeight: '500'
+  },
+  defiBubbleTail: {
+    position: 'absolute',
+    left: 20,
+    bottom: -10,
+    width: 14,
+    height: 14,
+    backgroundColor: '#FAFBFC',
+    borderWidth: 1,
+    borderColor: 'rgba(15, 23, 42, 0.06)',
+    transform: [{ rotate: '45deg' }],
+    borderRadius: 2,
+    zIndex: -1
   },
   defiSpeechMessage: {
     fontSize: 16,
@@ -613,10 +726,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1F2937',
+    fontWeight: '700',
+    color: '#0F172A',
     marginTop: 8,
-    marginBottom: 16
+    marginBottom: 12
   },
   monsterMiniCard: {
     flexDirection: 'row',
@@ -624,12 +737,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 14,
-    marginBottom: 12,
+    padding: 16,
+    marginBottom: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     elevation: 2,
   },
   monsterMiniLeft: {
@@ -638,9 +751,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   monsterMiniIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -666,21 +779,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     elevation: 2
   },
   taskIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
     backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 16
+    marginRight: 12
   },
   taskContent: {
     flex: 1
@@ -745,28 +858,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 12,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 14,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
     elevation: 2
   },
   mealCtaLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1
-  },
-  mealCtaIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: '#F3F4F6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10
   },
   mealCtaText: {
     flex: 1
@@ -808,12 +912,6 @@ const styles = StyleSheet.create({
   defiTextContainer: {
     flex: 1
   },
-  defiTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#1F2937',
-    marginBottom: 4
-  },
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -821,7 +919,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   modalCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Theme.surface,
     borderRadius: 16,
     padding: 24,
     width: '80%',
@@ -838,6 +936,23 @@ const styles = StyleSheet.create({
     color: '#1F2937',
     marginBottom: 20,
     textAlign: 'center'
+  },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 16,
+    color: '#0F172A',
+    marginBottom: 8,
+    backgroundColor: '#F8FAFC',
+  },
+  modalHint: {
+    fontSize: 12,
+    color: '#94A3B8',
+    marginBottom: 16,
+    textAlign: 'center',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -858,6 +973,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#1F2937'
+  },
+  primaryButton: {
+    backgroundColor: '#0F5A4E',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12
+  },
+  primaryButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF'
   },
   resetButton: {
     backgroundColor: '#FEE2E2',

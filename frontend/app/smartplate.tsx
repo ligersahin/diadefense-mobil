@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import * as ImagePicker from 'expo-image-picker';
 import { Card } from '../src/components/Card';
 import { useDefenseProgram } from '../src/context/DefenseProgramContext';
+import AppHeader from '../src/components/AppHeader';
 
 export default function SmartPlateScreen() {
   const router = useRouter();
@@ -78,21 +78,8 @@ export default function SmartPlateScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#1F2937" />
-        </TouchableOpacity>
-        <View style={styles.headerContent}>
-          <Text style={styles.headerTitle}>Akıllı Tabak</Text>
-          <Text style={styles.headerSubtitle}>Yemeğinizi analiz edin</Text>
-        </View>
-      </View>
-
+    <View style={styles.container}>
+      <AppHeader title="Akıllı Tabak" subtitle="Yemeğinizi analiz edin" />
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
@@ -205,48 +192,22 @@ export default function SmartPlateScreen() {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6'
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB'
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8
-  },
-  headerContent: {
-    flex: 1
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1F2937'
-  },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginTop: 2
+    backgroundColor: '#F5F6F8'
   },
   scrollView: {
     flex: 1
   },
   scrollContent: {
-    padding: 16
+    paddingTop: 18,
+    paddingBottom: 120,
+    paddingHorizontal: 20
   },
   infoCard: {
     alignItems: 'center',
