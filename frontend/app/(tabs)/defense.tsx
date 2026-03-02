@@ -1,92 +1,43 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDefenseProgram } from '../../src/context/DefenseProgramContext';
 import { Card } from '../../src/components/Card';
+import { ProgressCircle } from '../../src/components/ProgressCircle';
 import { getCurrentProgramDay } from '../../src/utils/programDay';
 import MonsterAvatar from '../../src/components/MonsterAvatar';
-import AppHeader from '../../src/components/AppHeader';
-import { ProgressCircle } from '../../src/components/ProgressCircle';
 
 export default function DefensePanelScreen() {
-  const router = useRouter();
   const {
     defenseScore,
+    monsterState,
+    defiMood,
+    defiMessage,
     mealRatio,
     supplementRatio,
     waterRatio,
     activityRatio,
     sleepRatio,
+    currentDayIndex,
     startISO
   } = useDefenseProgram();
 
   const currentDay = getCurrentProgramDay(startISO);
 
   const getMonsterStatus = (score: number) => {
-    if (score >= 90) {
-      return {
-        stateLabel: 'WEAK',
-        title: 'Mükemmel savunma',
-        message: 'Bugün canavara gün yok. Böyle devam.',
-      };
-    }
-    if (score >= 70) {
-      return {
-        stateLabel: 'CALM',
-        title: 'İyi gidiyorsun',
-        message: 'Canavar geri çekiliyor. Disiplini koru.',
-      };
-    }
-    if (score >= 40) {
-      return {
-        stateLabel: 'ALERT',
-        title: 'Denge sınırda',
-        message: 'İyiye gidiyorsun ama canavar hâlâ besleniyor. 1 adım daha.',
-      };
-    }
-    return {
-      stateLabel: 'STRONG',
-      title: 'Canavar güçleniyor',
-      message: 'Bugün aksama var. Programını uygula.',
-    };
+    if (score >= 80) return { label: '🟣 WEAK', message: 'Canavar zayıflıyor. Savunman güçlü.' };
+    if (score >= 60) return { label: '🟡 NEUTRAL', message: 'Denge var. Dikkati bırakma.' };
+    if (score >= 40) return { label: '🟠 STRONG', message: 'Canavar güçleniyor. Programdan sapma.' };
+    return { label: '🔴 ANGRY', message: 'Tehlike! Canavar kontrolden çıkıyor.' };
+  };
+
+  const getHelperText = (score: number) => {
+    if (score >= 80) return 'Harika gidiyorsun — hedefi koru.';
+    if (score >= 50) return 'İyi gidiyorsun — 80+ hedefle.';
+    return 'Savunma zayıf — bugün toparlayalım.';
   };
 
   const monsterStatus = getMonsterStatus(defenseScore);
-  const mealPct = Math.round(mealRatio * 100);
-  const suppPct = Math.round(supplementRatio * 100);
-  const lowestLabel = mealPct <= suppPct ? 'Öğünler' : 'Supp';
-  const lowestValue = mealPct <= suppPct ? mealPct : suppPct;
-  const ctaText = mealPct <= suppPct ? 'Menülere git' : 'Supplementlere git';
-  const ctaRoute = mealPct <= suppPct ? '/menus' : '/supplements';
-  const waterPct = Math.round(waterRatio * 100);
-  const activityPct = Math.round(activityRatio * 100);
-  const sleepPct = Math.round(sleepRatio * 100);
-  const reasonCandidates = [
-    { label: 'Öğünler', value: mealPct },
-    { label: 'Takviyeler', value: suppPct },
-    { label: 'Su', value: waterPct },
-    { label: 'Aktivite', value: activityPct },
-    { label: 'Uyku', value: sleepPct },
-  ]
-    .filter((item) => item.value < 90)
-    .sort((a, b) => a.value - b.value)
-    .slice(0, 3);
-  const reasonLines = reasonCandidates.length
-    ? reasonCandidates.map((item) => `• ${item.label} %${item.value}`)
-    : ['• Tüm göstergeler güçlü'];
-  const monsterStatusText =
-    monsterStatus.stateLabel === 'STRONG'
-      ? 'Canavar güçleniyor'
-      : monsterStatus.stateLabel === 'ALERT'
-        ? 'Canavar uyanık'
-        : 'Canavar sakin';
-  const monsterStatusColor =
-    monsterStatus.stateLabel === 'STRONG'
-      ? '#EF4444'
-      : monsterStatus.stateLabel === 'ALERT'
-        ? '#F59E0B'
-        : '#16A34A';
 
   const getScoreColor = (score: number) => {
     if (score >= 70) return '#10B981';
@@ -94,166 +45,161 @@ export default function DefensePanelScreen() {
     return '#EF4444';
   };
 
-  const monsterProgress = defenseScore >= 90 ? 0.9 : defenseScore >= 70 ? 0.7 : defenseScore >= 40 ? 0.5 : 0.25;
+  const getStatusDotColor = (state: string) => {
+    if (state === 'weak') return '#8B5CF6'; // Purple
+    if (state === 'neutral') return '#F59E0B'; // Yellow/Orange
+    return '#EF4444'; // Red for angry
+  };
+
+  const getDefiCoachMessage = (state: string, score: number) => {
+    if (state === 'weak' || score >= 80) {
+      return 'Harika gidiyorsun! Canavar zayıflıyor. Bu momentumu koru.';
+    }
+    if (state === 'neutral' || (score >= 60 && score < 80)) {
+      return 'Denge var ama dikkatli ol. Programına sadık kal.';
+    }
+    if (score >= 40 && score < 60) {
+      return 'Canavar güçleniyor. Programdan sapma var. Hemen toparla!';
+    }
+    return 'Tehlike! Canavar kontrolden çıkıyor. Acil önlem al.';
+  };
+
+  const getActionChips = (state: string, score: number) => {
+    if (state === 'weak' || score >= 80) {
+      return ['10 dk yürüyüş', '1L su'];
+    }
+    if (state === 'neutral' || (score >= 60 && score < 80)) {
+      return ['Öğünleri tamamla', '1L su'];
+    }
+    return ['Öğünleri tamamla', '10 dk yürüyüş'];
+  };
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <AppHeader title="Savunma" subtitle="Canavar durumu, savunma gücü ve araçlar" />
-      <ScrollView
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.dayLabel}>Program Günü: {currentDay}</Text>
-
-        <Card style={styles.scoreCard}>
-          <View style={styles.scoreTopRow}>
-            <View style={styles.scoreLeft}>
-              <Text style={styles.scoreTitle}>Savunma Skoru</Text>
-              <Text style={styles.scoreValue}>{Math.round(defenseScore)}%</Text>
-            </View>
-            <View style={styles.scoreRight}>
-              <View style={styles.batteryWrap}>
-                <View style={styles.batteryOutline}>
-                  <View
-                    style={[
-                      styles.batteryFill,
-                      {
-                        width: `${Math.max(8, Math.min(100, Math.round(defenseScore)))}%`,
-                        backgroundColor:
-                          defenseScore >= 80 ? '#16A34A' : defenseScore >= 50 ? '#F59E0B' : '#DC2626',
-                      },
-                    ]}
-                  />
-                </View>
-                <View style={styles.batteryTerminal} />
-              </View>
-              <View style={styles.batteryLabelRow}>
-                <Ionicons name="flash-outline" size={16} color="#FACC15" style={styles.batteryLabelIcon} />
-                <Text style={styles.batteryLabel}>Enerji Seviyesi</Text>
-              </View>
-            </View>
-          </View>
-        </Card>
-
-        <Card style={styles.monsterCard}>
-          <Text style={styles.monsterTitle}>Canavar</Text>
-          <View style={styles.monsterRow}>
-            <MonsterAvatar score={defenseScore} size={160} />
-            <View style={styles.monsterInfo}>
-              <Text style={styles.monsterLabel}>{monsterStatus.title}</Text>
-              <Text style={styles.monsterText}>{monsterStatus.message}</Text>
-              <Text style={styles.monsterReasonTitle}>Neden böyle?</Text>
-              {reasonLines.map((line) => (
-                <Text key={line} style={styles.monsterReasonItem}>{line}</Text>
-              ))}
-            </View>
-          </View>
-          <Text style={[styles.monsterStatus, { color: monsterStatusColor }]}>{monsterStatusText}</Text>
-          {(mealPct < 90 || suppPct < 90) ? (
-            <TouchableOpacity style={styles.monsterCta} onPress={() => router.push(ctaRoute)} activeOpacity={0.85}>
-              <Text style={styles.monsterCtaText}>{ctaText}</Text>
-            </TouchableOpacity>
-          ) : null}
-        </Card>
-
-        <View style={styles.sectionHeaderRow}>
-          <Text style={styles.sectionTitle}>Savunma Araçları</Text>
-          <Text style={styles.sectionLink}>Keşfet</Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.subtitle}>Program Günü: {currentDay}</Text>
         </View>
 
-        <View style={styles.ringsRow}>
-          <View style={styles.ringItem}>
-            <ProgressCircle
-              progress={mealRatio}
-              size={64}
+        {/* Ana Skor Kartı */}
+        <Card style={styles.mainScoreCard}>
+          <View style={styles.monsterContainer}>
+            <MonsterAvatar score={defenseScore} size={200} />
+            <Text style={styles.statusLabel}>
+              {monsterStatus.label}
+            </Text>
+            <Text style={styles.statusMessage}>
+              {monsterStatus.message}
+            </Text>
+          </View>
+          
+          <Text style={styles.mainScoreLabel}>Savunma Gücü</Text>
+          <Text style={[
+            styles.mainScoreValue,
+            { color: getScoreColor(defenseScore) }
+          ]}>
+            {Math.round(defenseScore)}
+          </Text>
+          <View style={styles.scoreBar}>
+            <View style={[
+              styles.scoreBarFill,
+              { 
+                width: `${defenseScore}%`,
+                backgroundColor: getScoreColor(defenseScore)
+              }
+            ]} />
+          </View>
+          <Text style={styles.helperText}>
+            {getHelperText(defenseScore)}
+          </Text>
+        </Card>
+
+        {/* Savunma Oranları */}
+        <Text style={styles.sectionTitle}>Savunma Oranları</Text>
+        
+        <View style={styles.ratiosContainer}>
+          <View style={styles.ratioCard}>
+            <ProgressCircle 
+              progress={mealRatio} 
+              size={80} 
               strokeWidth={6}
               color="#10B981"
             />
-            <Text style={styles.ringTitle}>Öğünler</Text>
-            <TouchableOpacity
-              onPress={() => router.push({ pathname: '/menus' })}
-              activeOpacity={0.75}
-              accessibilityRole="button"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={styles.ringIconButton}
-            >
-              <Ionicons name="arrow-forward" size={14} color="#0F172A" />
-            </TouchableOpacity>
+            <Text style={styles.ratioLabel}>Öğünler</Text>
           </View>
-          <View style={styles.ringItem}>
-            <ProgressCircle
-              progress={supplementRatio}
-              size={64}
+
+          <View style={styles.ratioCard}>
+            <ProgressCircle 
+              progress={supplementRatio} 
+              size={80} 
               strokeWidth={6}
               color="#8B5CF6"
             />
-            <Text style={styles.ringTitle}>Supp</Text>
-            <TouchableOpacity
-              onPress={() => router.push({ pathname: '/supplements' })}
-              activeOpacity={0.75}
-              accessibilityRole="button"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={styles.ringIconButton}
-            >
-              <Ionicons name="arrow-forward" size={14} color="#0F172A" />
-            </TouchableOpacity>
+            <Text style={styles.ratioLabel}>Supplement</Text>
           </View>
-          <View style={styles.ringItem}>
-            <ProgressCircle
-              progress={waterRatio}
-              size={64}
+
+          <View style={styles.ratioCard}>
+            <ProgressCircle 
+              progress={waterRatio} 
+              size={80} 
               strokeWidth={6}
               color="#3B82F6"
             />
-            <Text style={styles.ringTitle}>Su</Text>
-            <TouchableOpacity
-              onPress={() => router.push({ pathname: '/', params: { focus: 'water' } })}
-              activeOpacity={0.75}
-              accessibilityRole="button"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={styles.ringIconButton}
-            >
-              <Ionicons name="arrow-forward" size={14} color="#0F172A" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.ringItem}>
-            <ProgressCircle
-              progress={activityRatio}
-              size={64}
-              strokeWidth={6}
-              color="#F59E0B"
-            />
-            <Text style={styles.ringTitle}>Aktivite</Text>
-            <TouchableOpacity
-              onPress={() => router.push({ pathname: '/', params: { focus: 'activity' } })}
-              activeOpacity={0.75}
-              accessibilityRole="button"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={styles.ringIconButton}
-            >
-              <Ionicons name="arrow-forward" size={14} color="#0F172A" />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.ringItem}>
-            <ProgressCircle progress={sleepRatio} size={64} strokeWidth={6} color="#6366F1" />
-            <Text style={styles.ringTitle}>Uyku</Text>
-            <TouchableOpacity
-              onPress={() => router.push({ pathname: '/', params: { focus: 'sleep' } })}
-              activeOpacity={0.75}
-              accessibilityRole="button"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={styles.ringIconButton}
-            >
-              <Ionicons name="arrow-forward" size={14} color="#0F172A" />
-            </TouchableOpacity>
+            <Text style={styles.ratioLabel}>Su</Text>
           </View>
         </View>
 
+        <View style={styles.ratiosContainer}>
+          <View style={styles.ratioCard}>
+            <ProgressCircle 
+              progress={activityRatio} 
+              size={80} 
+              strokeWidth={6}
+              color="#F59E0B"
+            />
+            <Text style={styles.ratioLabel}>Aktivite</Text>
+          </View>
+
+          <View style={styles.ratioCard}>
+            <ProgressCircle 
+              progress={sleepRatio} 
+              size={80} 
+              strokeWidth={6}
+              color="#6366F1"
+            />
+            <Text style={styles.ratioLabel}>Uyku</Text>
+          </View>
+
+          <View style={styles.ratioCard} />
+        </View>
+
+        {/* Defi Yorumu */}
+        <Card style={styles.defiCard}>
+          <View style={styles.defiHeader}>
+            <View style={[styles.statusDot, { backgroundColor: getStatusDotColor(monsterState) }]} />
+            <Text style={styles.defiTitle}>Defi'nin Yorumu</Text>
+            {(monsterState === 'angry' || defenseScore < 40) && (
+              <Text style={styles.warningIcon}>⚠️</Text>
+            )}
+          </View>
+          <Text style={styles.defiMessage}>{getDefiCoachMessage(monsterState, defenseScore)}</Text>
+          <View style={styles.actionChips}>
+            {getActionChips(monsterState, defenseScore).map((chip, index) => (
+              <View key={index} style={styles.actionChip}>
+                <Text style={styles.actionChipText}>{chip}</Text>
+              </View>
+            ))}
+          </View>
+        </Card>
+
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -266,175 +212,148 @@ const styles = StyleSheet.create({
     flex: 1
   },
   scrollContent: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 24
+    padding: 16
   },
-  dayLabel: {
+  header: {
+    marginBottom: 12,
+    marginTop: 8
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#6B7280'
+  },
+  mainScoreCard: {
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingTop: 12
+  },
+  mainScoreLabel: {
     fontSize: 14,
     color: '#6B7280',
-    marginBottom: 12
-  },
-  scoreCard: {
-    backgroundColor: '#0F172A',
-    borderRadius: 18,
-    padding: 16,
-    marginBottom: 18,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3
-  },
-  scoreTitle: {
-    color: '#E2E8F0',
-    fontSize: 14,
-    fontWeight: '600'
-  },
-  scoreValue: {
-    color: '#FFFFFF',
-    fontSize: 40,
-    fontWeight: '800',
-    marginTop: 6,
-    marginBottom: 12
-  },
-  scoreTopRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 12
-  },
-  scoreLeft: {
-    flex: 1
-  },
-  scoreRight: {
-    minWidth: 160,
-    alignItems: 'flex-start'
-  },
-  batteryWrap: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  batteryOutline: {
-    width: 170,
-    height: 18,
-    borderRadius: 4,
-    borderWidth: 1.5,
-    borderColor: '#CBD5E1',
-    padding: 2,
-    backgroundColor: 'transparent'
-  },
-  batteryFill: {
-    height: '100%',
-    borderRadius: 2
-  },
-  batteryTerminal: {
-    width: 6,
-    height: 10,
-    borderRadius: 2,
-    marginLeft: 2,
-    backgroundColor: '#CBD5E1'
-  },
-  batteryLabel: {
-    fontSize: 13,
-    color: '#64748B',
-    textAlign: 'left'
-  },
-  batteryLabelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 6
-  },
-  batteryLabelIcon: {
-    marginRight: 4
-  },
-  monsterCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    padding: 16,
-    marginBottom: 18,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 2
-  },
-  monsterTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1F2937',
-    marginBottom: 10
-  },
-  monsterRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12
-  },
-  monsterInfo: {
-    flex: 1
-  },
-  monsterLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#111827',
+    fontWeight: '600',
+    marginTop: 20,
     marginBottom: 6
   },
-  monsterText: {
-    fontSize: 13,
+  mainScoreValue: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    marginBottom: 12
+  },
+  scoreBar: {
+    width: '100%',
+    height: 12,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginBottom: 12
+  },
+  helperText: {
+    fontSize: 14,
     color: '#6B7280',
-    lineHeight: 18
+    textAlign: 'center',
+    marginBottom: 20,
+    fontStyle: 'italic'
   },
-  monsterReasonTitle: {
-    fontSize: 12,
-    color: '#94A3B8',
-    marginTop: 6,
-    fontWeight: '600'
+  scoreBarFill: {
+    height: '100%',
+    borderRadius: 6
   },
-  monsterReasonItem: {
-    fontSize: 12,
-    color: '#94A3B8',
-    marginTop: 4
-  },
-  monsterStatus: {
-    fontSize: 13,
-    fontWeight: '600',
-    marginTop: 6
-  },
-  monsterCta: {
-    marginTop: 12,
-    alignSelf: 'flex-start',
-    backgroundColor: '#E8F3F1',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  monsterCtaText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#0F5A4E',
-  },
-  monsterCtaMuted: {
-    marginTop: 10,
-    fontSize: 12,
-    color: '#94A3B8',
-  },
-  sectionHeaderRow: { flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginTop: 18, marginBottom: 10 },
-  sectionTitle: { fontSize: 22, fontWeight:'800', color:'#0F172A' },
-  sectionLink: { fontSize: 14, color:'#94A3B8', fontWeight:'600' },
-  ringsRow: { flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' },
-  ringItem: { width: '20%', alignItems: 'center' },
-  ringTitle: { marginTop: 8, fontSize: 9, fontWeight: '600', color: '#1F2937' },
-  ringIconButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 999,
-    backgroundColor: 'rgba(15, 23, 42, 0.06)',
+  monsterContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 6,
+    marginBottom: 8
   },
-  ringValue: { marginTop: 2, fontSize: 9, color: '#6B7280' },
+  statusLabel: {
+    fontSize: 15,
+    color: '#1F2937',
+    fontWeight: '700',
+    marginTop: 12
+  },
+  statusMessage: {
+    fontSize: 14,
+    color: '#6B7280',
+    textAlign: 'center',
+    marginTop: 4,
+    paddingHorizontal: 16
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginTop: 4,
+    marginBottom: 12
+  },
+  ratiosContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16
+  },
+  ratioCard: {
+    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    marginHorizontal: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2
+  },
+  ratioLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+    fontWeight: '600',
+    marginTop: 8,
+    textAlign: 'center'
+  },
+  defiCard: {
+    backgroundColor: '#FFFFFF'
+  },
+  defiHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 8
+  },
+  defiTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1F2937',
+    flex: 1
+  },
+  warningIcon: {
+    fontSize: 18
+  },
+  defiMessage: {
+    fontSize: 14,
+    color: '#4B5563',
+    lineHeight: 20,
+    marginBottom: 12
+  },
+  actionChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  actionChip: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    marginRight: 8,
+    marginBottom: 8
+  },
+  actionChipText: {
+    fontSize: 12,
+    color: '#6B7280',
+    fontWeight: '500'
+  },
   bottomSpacer: {
-    height: 24,
-  },
+    height: 32
+  }
 });

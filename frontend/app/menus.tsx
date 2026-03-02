@@ -1,657 +1,435 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, Pressable } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, router } from 'expo-router';
-import AppHeader from '../src/components/AppHeader';
-import { Card } from '../src/components/Card';
-import DefiBanner from '../src/components/DefiBanner';
-import { MENUS } from '../src/data/menus';
-import { supplementRules } from '../src/data/supplementRules';
+import { useRouter } from 'expo-router';
 import { useDefenseProgram } from '../src/context/DefenseProgramContext';
-import { MealSlot } from '../src/types';
-import { getRecipeThumbImage } from '../src/assets/recipeImages';
-import { markMealsInteractedToday } from '../src/notifications/mealsNudgeNotifications';
-import { getLocalDateISO } from '../src/utils/dateISO';
-import { shouldShowDefi, shouldShowMessage, markMessageShown } from '../src/defi/defiVisibility';
-import { getDefiMessage } from '../src/defi/defiMessages';
+import { Card } from '../src/components/Card';
+import { MealSlot, DayPlan } from '../src/types';
+import { getCurrentProgramDay } from '../src/utils/programDay';
 
-const SECTION_META = [
-  { key: 'breakfast', title: 'Kahvaltı' },
-  { key: 'lunch', title: 'Öğlen' },
-  { key: 'dinner', title: 'Akşam' },
-] as const;
-
-type MealKey = typeof SECTION_META[number]['key'];
-
-type MealCardProps = {
-  title: string;
-  description: string;
-  recipeId?: string | null;
-  isCompleted?: boolean;
-  onToggle?: () => void;
-  thumbKey?: string;
-  showSupplementsAction?: boolean;
-  onSupplementsPress?: () => void;
-  supplementSummary?: string;
-  mealKey?: string;
+const MEAL_ICONS: Record<MealSlot, string> = {
+  breakfast: 'sunny',
+  lunch: 'restaurant',
+  dinner: 'moon'
 };
 
-type InfoMap = {
-  breakfast?: string[];
-  lunch?: string[];
-  dinner?: string[];
+const MEAL_NAMES: Record<MealSlot, string> = {
+  breakfast: 'Kahvaltı',
+  lunch: 'Öğle Yemeği',
+  dinner: 'Akşam Yemeği'
 };
-
-const DAY1_INFO: InfoMap = {
-  breakfast: [
-    '2 yumurta (kayısı kıvamı).',
-    'Çoban veya yeşil salata (zeytinyağı, limon, kekik).',
-    '10–15 zeytin.',
-    '15–20 çiğ fındık veya badem.',
-    'Şekersiz çay, yeşil çay veya sade Türk kahvesi.',
-    'Kahvaltıdan 30 dk önce: Probiyotik + Zeytin yaprağı.',
-    'Kahvaltıdan 60 dk sonra: Krill yağı + Magnezyum.',
-    'Kahvaltıdan 90 dk sonra (15 günde 1): D vitamini (zeytinyağı ile).',
-  ],
-  lunch: [
-    'Soğuk domates çorbası (tarife bak).',
-    'Zeytinyağlı bamya veya ıspanak kökü salatası.',
-    'Ev yapımı turşu.',
-    'Öğle yemeğinden 30 dk önce: Çemen otu.',
-  ],
-  dinner: [
-    'Izgara biftek.',
-    'Çoban salata veya karnabahar salatası (buharda, hafif diri).',
-    'Zeytinyağı, limon, kaya tuzu ile.',
-    'Akşam yemeğinden 30 dk önce: Probiyotik + Zeytin yaprağı.',
-    'Akşam yemeğinden 60 dk sonra: Krill yağı.',
-  ],
-};
-
-function MealCard({ title, description, recipeId, infoLines, isCompleted, onToggle, thumbKey, showSupplementsAction, onSupplementsPress, supplementSummary, mealKey }: MealCardProps & { infoLines?: string[] }) {
-  const [open, setOpen] = useState(false);
-  const infoLinesToRender = infoLines || [];
-  const summaryLine = infoLinesToRender.length > 0 ? infoLinesToRender[0] : description;
-  const thumbSource = getRecipeThumbImage(thumbKey);
-  return (
-    <Card style={styles.mealCard}>
-      <View style={styles.mealTopRow}>
-        <View style={styles.mealThumb}>
-          {thumbSource ? (
-            <Image source={thumbSource} style={styles.mealThumbImage} resizeMode="cover" />
-          ) : (
-            <Text style={styles.mealThumbEmoji}>🍽️</Text>
-          )}
-        </View>
-        <View style={styles.mealTextBlock}>
-          <Text style={styles.mealTitle}>{title}</Text>
-          <Text style={styles.mealDescription} numberOfLines={1}>{summaryLine}</Text>
-        </View>
-        <TouchableOpacity
-          onPress={onToggle}
-          style={[styles.mealCheck, isCompleted && styles.mealCheckActive]}
-          activeOpacity={0.8}
-        >
-          {isCompleted ? <Text style={styles.mealCheckMark}>✓</Text> : null}
-        </TouchableOpacity>
-      </View>
-      <View style={styles.mealActions}>
-        <TouchableOpacity
-          onPress={() => setOpen((prev) => !prev)}
-          activeOpacity={0.8}
-          style={styles.actionButton}
-        >
-          <Text style={styles.actionText}>Bilgiler</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() =>
-            recipeId
-              ? router.push({
-                  pathname: '/recipes/[id]',
-                  params: { id: recipeId },
-                })
-              : undefined
-          }
-          activeOpacity={recipeId ? 0.8 : 1}
-          style={[styles.actionButton, !recipeId && styles.actionButtonDisabled, !!recipeId && styles.recipeButtonHasRecipe]}
-        >
-          <Text style={[styles.actionText, !recipeId && styles.actionTextDisabled, !!recipeId && styles.recipeButtonTextHasRecipe]}>
-            Tarife git
-          </Text>
-        </TouchableOpacity>
-      </View>
-      {open ? (
-        <View style={styles.infoList}>
-          {infoLinesToRender.map((line, index) => (
-            <Text key={`${line}-${index}`} style={styles.infoText}>
-              {line}
-            </Text>
-          ))}
-          {showSupplementsAction ? (
-            <TouchableOpacity
-              onPress={onSupplementsPress}
-              activeOpacity={0.8}
-              style={styles.supplementRow}
-            >
-              <View style={styles.supplementStarButton}>
-                <Ionicons name="star" size={16} color="#8B5CF6" />
-              </View>
-              <Text style={styles.supplementLabel}>Takviyeler</Text>
-            </TouchableOpacity>
-          ) : null}
-          <TouchableOpacity
-            onPress={() => router.push('/shopping')}
-            activeOpacity={0.8}
-            style={styles.shoppingActionRow}
-          >
-            <Ionicons name="cart-outline" size={16} color="#0F5A4E" />
-            <Text style={styles.shoppingActionLabel}>Alışveriş Listesi</Text>
-          </TouchableOpacity>
-        </View>
-      ) : null}
-    </Card>
-  );
-}
-
-const DEBUG_SHOW_DEFI_MENUS = true; // TEMP: set false after visual verification
 
 export default function MenusScreen() {
-  const { currentDayIndex, completedMeals, toggleMealCompleted } = useDefenseProgram();
-  const [defiVisible, setDefiVisible] = useState(true);
-  const [defiMessage, setDefiMessage] = useState<{ title: string; body: string; detail?: string } | null>(null);
-  const hasShownOnceRef = useRef(false);
+  const router = useRouter();
   const scrollViewRef = useRef<ScrollView>(null);
-  const defiRevealAnim = useRef(new Animated.Value(0)).current;
-  const defiMsgTextRef = useRef<string | null>(null);
-  const lastRevealAtRef = useRef(0);
-  const [selectedDay, setSelectedDay] = useState(currentDayIndex || 1);
-  const [manualDay, setManualDay] = useState(false);
-  const days = useMemo(() => MENUS.map((item) => item.day), []);
-  const dayMenu = MENUS.find((item) => item.day === selectedDay) || MENUS[0];
-  const dayMeals = completedMeals[selectedDay] || [];
-  const safeCompleted = Array.from(new Set(dayMeals.filter((s) => s === 'breakfast' || s === 'lunch' || s === 'dinner')));
-  const completedCount = safeCompleted.length;
-  const hasAnyMealCompletedToday = (completedMeals[currentDayIndex] || []).length > 0;
-  const todayISO = useMemo(() => getLocalDateISO(), []);
-  const supplementsByMeal = useMemo(() => {
-    const enabled = supplementRules.filter((rule) => rule.enabled);
-    const buildSummary = (mealKey: string) => {
-      const rules = enabled.filter((rule) => rule.meal === mealKey);
-      if (!rules.length) return { has: false, summary: '' };
-      const parts = rules.map((rule) => {
-        const prefix = rule.offsetMinutes < 0
-          ? `${Math.abs(rule.offsetMinutes)} dk önce`
-          : `+${rule.offsetMinutes} dk`;
-        const names = rule.items.map((item) => item.name).join(' + ');
-        return `${prefix} ${names}`;
-      });
-      return { has: true, summary: `Takviyeler: ${parts.join(' · ')}` };
-    };
-    return {
-      breakfast: buildSummary('breakfast'),
-      lunch: buildSummary('lunch'),
-      dinner: buildSummary('dinner'),
-    };
-  }, []);
-  const baseDefiMessage = useMemo(
-    () =>
-      (DEBUG_SHOW_DEFI_MENUS || defiVisible)
-        ? getDefiMessage({
-            screen: 'meals',
-            hasStartedToday: hasAnyMealCompletedToday,
-            remainingMeals: undefined,
-          })
-        : null,
-    [defiVisible, hasAnyMealCompletedToday]
-  );
+  const [mealsYPosition, setMealsYPosition] = useState<number | null>(null);
+  const [supplementsYPosition, setSupplementsYPosition] = useState<number | null>(null);
+  
+  const { 
+    currentDayPlan, 
+    currentDayIndex,
+    startISO,
+    completedMeals,
+    completedSupplements,
+    toggleMealCompleted,
+    toggleSupplementTaken
+  } = useDefenseProgram();
 
-  const handleOpenPlan = () => {
-    router.push('/defense');
+  if (!currentDayPlan) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.centered}>
+          <Text style={styles.emptyText}>Program başlatılmadı</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Calculate current program day using the utility function
+  const currentDay = getCurrentProgramDay(startISO);
+
+  const rawDayMeals = completedMeals[currentDayIndex] || [];
+  // Filter out snacks and deduplicate for meal counter
+  const todayMeals = Array.from(new Set(rawDayMeals.filter(s => s !== 'snack' && (s === 'breakfast' || s === 'lunch' || s === 'dinner'))));
+  const safeMeals = (currentDayPlan?.meals ?? []).filter(
+    (m: any) => m?.type !== "snack" && m?.slot !== "snack" && m?.label !== "Ara Öğün"
+  );
+  const totalMeals = safeMeals.length;
+
+  const todaySupps = completedSupplements[currentDayIndex] || [];
+  const totalSupps = currentDayPlan.supplements.length;
+
+  const handleToggleMeal = (dayIndex: number, slot: MealSlot) => {
+    toggleMealCompleted(dayIndex, slot);
   };
 
-  useEffect(() => {
-    if (!manualDay && currentDayIndex) {
-      setSelectedDay(currentDayIndex);
-    }
-  }, [currentDayIndex, manualDay]);
+  const handleToggleSupplement = (id: string) => {
+    toggleSupplementTaken(currentDayIndex, id);
+  };
 
-  useEffect(() => {
-    let mounted = true;
-    shouldShowDefi(todayISO, 'meals').then((show) => {
-      if (mounted) setDefiVisible(show);
+  const scrollToMeals = () => {
+    if (mealsYPosition !== null && scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ y: mealsYPosition, animated: true });
+    }
+  };
+
+  const scrollToSupplements = () => {
+    if (supplementsYPosition !== null && scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ y: supplementsYPosition, animated: true });
+    }
+  };
+
+  // Reusable function to render meals for a given day
+  const renderMealsForDay = (dayPlan: DayPlan, dayIndex: number, showCheckbox: boolean = false) => {
+    const rawDayMeals = completedMeals[dayIndex] || [];
+    // Filter out snacks and deduplicate for safe meal checking
+    const dayMeals = Array.from(new Set(rawDayMeals.filter(s => s !== 'snack' && (s === 'breakfast' || s === 'lunch' || s === 'dinner'))));
+    
+    return dayPlan.meals.map((meal, index) => {
+      const isCompleted = dayMeals.includes(meal.slot);
+      
+      return (
+        <Card key={`${dayIndex}-${index}`}>
+          <View style={styles.mealCard}>
+            <View style={styles.mealHeader}>
+              <View style={styles.mealTitleContainer}>
+                <View style={[styles.mealIcon, isCompleted && styles.mealIconCompleted]}>
+                  <Ionicons 
+                    name={MEAL_ICONS[meal.slot] as any} 
+                    size={24} 
+                    color={isCompleted ? '#10B981' : '#6B7280'} 
+                  />
+                </View>
+                <View>
+                  <Text style={styles.mealSlotName}>{MEAL_NAMES[meal.slot]}</Text>
+                  <Text style={styles.mealTitle}>{meal.title}</Text>
+                </View>
+              </View>
+              {showCheckbox && (
+                <TouchableOpacity
+                  style={[styles.checkbox, isCompleted && styles.checkboxCompleted]}
+                  onPress={() => handleToggleMeal(dayIndex, meal.slot)}
+                >
+                  {isCompleted && (
+                    <Ionicons name="checkmark" size={20} color="#FFFFFF" />
+                  )}
+                </TouchableOpacity>
+              )}
+            </View>
+            
+            {meal.description && (
+              <Text style={styles.mealDescription}>{meal.description}</Text>
+            )}
+          </View>
+        </Card>
+      );
     });
-    return () => {
-      mounted = false;
-    };
-  }, [todayISO]);
-
-  useEffect(() => {
-    let active = true;
-    if (!baseDefiMessage) {
-      setDefiMessage(null);
-      return () => {
-        active = false;
-      };
-    }
-    // TEMP: debug bypass — skip cooldown/visibility gates
-    if (DEBUG_SHOW_DEFI_MENUS) {
-      setDefiMessage(baseDefiMessage);
-      return () => { active = false; };
-    }
-    if (!hasShownOnceRef.current) {
-      setDefiMessage(baseDefiMessage);
-      void markMessageShown('meals', baseDefiMessage.body);
-      hasShownOnceRef.current = true;
-      return () => {
-        active = false;
-      };
-    }
-    (async () => {
-      const shouldShow = await shouldShowMessage('meals', baseDefiMessage.body);
-      if (!active) return;
-      if (!shouldShow) {
-        setDefiMessage(null);
-        return;
-      }
-      setDefiMessage(baseDefiMessage);
-      await markMessageShown('meals', baseDefiMessage.body);
-    })();
-    return () => {
-      active = false;
-    };
-  }, [baseDefiMessage]);
-
-  const runRevealAnimation = useCallback((reason: string) => {
-    const now = Date.now();
-    if (now - lastRevealAtRef.current < 12000) {
-      console.log('[DefiReveal] blocked by cooldown:', reason);
-      return;
-    }
-    lastRevealAtRef.current = now;
-    console.log('[DefiReveal] run:', reason);
-    defiRevealAnim.stopAnimation();
-    defiRevealAnim.setValue(0);
-    Animated.timing(defiRevealAnim, {
-      toValue: 1,
-      duration: 700,
-      useNativeDriver: true,
-    }).start();
-  }, [defiRevealAnim]);
-
-
-  const nowVisible = Boolean(defiVisible) && Boolean(defiMessage);
-  const wasVisibleRef = useRef(false);
-
-  useEffect(() => {
-    if (nowVisible && !wasVisibleRef.current) {
-      runRevealAnimation('first-visible');
-    }
-    wasVisibleRef.current = nowVisible;
-  }, [nowVisible, runRevealAnimation]);
-
-  useEffect(() => {
-    if (!nowVisible) return;
-    const t = setTimeout(() => runRevealAnimation('idle-60s'), 60000);
-    return () => clearTimeout(t);
-  }, [nowVisible, runRevealAnimation]);
-
-  useEffect(() => {
-    if (!defiMessage) return;
-    const body = defiMessage.body;
-    const isNew = defiMsgTextRef.current !== body;
-    defiMsgTextRef.current = body;
-    if (isNew) runRevealAnimation('message-change');
-  }, [defiMessage, runRevealAnimation]);
+  };
 
   return (
-    <View style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <AppHeader
-        title="Menüler"
-        subtitle="Gün seç ve öğünleri görüntüle"
-        showBack={router.canGoBack()}
-        onBack={() => router.back()}
-      />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color="#1F2937" />
+        </TouchableOpacity>
+        <View style={styles.headerContent}>
+          <Text style={styles.headerTitle}>Menüler</Text>
+          <Text style={styles.headerSubtitle}>Gün {currentDay}</Text>
+        </View>
+      </View>
 
-      <ScrollView
+      {/* Jump Buttons */}
+      <View style={styles.jumpButtons}>
+        <TouchableOpacity style={styles.jumpButton} onPress={scrollToMeals}>
+          <Ionicons name="restaurant" size={16} color="#10B981" />
+          <Text style={styles.jumpButtonText}>Yemekler</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.jumpButton} onPress={scrollToSupplements}>
+          <Ionicons name="medical" size={16} color="#8B5CF6" />
+          <Text style={styles.jumpButtonText}>Supplementler</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView 
         ref={scrollViewRef}
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.daySelectorWrap}>
-          <Text style={styles.sectionTitle}>Gün Seç</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {days.map((day) => {
-              const isActive = day === selectedDay;
+        {/* Bugünün Menüsü - Today's Meal Plan */}
+        <View
+          onLayout={(event) => {
+            const { y } = event.nativeEvent.layout;
+            setMealsYPosition(y);
+          }}
+        >
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Bugünün Menüsü</Text>
+            <Text style={styles.sectionSubtitle}>
+              {todayMeals.length} / {totalMeals} tamamlandı
+            </Text>
+          </View>
+          {renderMealsForDay(currentDayPlan, currentDayIndex, true)}
+        </View>
+
+        {/* Bugünün Supplementleri - Today's Supplements */}
+        {currentDayPlan.supplements.length > 0 && (
+          <View
+            onLayout={(event) => {
+              const { y } = event.nativeEvent.layout;
+              setSupplementsYPosition(y);
+            }}
+            style={styles.supplementsSection}
+          >
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Bugünün Supplementleri</Text>
+              <Text style={styles.sectionSubtitle}>
+                {todaySupps.length} / {totalSupps} alındı
+              </Text>
+            </View>
+            {currentDayPlan.supplements.map((supp) => {
+              const isTaken = todaySupps.includes(supp.id);
+              
               return (
-                <TouchableOpacity
-                  key={day}
-                  style={[styles.dayChip, isActive && styles.dayChipActive]}
-                  onPress={() => {
-                    setSelectedDay(day);
-                    setManualDay(true);
-                  }}
-                  activeOpacity={0.8}
-                >
-                  <Text style={[styles.dayText, isActive && styles.dayTextActive]}>{day}</Text>
-                </TouchableOpacity>
+                <Card key={supp.id}>
+                  <View style={styles.suppCard}>
+                    <View style={styles.suppHeader}>
+                      <View style={styles.suppInfo}>
+                        <View style={[styles.suppIcon, isTaken && styles.suppIconTaken]}>
+                          <Ionicons 
+                            name="medical" 
+                            size={24} 
+                            color={isTaken ? '#8B5CF6' : '#6B7280'} 
+                          />
+                        </View>
+                        <View style={styles.suppDetails}>
+                          <Text style={styles.suppTime}>{supp.time}</Text>
+                          <Text style={styles.suppName}>{supp.name}</Text>
+                          <Text style={styles.suppDose}>{supp.dose}</Text>
+                        </View>
+                      </View>
+                      <TouchableOpacity
+                        style={[styles.checkbox, isTaken && styles.checkboxTaken]}
+                        onPress={() => handleToggleSupplement(supp.id)}
+                      >
+                        {isTaken && (
+                          <Ionicons name="checkmark" size={20} color="#FFFFFF" />
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Card>
               );
             })}
-          </ScrollView>
-        </View>
-        <Text style={styles.dayIndicator}>Gün {selectedDay} / 91 • {completedCount}/3 öğün tamamlandı</Text>
-
-        <View style={styles.defiBlock}>
-          <Animated.View style={{
-            opacity: defiRevealAnim,
-            transform: [{ translateY: defiRevealAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }],
-          }}>
-            <DefiBanner
-              message={DEBUG_SHOW_DEFI_MENUS ? (defiMessage ?? { title: 'Defi', body: 'Debug: Defi card görünürlük testi.' }) : defiMessage}
-              onOpenPlan={handleOpenPlan}
-              todayISO={todayISO}
-              onHidden={() => setDefiVisible(false)}
-              screenId="meals"
-              enableTypewriter={true}
-              enableIdleReplay={true}
-              variant="card"
-            />
-          </Animated.View>
-        </View>
-
-        <Card style={styles.heroCard}>
-          {dayMenu.heroImage ? (
-            <Image source={dayMenu.heroImage} style={styles.heroImage} resizeMode="cover" />
-          ) : (
-            <View style={styles.heroPlaceholder}>
-              <Text style={styles.heroEmoji}>🛡️</Text>
-              <Text style={styles.heroPlaceholderText}>Görsel yakında</Text>
-            </View>
-          )}
-          <View style={styles.heroContent}>
-            <Text style={styles.heroTitle}>{dayMenu.dayTitle}</Text>
-            <Text style={styles.heroSummary}>{dayMenu.daySummary}</Text>
-            <View style={styles.heroTag}>
-              <Text style={styles.heroTagText}>🛡 Savunma Odağı: {dayMenu.focusTag}</Text>
-            </View>
           </View>
-        </Card>
+        )}
 
-        {SECTION_META.map((section) => {
-          const meal = dayMenu.meals[section.key as MealKey];
-          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : undefined;
-          const isCompleted = safeCompleted.includes(section.key);
-          return (
-            <View key={section.key} style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{section.title}</Text>
-              </View>
-              <MealCard
-                title={meal.title}
-                description={meal.description}
-                recipeId={meal.recipeId}
-                infoLines={infoLines}
-                isCompleted={isCompleted}
-                onToggle={() => {
-                  void markMealsInteractedToday(getLocalDateISO());
-                  toggleMealCompleted(selectedDay, section.key as MealSlot);
-                }}
-                showSupplementsAction={supplementsByMeal[section.key as MealKey].has}
-                supplementSummary={supplementsByMeal[section.key as MealKey].summary}
-                onSupplementsPress={() =>
-                  router.push({ pathname: '/supplements', params: { meal: section.key } })
-                }
-                thumbKey={meal.imageKey || meal.recipeId || undefined}
-                mealKey={section.key}
-              />
-            </View>
-          );
-        })}
+        <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  defiBlock: {
-    marginTop: 8,
-    marginBottom: 14,
+  container: {
+    flex: 1,
+    backgroundColor: '#F3F4F6'
   },
-  container: { flex: 1, backgroundColor: '#F5F6F8' },
-  scrollView: { flex: 1 },
-  scrollContent: {
-    paddingTop: 18,
-    paddingBottom: 120,
-    paddingHorizontal: 20,
-  },
-  daySelectorWrap: {
-    marginBottom: 16,
-  },
-  dayIndicator: {
-    fontSize: 12,
-    color: '#94A3B8',
-    marginBottom: 12,
-  },
-  dayChip: {
-    minWidth: 44,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#E2E8F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-    paddingHorizontal: 12,
-  },
-  dayChipActive: {
-    backgroundColor: '#0F5A4E',
-  },
-  dayText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#0F172A',
-  },
-  dayTextActive: {
-    color: '#FFFFFF',
-  },
-  section: {
-    marginBottom: 8,
-  },
-  sectionHeader: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+    padding: 16,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB'
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8
+  },
+  headerContent: {
+    flex: 1
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1F2937'
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 2
+  },
+  jumpButtons: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+    gap: 8
+  },
+  jumpButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 8,
+    gap: 6
+  },
+  jumpButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#1F2937'
+  },
+  scrollView: {
+    flex: 1
+  },
+  scrollContent: {
+    padding: 16
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: '700',
-    color: '#0F172A',
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginTop: 8,
+    marginBottom: 16
+  },
+  sectionHeader: {
+    marginBottom: 16
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 4
+  },
+  supplementsSection: {
+    marginTop: 24
+  },
+  suppCard: {
+    width: '100%'
+  },
+  suppHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  suppInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1
+  },
+  suppIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 16
+  },
+  suppIconTaken: {
+    backgroundColor: '#EDE9FE'
+  },
+  suppDetails: {
+    flex: 1
+  },
+  suppTime: {
+    fontSize: 12,
+    color: '#6B7280',
+    fontWeight: '600',
+    marginBottom: 4
+  },
+  suppName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginBottom: 2
+  },
+  suppDose: {
+    fontSize: 14,
+    color: '#6B7280'
+  },
+  checkboxTaken: {
+    backgroundColor: '#8B5CF6',
+    borderColor: '#8B5CF6'
   },
   mealCard: {
-    marginBottom: 12,
+    width: '100%'
   },
-  mealTopRow: {
+  mealHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 12
+  },
+  mealTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    flex: 1
   },
-  mealThumb: {
+  mealIcon: {
     width: 48,
     height: 48,
-    borderRadius: 12,
-    backgroundColor: '#E5E7EB',
+    borderRadius: 24,
+    backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
-    overflow: 'hidden',
+    marginRight: 12
   },
-  mealThumbImage: {
-    width: '100%',
-    height: '100%',
+  mealIconCompleted: {
+    backgroundColor: '#D1FAE5'
   },
-  mealThumbEmoji: {
-    fontSize: 20,
-  },
-  mealTextBlock: {
-    flex: 1,
-  },
-  mealCheck: {
-    width: 28,
-    height: 28,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#CBD5F5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 8,
-  },
-  mealCheckActive: {
-    backgroundColor: '#0F5A4E',
-    borderColor: '#0F5A4E',
-  },
-  mealCheckMark: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '700',
+  mealSlotName: {
+    fontSize: 12,
+    color: '#6B7280',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    fontWeight: '600'
   },
   mealTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: 6,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1F2937',
+    marginTop: 2
   },
   mealDescription: {
-    fontSize: 14,
-    color: '#64748B',
-    marginBottom: 10,
+    fontSize: 15,
+    color: '#4B5563',
+    lineHeight: 22
   },
-  mealActions: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 4,
+  checkbox: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#D1D5DB',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
-  actionButton: {
+  checkboxCompleted: {
+    backgroundColor: '#10B981',
+    borderColor: '#10B981'
+  },
+  bottomSpacer: {
+    height: 32
+  },
+  centered: {
     flex: 1,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: '#F1F5F9',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
-  actionButtonDisabled: {
-    backgroundColor: '#E2E8F0',
-  },
-  actionText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#0F172A',
-  },
-  actionTextDisabled: {
-    color: '#94A3B8',
-  },
-  recipeButtonHasRecipe: {
-    backgroundColor: '#0F5A4E',
-  },
-  recipeButtonTextHasRecipe: {
-    color: '#FFFFFF',
-  },
-  infoList: {
-    marginTop: 8,
-    gap: 6,
-  },
-  supplementRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    backgroundColor: 'rgba(139, 92, 246, 0.08)',
-  },
-  supplementStarButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 999,
-    backgroundColor: 'rgba(139, 92, 246, 0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  supplementLabel: {
-    flex: 1,
-    fontSize: 12,
-    color: '#8B5CF6',
-    lineHeight: 16,
-  },
-  shoppingActionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    backgroundColor: 'rgba(15, 90, 78, 0.08)',
-  },
-  shoppingActionLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#0F5A4E',
-  },
-  infoText: {
-    fontSize: 13,
-    color: '#64748B',
-    lineHeight: 18,
-  },
-  heroCard: {
-    marginBottom: 18,
-    padding: 0,
-    overflow: 'hidden',
-  },
-  heroImage: {
-    width: '100%',
-    height: 140,
-  },
-  heroPlaceholder: {
-    width: '100%',
-    height: 140,
-    backgroundColor: '#E2E8F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  heroEmoji: {
-    fontSize: 22,
-    marginBottom: 6,
-  },
-  heroPlaceholderText: {
-    fontSize: 12,
-    color: '#64748B',
-  },
-  heroContent: {
-    padding: 14,
-  },
-  heroTitle: {
+  emptyText: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: 6,
-  },
-  heroSummary: {
-    fontSize: 14,
-    color: '#64748B',
-    marginBottom: 10,
-  },
-  heroTag: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#E8F3F1',
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  heroTagText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#0F5A4E',
-  },
+    color: '#6B7280'
+  }
 });

@@ -1,13 +1,12 @@
 {
   "expo": {
-    "newArchEnabled": false,
     "name": "diadefense",
     "slug": "diadefense",
-    "scheme": "diadefense",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/brand/icon/icon.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/brand/splash/splash.png",
       "resizeMode": "contain",
@@ -21,17 +20,11 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sahin3838.diadefense",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSHealthShareUsageDescription": "DiaDefense reads your Health data (such as steps and activity) to show your progress and support diabetes management.",
-        "NSHealthUpdateUsageDescription": "DiaDefense may write limited health data to Apple Health to support your program."
-      }
+      "bundleIdentifier": "com.sahin3838.diadefense"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png"
       },
       "package": "com.sahin3838.diadefense"
     },
@@ -45,19 +38,10 @@
         {
           "locale": "auto"
         }
-      ],
-      "expo-font",
-      "expo-web-browser",
-      "@react-native-community/datetimepicker"
+      ]
     ],
     "experiments": {
       "typedRoutes": true
-    },
-    "extra": {
-      "router": {},
-      "eas": {
-        "projectId": "7ab47d91-ff68-4922-86f8-3f2b26031c92"
-      }
     }
   }
 }
