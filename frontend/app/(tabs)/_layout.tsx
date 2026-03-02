@@ -1,70 +1,89 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useTranslation } from 'react-i18next';
-import { DiaDefenseColors } from '../../constants/colors';
+import { Theme } from '../../src/config/theme';
 
-export default function TabsLayout() {
-  const { t } = useTranslation();
-  
+export default function TabLayout() {
   return (
     <Tabs
+      initialRouteName="index"
       screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: DiaDefenseColors.oliveGreen,
-        tabBarInactiveTintColor: '#999',
+        tabBarActiveTintColor: Theme.primary,
+        tabBarInactiveTintColor: "#94A3B8",
         tabBarStyle: {
+          backgroundColor: Theme.surface,
           borderTopWidth: 1,
-          borderTopColor: '#eee',
-          paddingBottom: 8,
-          paddingTop: 8,
-          height: 60,
+          borderTopColor: Theme.border,
+          height: 92,
+          paddingTop: 12,
+          paddingBottom: 20,
+          elevation: 0,
+          shadowOpacity: 0
         },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600'
+        },
+        tabBarItemStyle: {
+          paddingHorizontal: 4,
+          flex: 1
+        },
+        headerStyle: {
+          backgroundColor: Theme.primary
+        },
+        headerTintColor: Theme.surface,
+        headerTitleStyle: {
+          fontWeight: 'bold'
+        },
+        headerShown: false
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          title: t('nav.home'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
+          title: 'Bugün',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="home-outline" size={24} color={color} />
+          )
         }}
       />
       <Tabs.Screen
-        name="today"
+        name="program"
         options={{
-          title: t('nav.today'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="today-outline" size={size} color={color} />
-          ),
+          title: 'Program',
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="clipboard-outline" size={24} color={color} />
+          )
         }}
       />
       <Tabs.Screen
-        name="meals"
+        name="defense"
         options={{
-          title: t('nav.meals'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="restaurant-outline" size={size} color={color} />
-          ),
+          title: 'Savunma',
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="shield-checkmark-outline" size={24} color={color} />
+          )
         }}
       />
       <Tabs.Screen
-        name="supplements"
+        name="tracking"
         options={{
-          title: t('nav.supplements'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="medical-outline" size={size} color={color} />
-          ),
+          title: 'Verilerim',
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="pulse-outline" size={24} color={color} />
+          )
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="info"
         options={{
-          title: t('nav.profile'),
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
-          ),
+          title: 'Eğitim',
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="book-outline" size={24} color={color} />
+          )
         }}
       />
     </Tabs>

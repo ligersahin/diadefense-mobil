@@ -1,0 +1,657 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Stack, router } from 'expo-router';
+import AppHeader from '../src/components/AppHeader';
+import { Card } from '../src/components/Card';
+import DefiBanner from '../src/components/DefiBanner';
+import { MENUS } from '../src/data/menus';
+import { supplementRules } from '../src/data/supplementRules';
+import { useDefenseProgram } from '../src/context/DefenseProgramContext';
+import { MealSlot } from '../src/types';
+import { getRecipeThumbImage } from '../src/assets/recipeImages';
+import { markMealsInteractedToday } from '../src/notifications/mealsNudgeNotifications';
+import { getLocalDateISO } from '../src/utils/dateISO';
+import { shouldShowDefi, shouldShowMessage, markMessageShown } from '../src/defi/defiVisibility';
+import { getDefiMessage } from '../src/defi/defiMessages';
+
+const SECTION_META = [
+  { key: 'breakfast', title: 'Kahvaltı' },
+  { key: 'lunch', title: 'Öğlen' },
+  { key: 'dinner', title: 'Akşam' },
+] as const;
+
+type MealKey = typeof SECTION_META[number]['key'];
+
+type MealCardProps = {
+  title: string;
+  description: string;
+  recipeId?: string | null;
+  isCompleted?: boolean;
+  onToggle?: () => void;
+  thumbKey?: string;
+  showSupplementsAction?: boolean;
+  onSupplementsPress?: () => void;
+  supplementSummary?: string;
+  mealKey?: string;
+};
+
+type InfoMap = {
+  breakfast?: string[];
+  lunch?: string[];
+  dinner?: string[];
+};
+
+const DAY1_INFO: InfoMap = {
+  breakfast: [
+    '2 yumurta (kayısı kıvamı).',
+    'Çoban veya yeşil salata (zeytinyağı, limon, kekik).',
+    '10–15 zeytin.',
+    '15–20 çiğ fındık veya badem.',
+    'Şekersiz çay, yeşil çay veya sade Türk kahvesi.',
+    'Kahvaltıdan 30 dk önce: Probiyotik + Zeytin yaprağı.',
+    'Kahvaltıdan 60 dk sonra: Krill yağı + Magnezyum.',
+    'Kahvaltıdan 90 dk sonra (15 günde 1): D vitamini (zeytinyağı ile).',
+  ],
+  lunch: [
+    'Soğuk domates çorbası (tarife bak).',
+    'Zeytinyağlı bamya veya ıspanak kökü salatası.',
+    'Ev yapımı turşu.',
+    'Öğle yemeğinden 30 dk önce: Çemen otu.',
+  ],
+  dinner: [
+    'Izgara biftek.',
+    'Çoban salata veya karnabahar salatası (buharda, hafif diri).',
+    'Zeytinyağı, limon, kaya tuzu ile.',
+    'Akşam yemeğinden 30 dk önce: Probiyotik + Zeytin yaprağı.',
+    'Akşam yemeğinden 60 dk sonra: Krill yağı.',
+  ],
+};
+
+function MealCard({ title, description, recipeId, infoLines, isCompleted, onToggle, thumbKey, showSupplementsAction, onSupplementsPress, supplementSummary, mealKey }: MealCardProps & { infoLines?: string[] }) {
+  const [open, setOpen] = useState(false);
+  const infoLinesToRender = infoLines || [];
+  const summaryLine = infoLinesToRender.length > 0 ? infoLinesToRender[0] : description;
+  const thumbSource = getRecipeThumbImage(thumbKey);
+  return (
+    <Card style={styles.mealCard}>
+      <View style={styles.mealTopRow}>
+        <View style={styles.mealThumb}>
+          {thumbSource ? (
+            <Image source={thumbSource} style={styles.mealThumbImage} resizeMode="cover" />
+          ) : (
+            <Text style={styles.mealThumbEmoji}>🍽️</Text>
+          )}
+        </View>
+        <View style={styles.mealTextBlock}>
+          <Text style={styles.mealTitle}>{title}</Text>
+          <Text style={styles.mealDescription} numberOfLines={1}>{summaryLine}</Text>
+        </View>
+        <TouchableOpacity
+          onPress={onToggle}
+          style={[styles.mealCheck, isCompleted && styles.mealCheckActive]}
+          activeOpacity={0.8}
+        >
+          {isCompleted ? <Text style={styles.mealCheckMark}>✓</Text> : null}
+        </TouchableOpacity>
+      </View>
+      <View style={styles.mealActions}>
+        <TouchableOpacity
+          onPress={() => setOpen((prev) => !prev)}
+          activeOpacity={0.8}
+          style={styles.actionButton}
+        >
+          <Text style={styles.actionText}>Bilgiler</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() =>
+            recipeId
+              ? router.push({
+                  pathname: '/recipes/[id]',
+                  params: { id: recipeId },
+                })
+              : undefined
+          }
+          activeOpacity={recipeId ? 0.8 : 1}
+          style={[styles.actionButton, !recipeId && styles.actionButtonDisabled, !!recipeId && styles.recipeButtonHasRecipe]}
+        >
+          <Text style={[styles.actionText, !recipeId && styles.actionTextDisabled, !!recipeId && styles.recipeButtonTextHasRecipe]}>
+            Tarife git
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {open ? (
+        <View style={styles.infoList}>
+          {infoLinesToRender.map((line, index) => (
+            <Text key={`${line}-${index}`} style={styles.infoText}>
+              {line}
+            </Text>
+          ))}
+          {showSupplementsAction ? (
+            <TouchableOpacity
+              onPress={onSupplementsPress}
+              activeOpacity={0.8}
+              style={styles.supplementRow}
+            >
+              <View style={styles.supplementStarButton}>
+                <Ionicons name="star" size={16} color="#8B5CF6" />
+              </View>
+              <Text style={styles.supplementLabel}>Takviyeler</Text>
+            </TouchableOpacity>
+          ) : null}
+          <TouchableOpacity
+            onPress={() => router.push('/shopping')}
+            activeOpacity={0.8}
+            style={styles.shoppingActionRow}
+          >
+            <Ionicons name="cart-outline" size={16} color="#0F5A4E" />
+            <Text style={styles.shoppingActionLabel}>Alışveriş Listesi</Text>
+          </TouchableOpacity>
+        </View>
+      ) : null}
+    </Card>
+  );
+}
+
+const DEBUG_SHOW_DEFI_MENUS = true; // TEMP: set false after visual verification
+
+export default function MenusScreen() {
+  const { currentDayIndex, completedMeals, toggleMealCompleted } = useDefenseProgram();
+  const [defiVisible, setDefiVisible] = useState(true);
+  const [defiMessage, setDefiMessage] = useState<{ title: string; body: string; detail?: string } | null>(null);
+  const hasShownOnceRef = useRef(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const defiRevealAnim = useRef(new Animated.Value(0)).current;
+  const defiMsgTextRef = useRef<string | null>(null);
+  const lastRevealAtRef = useRef(0);
+  const [selectedDay, setSelectedDay] = useState(currentDayIndex || 1);
+  const [manualDay, setManualDay] = useState(false);
+  const days = useMemo(() => MENUS.map((item) => item.day), []);
+  const dayMenu = MENUS.find((item) => item.day === selectedDay) || MENUS[0];
+  const dayMeals = completedMeals[selectedDay] || [];
+  const safeCompleted = Array.from(new Set(dayMeals.filter((s) => s === 'breakfast' || s === 'lunch' || s === 'dinner')));
+  const completedCount = safeCompleted.length;
+  const hasAnyMealCompletedToday = (completedMeals[currentDayIndex] || []).length > 0;
+  const todayISO = useMemo(() => getLocalDateISO(), []);
+  const supplementsByMeal = useMemo(() => {
+    const enabled = supplementRules.filter((rule) => rule.enabled);
+    const buildSummary = (mealKey: string) => {
+      const rules = enabled.filter((rule) => rule.meal === mealKey);
+      if (!rules.length) return { has: false, summary: '' };
+      const parts = rules.map((rule) => {
+        const prefix = rule.offsetMinutes < 0
+          ? `${Math.abs(rule.offsetMinutes)} dk önce`
+          : `+${rule.offsetMinutes} dk`;
+        const names = rule.items.map((item) => item.name).join(' + ');
+        return `${prefix} ${names}`;
+      });
+      return { has: true, summary: `Takviyeler: ${parts.join(' · ')}` };
+    };
+    return {
+      breakfast: buildSummary('breakfast'),
+      lunch: buildSummary('lunch'),
+      dinner: buildSummary('dinner'),
+    };
+  }, []);
+  const baseDefiMessage = useMemo(
+    () =>
+      (DEBUG_SHOW_DEFI_MENUS || defiVisible)
+        ? getDefiMessage({
+            screen: 'meals',
+            hasStartedToday: hasAnyMealCompletedToday,
+            remainingMeals: undefined,
+          })
+        : null,
+    [defiVisible, hasAnyMealCompletedToday]
+  );
+
+  const handleOpenPlan = () => {
+    router.push('/defense');
+  };
+
+  useEffect(() => {
+    if (!manualDay && currentDayIndex) {
+      setSelectedDay(currentDayIndex);
+    }
+  }, [currentDayIndex, manualDay]);
+
+  useEffect(() => {
+    let mounted = true;
+    shouldShowDefi(todayISO, 'meals').then((show) => {
+      if (mounted) setDefiVisible(show);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [todayISO]);
+
+  useEffect(() => {
+    let active = true;
+    if (!baseDefiMessage) {
+      setDefiMessage(null);
+      return () => {
+        active = false;
+      };
+    }
+    // TEMP: debug bypass — skip cooldown/visibility gates
+    if (DEBUG_SHOW_DEFI_MENUS) {
+      setDefiMessage(baseDefiMessage);
+      return () => { active = false; };
+    }
+    if (!hasShownOnceRef.current) {
+      setDefiMessage(baseDefiMessage);
+      void markMessageShown('meals', baseDefiMessage.body);
+      hasShownOnceRef.current = true;
+      return () => {
+        active = false;
+      };
+    }
+    (async () => {
+      const shouldShow = await shouldShowMessage('meals', baseDefiMessage.body);
+      if (!active) return;
+      if (!shouldShow) {
+        setDefiMessage(null);
+        return;
+      }
+      setDefiMessage(baseDefiMessage);
+      await markMessageShown('meals', baseDefiMessage.body);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [baseDefiMessage]);
+
+  const runRevealAnimation = useCallback((reason: string) => {
+    const now = Date.now();
+    if (now - lastRevealAtRef.current < 12000) {
+      console.log('[DefiReveal] blocked by cooldown:', reason);
+      return;
+    }
+    lastRevealAtRef.current = now;
+    console.log('[DefiReveal] run:', reason);
+    defiRevealAnim.stopAnimation();
+    defiRevealAnim.setValue(0);
+    Animated.timing(defiRevealAnim, {
+      toValue: 1,
+      duration: 700,
+      useNativeDriver: true,
+    }).start();
+  }, [defiRevealAnim]);
+
+
+  const nowVisible = Boolean(defiVisible) && Boolean(defiMessage);
+  const wasVisibleRef = useRef(false);
+
+  useEffect(() => {
+    if (nowVisible && !wasVisibleRef.current) {
+      runRevealAnimation('first-visible');
+    }
+    wasVisibleRef.current = nowVisible;
+  }, [nowVisible, runRevealAnimation]);
+
+  useEffect(() => {
+    if (!nowVisible) return;
+    const t = setTimeout(() => runRevealAnimation('idle-60s'), 60000);
+    return () => clearTimeout(t);
+  }, [nowVisible, runRevealAnimation]);
+
+  useEffect(() => {
+    if (!defiMessage) return;
+    const body = defiMessage.body;
+    const isNew = defiMsgTextRef.current !== body;
+    defiMsgTextRef.current = body;
+    if (isNew) runRevealAnimation('message-change');
+  }, [defiMessage, runRevealAnimation]);
+
+  return (
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
+      <AppHeader
+        title="Menüler"
+        subtitle="Gün seç ve öğünleri görüntüle"
+        showBack={router.canGoBack()}
+        onBack={() => router.back()}
+      />
+
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.daySelectorWrap}>
+          <Text style={styles.sectionTitle}>Gün Seç</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {days.map((day) => {
+              const isActive = day === selectedDay;
+              return (
+                <TouchableOpacity
+                  key={day}
+                  style={[styles.dayChip, isActive && styles.dayChipActive]}
+                  onPress={() => {
+                    setSelectedDay(day);
+                    setManualDay(true);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={[styles.dayText, isActive && styles.dayTextActive]}>{day}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+        <Text style={styles.dayIndicator}>Gün {selectedDay} / 91 • {completedCount}/3 öğün tamamlandı</Text>
+
+        <View style={styles.defiBlock}>
+          <Animated.View style={{
+            opacity: defiRevealAnim,
+            transform: [{ translateY: defiRevealAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }],
+          }}>
+            <DefiBanner
+              message={DEBUG_SHOW_DEFI_MENUS ? (defiMessage ?? { title: 'Defi', body: 'Debug: Defi card görünürlük testi.' }) : defiMessage}
+              onOpenPlan={handleOpenPlan}
+              todayISO={todayISO}
+              onHidden={() => setDefiVisible(false)}
+              screenId="meals"
+              enableTypewriter={true}
+              enableIdleReplay={true}
+              variant="card"
+            />
+          </Animated.View>
+        </View>
+
+        <Card style={styles.heroCard}>
+          {dayMenu.heroImage ? (
+            <Image source={dayMenu.heroImage} style={styles.heroImage} resizeMode="cover" />
+          ) : (
+            <View style={styles.heroPlaceholder}>
+              <Text style={styles.heroEmoji}>🛡️</Text>
+              <Text style={styles.heroPlaceholderText}>Görsel yakında</Text>
+            </View>
+          )}
+          <View style={styles.heroContent}>
+            <Text style={styles.heroTitle}>{dayMenu.dayTitle}</Text>
+            <Text style={styles.heroSummary}>{dayMenu.daySummary}</Text>
+            <View style={styles.heroTag}>
+              <Text style={styles.heroTagText}>🛡 Savunma Odağı: {dayMenu.focusTag}</Text>
+            </View>
+          </View>
+        </Card>
+
+        {SECTION_META.map((section) => {
+          const meal = dayMenu.meals[section.key as MealKey];
+          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : undefined;
+          const isCompleted = safeCompleted.includes(section.key);
+          return (
+            <View key={section.key} style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>{section.title}</Text>
+              </View>
+              <MealCard
+                title={meal.title}
+                description={meal.description}
+                recipeId={meal.recipeId}
+                infoLines={infoLines}
+                isCompleted={isCompleted}
+                onToggle={() => {
+                  void markMealsInteractedToday(getLocalDateISO());
+                  toggleMealCompleted(selectedDay, section.key as MealSlot);
+                }}
+                showSupplementsAction={supplementsByMeal[section.key as MealKey].has}
+                supplementSummary={supplementsByMeal[section.key as MealKey].summary}
+                onSupplementsPress={() =>
+                  router.push({ pathname: '/supplements', params: { meal: section.key } })
+                }
+                thumbKey={meal.imageKey || meal.recipeId || undefined}
+                mealKey={section.key}
+              />
+            </View>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  defiBlock: {
+    marginTop: 8,
+    marginBottom: 14,
+  },
+  container: { flex: 1, backgroundColor: '#F5F6F8' },
+  scrollView: { flex: 1 },
+  scrollContent: {
+    paddingTop: 18,
+    paddingBottom: 120,
+    paddingHorizontal: 20,
+  },
+  daySelectorWrap: {
+    marginBottom: 16,
+  },
+  dayIndicator: {
+    fontSize: 12,
+    color: '#94A3B8',
+    marginBottom: 12,
+  },
+  dayChip: {
+    minWidth: 44,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#E2E8F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+    paddingHorizontal: 12,
+  },
+  dayChipActive: {
+    backgroundColor: '#0F5A4E',
+  },
+  dayText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#0F172A',
+  },
+  dayTextActive: {
+    color: '#FFFFFF',
+  },
+  section: {
+    marginBottom: 8,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#0F172A',
+  },
+  mealCard: {
+    marginBottom: 12,
+  },
+  mealTopRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  mealThumb: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#E5E7EB',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+    overflow: 'hidden',
+  },
+  mealThumbImage: {
+    width: '100%',
+    height: '100%',
+  },
+  mealThumbEmoji: {
+    fontSize: 20,
+  },
+  mealTextBlock: {
+    flex: 1,
+  },
+  mealCheck: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#CBD5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  mealCheckActive: {
+    backgroundColor: '#0F5A4E',
+    borderColor: '#0F5A4E',
+  },
+  mealCheckMark: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  mealTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 6,
+  },
+  mealDescription: {
+    fontSize: 14,
+    color: '#64748B',
+    marginBottom: 10,
+  },
+  mealActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  actionButton: {
+    flex: 1,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionButtonDisabled: {
+    backgroundColor: '#E2E8F0',
+  },
+  actionText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#0F172A',
+  },
+  actionTextDisabled: {
+    color: '#94A3B8',
+  },
+  recipeButtonHasRecipe: {
+    backgroundColor: '#0F5A4E',
+  },
+  recipeButtonTextHasRecipe: {
+    color: '#FFFFFF',
+  },
+  infoList: {
+    marginTop: 8,
+    gap: 6,
+  },
+  supplementRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: 'rgba(139, 92, 246, 0.08)',
+  },
+  supplementStarButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 999,
+    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  supplementLabel: {
+    flex: 1,
+    fontSize: 12,
+    color: '#8B5CF6',
+    lineHeight: 16,
+  },
+  shoppingActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    backgroundColor: 'rgba(15, 90, 78, 0.08)',
+  },
+  shoppingActionLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0F5A4E',
+  },
+  infoText: {
+    fontSize: 13,
+    color: '#64748B',
+    lineHeight: 18,
+  },
+  heroCard: {
+    marginBottom: 18,
+    padding: 0,
+    overflow: 'hidden',
+  },
+  heroImage: {
+    width: '100%',
+    height: 140,
+  },
+  heroPlaceholder: {
+    width: '100%',
+    height: 140,
+    backgroundColor: '#E2E8F0',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroEmoji: {
+    fontSize: 22,
+    marginBottom: 6,
+  },
+  heroPlaceholderText: {
+    fontSize: 12,
+    color: '#64748B',
+  },
+  heroContent: {
+    padding: 14,
+  },
+  heroTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 6,
+  },
+  heroSummary: {
+    fontSize: 14,
+    color: '#64748B',
+    marginBottom: 10,
+  },
+  heroTag: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#E8F3F1',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  heroTagText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0F5A4E',
+  },
+});
