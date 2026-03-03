@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, Pressable, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
 import AppHeader from '../src/components/AppHeader';
@@ -9,11 +9,13 @@ import { MENUS } from '../src/data/menus';
 import { supplementRules } from '../src/data/supplementRules';
 import { useDefenseProgram } from '../src/context/DefenseProgramContext';
 import { MealSlot } from '../src/types';
-import { getRecipeThumbImage } from '../src/assets/recipeImages';
+import { getRecipeImage } from '../src/assets/recipeImages';
 import { markMealsInteractedToday } from '../src/notifications/mealsNudgeNotifications';
 import { getLocalDateISO } from '../src/utils/dateISO';
 import { shouldShowDefi, shouldShowMessage, markMessageShown } from '../src/defi/defiVisibility';
 import { getDefiMessage } from '../src/defi/defiMessages';
+import DayInfoBoard, { type DayInfoCard } from '../src/components/DayInfoBoard';
+import { DAY_INFO_BOARD, type DayInfoCardData } from '../src/data/dayInfoBoard';
 
 const SECTION_META = [
   { key: 'breakfast', title: 'Kahvaltı' },
@@ -49,22 +51,162 @@ const DAY1_INFO: InfoMap = {
     '10–15 zeytin.',
     '15–20 çiğ fındık veya badem.',
     'Şekersiz çay, yeşil çay veya sade Türk kahvesi.',
-    'Kahvaltıdan 30 dk önce: Probiyotik + Zeytin yaprağı.',
-    'Kahvaltıdan 60 dk sonra: Krill yağı + Magnezyum.',
+    'Kahvaltıdan 30 dk önce: Enterik probiyotik kapsülü ve zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 60 dk sonra: Krill yağı kapsülü ve 200 mg magnezyum kapsülü.',
     'Kahvaltıdan 90 dk sonra (15 günde 1): D vitamini (zeytinyağı ile).',
   ],
   lunch: [
     'Soğuk domates çorbası (tarife bak).',
     'Zeytinyağlı bamya veya ıspanak kökü salatası.',
     'Ev yapımı turşu.',
-    'Öğle yemeğinden 30 dk önce: Çemen otu.',
+    'Öğle yemeğinden 30 dk önce: Çemen otu kapsülü.',
   ],
   dinner: [
     'Izgara biftek.',
     'Çoban salata veya karnabahar salatası (buharda, hafif diri).',
     'Zeytinyağı, limon, kaya tuzu ile.',
-    'Akşam yemeğinden 30 dk önce: Probiyotik + Zeytin yaprağı.',
-    'Akşam yemeğinden 60 dk sonra: Krill yağı.',
+    'Akşam yemeğinden 30 dk önce: Enterik probiyotik kapsülü ve zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 60 dk sonra: Krill yağı kapsülü.',
+  ],
+};
+
+const DAY2_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda pastırmalı yumurta.',
+    'Mevsimine göre yeşil salata veya çoban salatası (biber, salatalık, domates, bol sızma zeytinyağı, limon, kekik).',
+    '10–15 adet siyah veya yeşil zeytin.',
+    'Şekersiz çay, yeşil çay veya sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü ve zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü ve 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Sirke ve sarımsakla çeşnilendirilmiş paça çorbası.',
+    'Sızma zeytinyağı ve ev sirkesi ile hazırlanmış mevsim salatası.',
+    '5–6 adet ceviz.',
+    'Öğle yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Mevsimine göre palamut izgara veya deniz levreği.',
+    'Sızma zeytinyağı ve ev sirkesi ya da limon suyu ile hazırlanmış yeşil salata veya çoban salata.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü ve zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY3_INFO: InfoMap = {
+  breakfast: [
+    'Mevsim sebzeleriyle hazırlanmış tereyağlı omlet (2 yumurta).',
+    '10–15 adet çiğ fındık ya da badem.',
+    'Siyah ya da yeşil zeytin (10–15 adet).',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra: krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'İşkembe çorbası (ev sirkesi ve dövülmüş sarımsakla çeşitlendirilmiş).',
+    'Mevsimine göre: taze börülce salatası ya da sızma zeytinyağı, limon ve kaya tuzu ile çeşitlendirilmiş Brüksel lahanası salatası (buharda az haşlanmış).',
+    'Öğlen yemeğinden 30 dakika önce: çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Çeşnili tavuk ızgara (tavuk göğsü: kimyon, zerdeçal, kekik, kırmızı pul biber + 1 diş dövülmüş sarımsak; 1–2 saat dolapta dinlendir; sonra sızma zeytinyağı gezdirilmiş tavada pişir).',
+    'Mevsimine göre: dövülmüş sarımsak + zeytinyağı ile çeşitlendirilmiş tere salatası ya da çoban salata.',
+    'Akşam yemeğinden 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra: krill yağı kapsülü.',
+  ],
+};
+
+const DAY4_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda tereyağlı yumurta (2 yumurta ile hazırlanmış).',
+    'Mevsim salatası.',
+    'Siyah ya da yeşil zeytin (10–15 adet).',
+    '6–7 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra: krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Terbiyeli et suyu çorbası (et suyu kaynatılır; bir çanağa alınıp içine 1 yumurta sarısı eklenerek çırpılır; üzerine karabiber, birkaç damla limon suyu ve ince kıyılmış maydanoz eklenir).',
+    'Zeytinyağlı enginar.',
+    'Öğlen yemeğinden 30 dakika önce: çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Ciğer ızgara.',
+    'Turp, kereviz kökü ve ince doğranmış kereviz yaprakları ile hazırlanmış kök salata ya da çoban salata.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra: krill yağı kapsülü.',
+  ],
+};
+
+const DAY5_INFO: InfoMap = {
+  breakfast: [
+    'Sucuklu yumurta (2 yumurta ile hazırlanmış).',
+    'Mevsim salatası.',
+    'Siyah ya da yeşil zeytin (10–15 adet).',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce: enterik probiyotik kapsül, zeytin yaprağı kapsül.',
+    'Kahvaltıdan 1 saat sonra: krill yağı kapsül, 200 mg magnezyum kapsül.',
+  ],
+  lunch: [
+    'Sebze çorbası (et suyu bazlı).',
+    'Çoban salata veya mevsim salatası.',
+    '10–15 adet çiğ fındık veya badem.',
+    'Pratik pancar turşusu (tarife bak).',
+    'Öğle yemeğinden 30 dakika önce: çemen otu kapsül.',
+  ],
+  dinner: [
+    'Zencefilli somon.',
+    'Izgara yaz sebzeleri veya mevsim salatası.',
+    'Akşam yemeğinden 30 dakika önce: enterik probiyotik kapsül, zeytin yaprağı kapsül.',
+    'Akşam yemeğinden 1 saat sonra: krill yağı kapsül.',
+  ],
+};
+
+const DAY6_INFO: InfoMap = {
+  breakfast: [
+    '2 adet yumurta dolması (sarı: tereyağı + ince doğranmış dereotu + taze soğan; beyazın içine doldur).',
+    'Mevsim salatası.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra: krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Terbiyeli paça çorbası (dövülmüş sarımsak, ev sirkesi, kaya tuzu, karabiber ile).',
+    'Yeşil salata ya da sirkeyle çeşnilendirilmiş közlenmiş kırmızı çan biberi (1-2 saat buzdolabında dinlendir).',
+    '5-6 adet ceviz.',
+    'Öğlen yemeğinden 30 dakika önce: çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Kapuska (tarife bak).',
+    'Mevsim salatası.',
+    'Akşam yemeğinden 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra: krill yağı kapsülü.',
+  ],
+};
+
+const DAY7_INFO: InfoMap = {
+  breakfast: [
+    'Menemen (2 yumurta ile hazırlanmış).',
+    'Mevsim salatası (zeytinyağı, limon, kekik).',
+    '10–15 zeytin.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra: krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Kereviz çorbası (tarife bak).',
+    'Mevsim salatası.',
+    '10–15 adet çiğ fındık veya badem.',
+    'Öğlen yemeğinden 30 dakika önce: çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Fırında tavuk.',
+    'Soğuk avokado püresi veya mevsim salatası.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce: enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra: krill yağı kapsülü.',
   ],
 };
 
@@ -72,7 +214,7 @@ function MealCard({ title, description, recipeId, infoLines, isCompleted, onTogg
   const [open, setOpen] = useState(false);
   const infoLinesToRender = infoLines || [];
   const summaryLine = infoLinesToRender.length > 0 ? infoLinesToRender[0] : description;
-  const thumbSource = getRecipeThumbImage(thumbKey);
+  const thumbSource = getRecipeImage(thumbKey);
   return (
     <Card style={styles.mealCard}>
       <View style={styles.mealTopRow}>
@@ -166,6 +308,7 @@ export default function MenusScreen() {
   const lastRevealAtRef = useRef(0);
   const [selectedDay, setSelectedDay] = useState(currentDayIndex || 1);
   const [manualDay, setManualDay] = useState(false);
+  const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
   const days = useMemo(() => MENUS.map((item) => item.day), []);
   const dayMenu = MENUS.find((item) => item.day === selectedDay) || MENUS[0];
   const dayMeals = completedMeals[selectedDay] || [];
@@ -214,6 +357,10 @@ export default function MenusScreen() {
       setSelectedDay(currentDayIndex);
     }
   }, [currentDayIndex, manualDay]);
+
+  useEffect(() => {
+    setActiveInfoId(null);
+  }, [selectedDay]);
 
   useEffect(() => {
     let mounted = true;
@@ -342,6 +489,38 @@ export default function MenusScreen() {
         </View>
         <Text style={styles.dayIndicator}>Gün {selectedDay} / 91 • {completedCount}/3 öğün tamamlandı</Text>
 
+        <View style={styles.infoBoardWrap}>
+          <DayInfoBoard
+            cards={(() => {
+              const config = DAY_INFO_BOARD[selectedDay]?.cards ?? [];
+              return config.map((c): DayInfoCard => {
+                const data = c as DayInfoCardData;
+                const hasContent = !!(data.contentBody && data.contentTitle);
+                const onPress = hasContent
+                  ? () => setActiveInfoId((prev) => (prev === data.id ? null : data.id))
+                  : undefined;
+                return { ...c, onPress };
+              });
+            })()}
+          />
+          {activeInfoId ? (() => {
+            const config = DAY_INFO_BOARD[selectedDay]?.cards ?? [];
+            const card = config.find((c) => c.id === activeInfoId) as DayInfoCardData | undefined;
+            if (!card?.contentBody) return null;
+            return (
+              <View style={styles.infoDetailPanel}>
+                <ScrollView
+                  style={styles.infoDetailScroll}
+                  contentContainerStyle={styles.infoDetailScrollContent}
+                  showsVerticalScrollIndicator={true}
+                >
+                  <Text style={styles.infoDetailBody}>{card.contentBody}</Text>
+                </ScrollView>
+              </View>
+            );
+          })() : null}
+        </View>
+
         <View style={styles.defiBlock}>
           <Animated.View style={{
             opacity: defiRevealAnim,
@@ -361,14 +540,16 @@ export default function MenusScreen() {
         </View>
 
         <Card style={styles.heroCard}>
-          {dayMenu.heroImage ? (
-            <Image source={dayMenu.heroImage} style={styles.heroImage} resizeMode="cover" />
-          ) : (
-            <View style={styles.heroPlaceholder}>
-              <Text style={styles.heroEmoji}>🛡️</Text>
-              <Text style={styles.heroPlaceholderText}>Görsel yakında</Text>
-            </View>
-          )}
+          <Image
+            source={getRecipeImage(dayMenu.heroImageKey)!}
+            style={{
+              width: '100%',
+              height: 150,
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 16,
+            }}
+            resizeMode="cover"
+          />
           <View style={styles.heroContent}>
             <Text style={styles.heroTitle}>{dayMenu.dayTitle}</Text>
             <Text style={styles.heroSummary}>{dayMenu.daySummary}</Text>
@@ -380,7 +561,7 @@ export default function MenusScreen() {
 
         {SECTION_META.map((section) => {
           const meal = dayMenu.meals[section.key as MealKey];
-          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : undefined;
+          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : selectedDay === 2 ? DAY2_INFO[section.key] : selectedDay === 3 ? DAY3_INFO[section.key] : selectedDay === 4 ? DAY4_INFO[section.key] : selectedDay === 5 ? DAY5_INFO[section.key] : selectedDay === 6 ? DAY6_INFO[section.key] : selectedDay === 7 ? DAY7_INFO[section.key] : undefined;
           const isCompleted = safeCompleted.includes(section.key);
           return (
             <View key={section.key} style={styles.section}>
@@ -409,11 +590,70 @@ export default function MenusScreen() {
           );
         })}
       </ScrollView>
+
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 18,
+    padding: 20,
+  },
+  infoBoardWrap: {
+    marginBottom: 4,
+  },
+  infoDetailPanel: {
+    marginTop: 4,
+    marginHorizontal: 16,
+    marginBottom: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    maxHeight: 200,
+    overflow: 'hidden',
+  },
+  infoDetailScroll: {
+    maxHeight: 200,
+  },
+  infoDetailScrollContent: {
+    padding: 12,
+  },
+  infoDetailBody: {
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#475569',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  modalText: {
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 16,
+  },
+  modalScroll: {
+    flex: 1,
+    minHeight: 0,
+  },
+  modalScrollContent: {
+    paddingBottom: 16,
+  },
+  modalClose: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#0F5D4F',
+  },
   defiBlock: {
     marginTop: 8,
     marginBottom: 14,

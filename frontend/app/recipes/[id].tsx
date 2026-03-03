@@ -4,7 +4,7 @@ import { Stack, useLocalSearchParams, router } from 'expo-router';
 import AppHeader from '../../src/components/AppHeader';
 import { Card } from '../../src/components/Card';
 import { RECIPES } from '../../src/data/recipes';
-import { getRecipeHeroImage } from '../../src/assets/recipeImages';
+import { getRecipeImage } from '../../src/assets/recipeImages';
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -31,14 +31,17 @@ export default function RecipeDetailScreen() {
           <Text style={styles.notFound}>Bulunamadı</Text>
         ) : (
           <View style={styles.content}>
-            {getRecipeHeroImage(recipe.heroImageKey) ? (
-              <Image source={getRecipeHeroImage(recipe.heroImageKey)} style={styles.heroImage} resizeMode="cover" />
-            ) : (
-              <View style={styles.heroPlaceholder}>
-                <Text style={styles.heroEmoji}>🛡️</Text>
-                <Text style={styles.heroPlaceholderText}>Görsel yakında</Text>
-              </View>
-            )}
+            {(() => {
+              const img = getRecipeImage(recipe.heroImageKey);
+              return img ? (
+                <Image source={img} style={styles.heroImage} resizeMode="cover" />
+              ) : (
+                <View style={styles.heroPlaceholder}>
+                  <Text style={styles.heroEmoji}>🛡️</Text>
+                  <Text style={styles.heroPlaceholderText}>Görsel yakında</Text>
+                </View>
+              );
+            })()}
             {ingredients.length > 0 ? (
               <Card style={styles.sectionCard}>
                 <Text style={styles.sectionTitle}>Malzemeler</Text>

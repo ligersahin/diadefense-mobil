@@ -10,6 +10,8 @@ import DefiBanner from '../../src/components/DefiBanner';
 import { Theme } from '../../src/config/theme';
 import AppHeader from '../../src/components/AppHeader';
 import { getLocalDateISO } from '../../src/utils/dateISO';
+import { getRecipeImage } from '../../src/assets/recipeImages';
+import { MENUS } from '../../src/data/menus';
 
 export default function TodayScreen() {
   const {
@@ -130,6 +132,8 @@ export default function TodayScreen() {
   const totalSupps = currentDayPlan?.supplements?.length || 0;
   const todayISO = useMemo(() => getLocalDateISO(), []);
   const defiBannerMessage = useMemo(() => defiMessage ? { title: 'Defi', body: defiMessage } : null, [defiMessage]);
+  const dayMenu = MENUS.find((m) => m.day === currentDayIndex) || MENUS[0];
+  const dayHeroSource = getRecipeImage((dayMenu as { heroImageKey?: string | null }).heroImageKey);
 
   return (
     <View style={styles.container}>
@@ -173,13 +177,19 @@ export default function TodayScreen() {
           activeOpacity={0.85}
         >
           <View style={styles.mealCtaLeft}>
-            <View style={styles.sharedIconChip}>
-              <Ionicons name="restaurant" size={20} color="#10B981" />
-            </View>
+            {dayHeroSource ? (
+              <View style={styles.mealCtaHeroWrap}>
+                <Image source={dayHeroSource} style={styles.mealCtaHero} resizeMode="cover" />
+              </View>
+            ) : (
+              <View style={styles.sharedIconChip}>
+                <Ionicons name="restaurant" size={20} color="#10B981" />
+              </View>
+            )}
             <View style={styles.mealCtaText}>
               <Text style={styles.mealCtaTitle}>Bugünün Yemek Planı</Text>
               <Text style={styles.mealCtaSubtitle}>
-                {todayMeals.length}/{totalMeals} öğün • {todaySupps.length}/{totalSupps} supp
+                {todayMeals.length}/{totalMeals} öğün • {todaySupps.length}/{totalSupps} takviye
               </Text>
             </View>
           </View>
@@ -639,6 +649,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12
+  },
+  mealCtaHeroWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    overflow: 'hidden',
+    marginRight: 12
+  },
+  mealCtaHero: {
+    width: 44,
+    height: 44
   },
   defiHeroCard: {
     backgroundColor: 'rgba(15, 90, 78, 0.08)',
