@@ -165,7 +165,7 @@ function NotificationHandler() {
       const focusSlot = data.slotId ?? '';
       const focusDate = data.dateISO ?? '';
       const doseIds = Array.isArray(data.doseIds) ? JSON.stringify(data.doseIds) : undefined;
-      router.push({ pathname: '/supplements', params: { focusSlot, focusDate, doseIds } });
+      router.push({ pathname: '/(tabs)/supplements', params: { focusSlot, focusDate, doseIds } });
     }
   };
 

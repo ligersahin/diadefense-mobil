@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, Pressable, Modal } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, Pressable, Modal, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
 import AppHeader from '../src/components/AppHeader';
@@ -16,6 +17,8 @@ import { shouldShowDefi, shouldShowMessage, markMessageShown } from '../src/defi
 import { getDefiMessage } from '../src/defi/defiMessages';
 import DayInfoBoard, { type DayInfoCard } from '../src/components/DayInfoBoard';
 import { DAY_INFO_BOARD, type DayInfoCardData } from '../src/data/dayInfoBoard';
+import { Theme } from '../src/config/theme';
+import { getMetabolicFocus } from '../src/data/metabolicFocus';
 
 const SECTION_META = [
   { key: 'breakfast', title: 'Kahvaltı' },
@@ -282,7 +285,7 @@ function MealCard({ title, description, recipeId, infoLines, isCompleted, onTogg
             </TouchableOpacity>
           ) : null}
           <TouchableOpacity
-            onPress={() => router.push('/shopping')}
+            onPress={() => router.push('/(tabs)/shopping')}
             activeOpacity={0.8}
             style={styles.shoppingActionRow}
           >
@@ -297,9 +300,23 @@ function MealCard({ title, description, recipeId, infoLines, isCompleted, onTogg
 
 const DEBUG_SHOW_DEFI_MENUS = true; // TEMP: set false after visual verification
 
+const TAB_BAR_BASE = {
+  backgroundColor: Theme.surface,
+  borderTopWidth: 1,
+  borderTopColor: Theme.border,
+  height: 60,
+  paddingTop: 6,
+  paddingBottom: 6,
+  elevation: 0,
+  shadowOpacity: 0,
+};
+
 export default function MenusScreen() {
+  const navigation = useNavigation();
   const { currentDayIndex, completedMeals, toggleMealCompleted } = useDefenseProgram();
   const [defiVisible, setDefiVisible] = useState(true);
+  const [isTabHidden, setIsTabHidden] = useState(false);
+  const lastYRef = useRef(0);
   const [defiMessage, setDefiMessage] = useState<{ title: string; body: string; detail?: string } | null>(null);
   const hasShownOnceRef = useRef(false);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -349,8 +366,40 @@ export default function MenusScreen() {
   );
 
   const handleOpenPlan = () => {
-    router.push('/defense');
+    router.push('/(tabs)/defense');
   };
+
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const dy = y - lastYRef.current;
+    lastYRef.current = y;
+    if (y <= 10) {
+      setIsTabHidden(false);
+      return;
+    }
+    if (dy < -12) {
+      setIsTabHidden(false);
+    } else if (dy > 12 && y > 60) {
+      setIsTabHidden(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const base = { ...TAB_BAR_BASE };
+    navigation.setOptions({
+      tabBarStyle: isTabHidden
+        ? { ...base, opacity: 0, transform: [{ translateY: 80 }], height: 0, paddingBottom: 0 }
+        : { ...base, opacity: 1, transform: [{ translateY: 0 }] },
+    });
+  }, [isTabHidden, navigation]);
+
+  useEffect(() => {
+    return () => {
+      navigation.setOptions({
+        tabBarStyle: { ...TAB_BAR_BASE, opacity: 1, transform: [{ translateY: 0 }] },
+      });
+    };
+  }, [navigation]);
 
   useEffect(() => {
     if (!manualDay && currentDayIndex) {
@@ -465,6 +514,8 @@ export default function MenusScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         <View style={styles.daySelectorWrap}>
           <Text style={styles.sectionTitle}>Gün Seç</Text>
@@ -551,11 +602,18 @@ export default function MenusScreen() {
             resizeMode="cover"
           />
           <View style={styles.heroContent}>
-            <Text style={styles.heroTitle}>{dayMenu.dayTitle}</Text>
-            <Text style={styles.heroSummary}>{dayMenu.daySummary}</Text>
-            <View style={styles.heroTag}>
-              <Text style={styles.heroTagText}>🛡 Savunma Odağı: {dayMenu.focusTag}</Text>
-            </View>
+            {(() => {
+              const mf = getMetabolicFocus(selectedDay);
+              return (
+                <>
+                  <Text style={styles.heroTitle}>{mf.headline}</Text>
+                  <Text style={styles.metabolicLine} numberOfLines={3}>{mf.description}</Text>
+                  <View style={styles.heroTag}>
+                    <Text style={styles.heroTagText}>🛡 Savunma Odağı: {mf.defenseFocus}</Text>
+                  </View>
+                </>
+              );
+            })()}
           </View>
         </Card>
 
@@ -581,7 +639,7 @@ export default function MenusScreen() {
                 showSupplementsAction={supplementsByMeal[section.key as MealKey].has}
                 supplementSummary={supplementsByMeal[section.key as MealKey].summary}
                 onSupplementsPress={() =>
-                  router.push({ pathname: '/supplements', params: { meal: section.key } })
+                  router.push({ pathname: '/(tabs)/supplements', params: { meal: section.key } })
                 }
                 thumbKey={meal.imageKey || meal.recipeId || undefined}
                 mealKey={section.key}
@@ -631,6 +689,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: '#475569',
+  },
+  metabolicLine: {
+    fontSize: 12,
+    lineHeight: 16,
+    color: Theme.muted,
+    textAlign: 'center',
+    marginTop: 4,
+    marginBottom: 4,
   },
   modalTitle: {
     fontSize: 18,

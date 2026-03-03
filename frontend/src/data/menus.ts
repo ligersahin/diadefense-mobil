@@ -27,8 +27,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
   if (day === 1) {
     return {
       day,
-      dayTitle: 'Gün 1 – Adaptasyon',
+      dayTitle: 'Gün 1 — Adaptasyon',
       daySummary: 'İlk gün, dengeli tabaklarla kan şekerini stabilize etmeye odaklan.',
+      metabolicLine: 'Vücudun glikojen depolarını kullanmaya başladı.',
+      defenseFocus: 'Kan Şekeri Dengesi',
       focusTag: 'Denge',
       heroImageKey: 'soguk-domates-corbasi',
       meals: {
@@ -94,8 +96,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
   if (day === 2) {
     return {
       day,
-      dayTitle: 'Gün 2 – Devam',
+      dayTitle: 'Gün 2 — Devam',
       daySummary: 'İkinci gün, protein ve omega-3 ağırlıklı öğünlerle savunmayı güçlendir.',
+      metabolicLine: 'İnsülin salınım sıklığı azalmaya başladı.',
+      defenseFocus: 'İnsülin Dengesi',
       focusTag: 'Protein + Omega-3',
       heroImageKey: 'paca-corbasi',
       meals: {
@@ -159,8 +163,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
   if (day === 3) {
     return {
       day,
-      dayTitle: 'Gün 3 – Çeşitlilik',
+      dayTitle: 'Gün 3 — Çeşitlilik',
       daySummary: 'Üçüncü gün, işkembe çorbası ve taze börülce salatası ile öğün çeşitliliği.',
+      metabolicLine: 'Vücudun glikozdan yağa geçmeye zorlanıyor.',
+      defenseFocus: 'Yakıt Geçişi',
       focusTag: 'Probiyotik + Omega-3',
       heroImageKey: 'taze_borulce_salatasi',
       meals: {
@@ -221,8 +227,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
   if (day === 4) {
     return {
       day,
-      dayTitle: 'Gün 4 – Kemik Suyu',
+      dayTitle: 'Gün 4 — Kemik Suyu',
       daySummary: 'Dördüncü gün, terbiyeli et suyu çorbası ve ciğer ızgara ile besin yoğunluğu.',
+      metabolicLine: 'Yağ yakım enzimleri artıyor.',
+      defenseFocus: 'Yağ Oksidasyonu',
       focusTag: 'Kemik suyu + Demir',
       heroImageKey: 'terbiyeli_et_suyu_corbasi',
       meals: {
@@ -282,8 +290,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
   if (day === 5) {
     return {
       day,
-      dayTitle: 'Gün 5 – Omega-3',
+      dayTitle: 'Gün 5 — Omega-3',
       daySummary: 'Beşinci gün, sebze çorbası, zencefilli somon ve pratik pancar turşusu ile.',
+      metabolicLine: 'Kan şekeri dalgalanmaları azalıyor.',
+      defenseFocus: 'Stabilizasyon',
       focusTag: 'Omega-3 + Probiyotik',
       heroImageKey: 'pratik_pancar_tursusu',
       meals: {
@@ -340,8 +350,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
   if (day === 6) {
     return {
       day,
-      dayTitle: 'Gün 6 – Lahana',
+      dayTitle: 'Gün 6 — Lahana',
       daySummary: 'Altıncı gün, yumurta dolması, terbiyeli paça çorbası ve kapuska ile.',
+      metabolicLine: 'Sistemik inflamasyon sinyalleri düşmeye başladı.',
+      defenseFocus: 'İnflamasyon',
       focusTag: 'Probiyotik + Omega-3',
       heroImageKey: 'kapuska',
       meals: {
@@ -404,8 +416,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
   if (day === 7) {
     return {
       day,
-      dayTitle: 'Gün 7 – Avokado',
+      dayTitle: 'Gün 7 — Avokado + Omega-3',
       daySummary: 'Yedinci gün, kereviz çorbası ve avokado ile omega-3 ve lif dengesi.',
+      metabolicLine: 'Vücudun yağ kullanımına daha rahat geçiyor.',
+      defenseFocus: 'Metabolik Esneklik',
       focusTag: 'Avokado + Omega-3',
       heroImageKey: 'kereviz_corbasi',
       meals: {
@@ -467,8 +481,10 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
 
   return {
     day,
-    dayTitle: `Gün ${day} – Rutin`,
+    dayTitle: `Gün ${day} — Rutin`,
     daySummary: 'Basit, sürdürülebilir öğünlerle ritmi koru.',
+    metabolicLine: 'Metabolik ritim korunuyor.',
+    defenseFocus: 'İştah kontrolü',
     focusTag: 'İştah kontrolü',
     heroImageKey: null,
     meals: {

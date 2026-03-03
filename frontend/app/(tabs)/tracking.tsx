@@ -1,12 +1,28 @@
-import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { useDefenseProgram } from '../../src/context/DefenseProgramContext';
 import { Card } from '../../src/components/Card';
 import AppHeader from '../../src/components/AppHeader';
+import { Theme } from '../../src/config/theme';
+
+const TAB_BAR_BASE = {
+  backgroundColor: Theme.surface,
+  borderTopWidth: 1,
+  borderTopColor: Theme.border,
+  height: 60,
+  paddingTop: 6,
+  paddingBottom: 6,
+  elevation: 0,
+  shadowOpacity: 0,
+};
 
 export default function TrackingScreen() {
+  const navigation = useNavigation();
+  const lastYRef = useRef(0);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const {
     currentDayIndex,
     defenseScore,
@@ -41,6 +57,38 @@ export default function TrackingScreen() {
     trendData[trendData.length - 1] = Math.max(0, Math.min(100, defenseScore));
   }
 
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const dy = y - lastYRef.current;
+    lastYRef.current = y;
+    if (y <= 10) {
+      setIsTabHidden(false);
+      return;
+    }
+    if (dy < -12) {
+      setIsTabHidden(false);
+    } else if (dy > 12 && y > 60) {
+      setIsTabHidden(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const base = { ...TAB_BAR_BASE };
+    navigation.setOptions({
+      tabBarStyle: isTabHidden
+        ? { ...base, opacity: 0, transform: [{ translateY: 80 }], height: 0, paddingBottom: 0 }
+        : { ...base, opacity: 1, transform: [{ translateY: 0 }] },
+    });
+  }, [isTabHidden, navigation]);
+
+  useEffect(() => {
+    return () => {
+      navigation.setOptions({
+        tabBarStyle: { ...TAB_BAR_BASE, opacity: 1, transform: [{ translateY: 0 }] },
+      });
+    };
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -52,6 +100,8 @@ export default function TrackingScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
 
         <Card style={styles.card}>

@@ -33,7 +33,7 @@ export default function AppHeader({ title, subtitle, showBack, onBack, showSetti
         {showSettings ? (
           <TouchableOpacity
             style={styles.settingsButton}
-            onPress={() => router.push('/settings')}
+            onPress={() => router.push('/(tabs)/settings')}
           >
             <Ionicons name="settings-outline" size={20} color={Theme.surface} />
           </TouchableOpacity>

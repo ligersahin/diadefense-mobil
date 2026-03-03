@@ -1,14 +1,62 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import AppHeader from '../../src/components/AppHeader';
 import { Card } from '../../src/components/Card';
 import { RECIPES } from '../../src/data/recipes';
 import { getRecipeImage } from '../../src/assets/recipeImages';
+import { Theme } from '../../src/config/theme';
+
+const TAB_BAR_BASE = {
+  backgroundColor: Theme.surface,
+  borderTopWidth: 1,
+  borderTopColor: Theme.border,
+  height: 60,
+  paddingTop: 6,
+  paddingBottom: 6,
+  elevation: 0,
+  shadowOpacity: 0,
+};
 
 export default function RecipesScreen() {
+  const navigation = useNavigation();
+  const lastYRef = useRef(0);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const recipes = Object.values(RECIPES);
+
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const dy = y - lastYRef.current;
+    lastYRef.current = y;
+    if (y <= 10) {
+      setIsTabHidden(false);
+      return;
+    }
+    if (dy < -12) {
+      setIsTabHidden(false);
+    } else if (dy > 12 && y > 60) {
+      setIsTabHidden(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const base = { ...TAB_BAR_BASE };
+    navigation.setOptions({
+      tabBarStyle: isTabHidden
+        ? { ...base, opacity: 0, transform: [{ translateY: 80 }], height: 0, paddingBottom: 0 }
+        : { ...base, opacity: 1, transform: [{ translateY: 0 }] },
+    });
+  }, [isTabHidden, navigation]);
+
+  useEffect(() => {
+    return () => {
+      navigation.setOptions({
+        tabBarStyle: { ...TAB_BAR_BASE, opacity: 1, transform: [{ translateY: 0 }] },
+      });
+    };
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -24,6 +72,8 @@ export default function RecipesScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         {recipes.map((recipe) => {
           const key = recipe.thumbImageKey ?? recipe.heroImageKey ?? null;

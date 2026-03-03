@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Platform, Animated, findNodeHandle, InteractionManager } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal, Platform, Animated, findNodeHandle, InteractionManager, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
@@ -14,9 +15,22 @@ import { scheduleSupplementsForToday, cancelScheduledSupplementNotifications, en
 import { shouldShowDefi, shouldShowMessage, markMessageShown } from '../src/defi/defiVisibility';
 import { getLocalDateISO } from '../src/utils/dateISO';
 import { getDefiMessage } from '../src/defi/defiMessages';
+import { Theme } from '../src/config/theme';
+
+const TAB_BAR_BASE = {
+  backgroundColor: Theme.surface,
+  borderTopWidth: 1,
+  borderTopColor: Theme.border,
+  height: 60,
+  paddingTop: 6,
+  paddingBottom: 6,
+  elevation: 0,
+  shadowOpacity: 0,
+};
 
 export default function SupplementsScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
   const { focusSlot, focusDate, doseIds, meal } = useLocalSearchParams();
   const { 
     currentDayPlan, 
@@ -34,6 +48,8 @@ export default function SupplementsScreen() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [permissionMessage, setPermissionMessage] = useState<string | null>(null);
   const [defiVisible, setDefiVisible] = useState(true);
+  const [isTabHidden, setIsTabHidden] = useState(false);
+  const lastYRef = useRef(0);
   const [defiMessage, setDefiMessage] = useState<{ title: string; body: string; detail?: string } | null>(null);
   const hasShownOnceRef = useRef(false);
   const scrollViewRef = useRef<ScrollView>(null);
@@ -167,8 +183,40 @@ export default function SupplementsScreen() {
   }, []);
 
   const handleOpenPlan = () => {
-    router.push('/defense');
+    router.push('/(tabs)/defense');
   };
+
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const dy = y - lastYRef.current;
+    lastYRef.current = y;
+    if (y <= 10) {
+      setIsTabHidden(false);
+      return;
+    }
+    if (dy < -12) {
+      setIsTabHidden(false);
+    } else if (dy > 12 && y > 60) {
+      setIsTabHidden(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const base = { ...TAB_BAR_BASE };
+    navigation.setOptions({
+      tabBarStyle: isTabHidden
+        ? { ...base, opacity: 0, transform: [{ translateY: 80 }], height: 0, paddingBottom: 0 }
+        : { ...base, opacity: 1, transform: [{ translateY: 0 }] },
+    });
+  }, [isTabHidden, navigation]);
+
+  useEffect(() => {
+    return () => {
+      navigation.setOptions({
+        tabBarStyle: { ...TAB_BAR_BASE, opacity: 1, transform: [{ translateY: 0 }] },
+      });
+    };
+  }, [navigation]);
 
   const handleScrollToSlot = () => {
     const slot = normalizedFocusSlot;
@@ -404,6 +452,8 @@ export default function SupplementsScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         <View style={styles.defiWrap}>
           <DefiBanner

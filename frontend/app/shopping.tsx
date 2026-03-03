@@ -1,10 +1,23 @@
-import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Stack } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import AppHeader from '../src/components/AppHeader';
 import { Card } from '../src/components/Card';
 import { MENUS } from '../src/data/menus';
 import { RECIPES } from '../src/data/recipes';
+import { Theme } from '../src/config/theme';
+
+const TAB_BAR_BASE = {
+  backgroundColor: Theme.surface,
+  borderTopWidth: 1,
+  borderTopColor: Theme.border,
+  height: 60,
+  paddingTop: 6,
+  paddingBottom: 6,
+  elevation: 0,
+  shadowOpacity: 0,
+};
 
 const FILTERS = [
   { label: 'Bugün', days: 1 },
@@ -34,8 +47,43 @@ const categorizeItem = (item: string): CategoryKey => {
 };
 
 export default function ShoppingListScreen() {
+  const navigation = useNavigation();
+  const lastYRef = useRef(0);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const [rangeDays, setRangeDays] = useState(1);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
+
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const dy = y - lastYRef.current;
+    lastYRef.current = y;
+    if (y <= 10) {
+      setIsTabHidden(false);
+      return;
+    }
+    if (dy < -12) {
+      setIsTabHidden(false);
+    } else if (dy > 12 && y > 60) {
+      setIsTabHidden(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const base = { ...TAB_BAR_BASE };
+    navigation.setOptions({
+      tabBarStyle: isTabHidden
+        ? { ...base, opacity: 0, transform: [{ translateY: 80 }], height: 0, paddingBottom: 0 }
+        : { ...base, opacity: 1, transform: [{ translateY: 0 }] },
+    });
+  }, [isTabHidden, navigation]);
+
+  useEffect(() => {
+    return () => {
+      navigation.setOptions({
+        tabBarStyle: { ...TAB_BAR_BASE, opacity: 1, transform: [{ translateY: 0 }] },
+      });
+    };
+  }, [navigation]);
 
   const groupedItems = useMemo(() => {
     const startIndex = 0;
@@ -86,6 +134,8 @@ export default function ShoppingListScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         <View style={styles.filterRow}>
           {FILTERS.map((filter) => {

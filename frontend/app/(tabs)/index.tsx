@@ -12,6 +12,7 @@ import AppHeader from '../../src/components/AppHeader';
 import { getLocalDateISO } from '../../src/utils/dateISO';
 import { getRecipeImage } from '../../src/assets/recipeImages';
 import { MENUS } from '../../src/data/menus';
+import { getMetabolicFocus } from '../../src/data/metabolicFocus';
 
 export default function TodayScreen() {
   const {
@@ -170,10 +171,24 @@ export default function TodayScreen() {
           </View>
         </View>
 
+        {/* Metabolik Durum */}
+        {(() => {
+          const day = currentDayIndex ?? 1;
+          const mf = getMetabolicFocus(day);
+          return (
+            <View style={styles.metabolismCard}>
+              <Text style={styles.metabolismCardTitle}>Metabolik Durum</Text>
+              <Text style={styles.metabolismCardSubtitle}>{mf.headline}</Text>
+              <Text style={styles.metabolismCardBody}>{mf.description}</Text>
+              <Text style={styles.metabolismCardDefense}>🛡 Savunma Odağı: {mf.defenseFocus}</Text>
+            </View>
+          );
+        })()}
+
         {/* Today's Meal Plan Card */}
         <TouchableOpacity 
             style={styles.mealCtaCard}
-            onPress={() => router.push('/menus')}
+            onPress={() => router.push('/(tabs)/menus')}
           activeOpacity={0.85}
         >
           <View style={styles.mealCtaLeft}>
@@ -229,7 +244,7 @@ export default function TodayScreen() {
         <View ref={sectionRefs.current.meals}>
           <TouchableOpacity
             style={styles.taskCard}
-            onPress={() => router.push('/menus')}
+            onPress={() => router.push('/(tabs)/menus')}
           >
             <View style={styles.sharedIconChip}>
               <Ionicons name="restaurant" size={20} color="#10B981" />
@@ -254,7 +269,7 @@ export default function TodayScreen() {
         <View ref={sectionRefs.current.supplements}>
           <TouchableOpacity
             style={styles.taskCard}
-            onPress={() => router.push('/supplements')}
+            onPress={() => router.push('/(tabs)/supplements')}
           >
             <View style={styles.sharedIconChip}>
               <Ionicons name="medical" size={20} color="#8B5CF6" />
@@ -686,6 +701,37 @@ const styles = StyleSheet.create({
   },
   defiHeroMessageWrap: {
     flex: 1,
+  },
+  metabolismCard: {
+    backgroundColor: 'rgba(15, 90, 78, 0.06)',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(15, 90, 78, 0.12)',
+  },
+  metabolismCardTitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748B',
+    marginBottom: 4,
+  },
+  metabolismCardSubtitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 6,
+  },
+  metabolismCardBody: {
+    fontSize: 12,
+    lineHeight: 18,
+    color: '#475569',
+  },
+  metabolismCardDefense: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#0F5A4E',
+    marginTop: 6,
   },
   defiCard: {
     backgroundColor: '#FAFBFC',

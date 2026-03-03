@@ -1,16 +1,33 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDefenseProgram } from '../../src/context/DefenseProgramContext';
 import { Card } from '../../src/components/Card';
 import { getCurrentProgramDay } from '../../src/utils/programDay';
 import MonsterAvatar from '../../src/components/MonsterAvatar';
+import { getMetabolismForDay, getRiskLabel, getRiskColor, type RiskMetricType } from '../../src/lib/metabolism/engine';
 import AppHeader from '../../src/components/AppHeader';
 import { ProgressCircle } from '../../src/components/ProgressCircle';
+import { Theme } from '../../src/config/theme';
+
+const TAB_BAR_BASE = {
+  backgroundColor: Theme.surface,
+  borderTopWidth: 1,
+  borderTopColor: Theme.border,
+  height: 60,
+  paddingTop: 6,
+  paddingBottom: 6,
+  elevation: 0,
+  shadowOpacity: 0,
+};
 
 export default function DefensePanelScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
+  const lastYRef = useRef(0);
+  const [isTabHidden, setIsTabHidden] = useState(false);
   const {
     defenseScore,
     mealRatio,
@@ -58,7 +75,7 @@ export default function DefensePanelScreen() {
   const lowestLabel = mealPct <= suppPct ? 'Öğünler' : 'Supp';
   const lowestValue = mealPct <= suppPct ? mealPct : suppPct;
   const ctaText = mealPct <= suppPct ? 'Menülere git' : 'Supplementlere git';
-  const ctaRoute = mealPct <= suppPct ? '/menus' : '/supplements';
+  const ctaRoute = mealPct <= suppPct ? '/(tabs)/menus' : '/(tabs)/supplements';
   const waterPct = Math.round(waterRatio * 100);
   const activityPct = Math.round(activityRatio * 100);
   const sleepPct = Math.round(sleepRatio * 100);
@@ -96,6 +113,38 @@ export default function DefensePanelScreen() {
 
   const monsterProgress = defenseScore >= 90 ? 0.9 : defenseScore >= 70 ? 0.7 : defenseScore >= 40 ? 0.5 : 0.25;
 
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y;
+    const dy = y - lastYRef.current;
+    lastYRef.current = y;
+    if (y <= 10) {
+      setIsTabHidden(false);
+      return;
+    }
+    if (dy < -12) {
+      setIsTabHidden(false);
+    } else if (dy > 12 && y > 60) {
+      setIsTabHidden(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    const base = { ...TAB_BAR_BASE };
+    navigation.setOptions({
+      tabBarStyle: isTabHidden
+        ? { ...base, opacity: 0, transform: [{ translateY: 80 }], height: 0, paddingBottom: 0 }
+        : { ...base, opacity: 1, transform: [{ translateY: 0 }] },
+    });
+  }, [isTabHidden, navigation]);
+
+  useEffect(() => {
+    return () => {
+      navigation.setOptions({
+        tabBarStyle: { ...TAB_BAR_BASE, opacity: 1, transform: [{ translateY: 0 }] },
+      });
+    };
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -104,6 +153,8 @@ export default function DefensePanelScreen() {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         <Text style={styles.dayLabel}>Program Günü: {currentDay}</Text>
 
@@ -158,6 +209,42 @@ export default function DefensePanelScreen() {
           ) : null}
         </Card>
 
+        <Card style={styles.metabolismCard}>
+          <Text style={styles.metabolismTitle}>Metabolik Metrikler</Text>
+          {(() => {
+            const { scores, panel } = getMetabolismForDay(currentDay);
+            const metrics: { key: string; riskType: RiskMetricType; label: string; value: number; comment: string }[] = [
+              { key: 'insulin', riskType: 'insulin', label: 'İnsülin', value: scores.insulin, comment: panel.insulin },
+              { key: 'liverFat', riskType: 'liver', label: 'Karaciğer Yağı', value: scores.liverFat, comment: panel.liverFat },
+              { key: 'inflammation', riskType: 'inflammation', label: 'İnflamasyon', value: scores.inflammation, comment: panel.inflammation },
+              { key: 'flexibility', riskType: 'flexibility', label: 'Esneklik', value: scores.flexibility, comment: panel.flexibility },
+            ];
+            return metrics.map((m) => (
+              <View key={m.key} style={styles.metabolismBarWrap}>
+                <View style={styles.metabolismBarHeader}>
+                  <Text style={styles.metabolismBarLabel}>{m.label}</Text>
+                  <Text style={styles.metabolismBarValue}>{m.value}</Text>
+                </View>
+                <View style={styles.metabolismBarTrack}>
+                  <View
+                    style={[
+                      styles.metabolismBarFill,
+                      {
+                        width: `${Math.min(100, Math.max(0, m.value))}%`,
+                        backgroundColor: getRiskColor(m.riskType, m.value),
+                      },
+                    ]}
+                  />
+                </View>
+                <Text style={[styles.metabolismBarRiskLabel, { color: getRiskColor(m.riskType, m.value) }]}>
+                  {getRiskLabel(m.riskType, m.value)}
+                </Text>
+                <Text style={styles.metabolismBarComment}>{m.comment}</Text>
+              </View>
+            ));
+          })()}
+        </Card>
+
         <View style={styles.sectionHeaderRow}>
           <Text style={styles.sectionTitle}>Savunma Araçları</Text>
           <Text style={styles.sectionLink}>Keşfet</Text>
@@ -173,7 +260,7 @@ export default function DefensePanelScreen() {
             />
             <Text style={styles.ringTitle}>Öğünler</Text>
             <TouchableOpacity
-              onPress={() => router.push({ pathname: '/menus' })}
+              onPress={() => router.push({ pathname: '/(tabs)/menus' })}
               activeOpacity={0.75}
               accessibilityRole="button"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -191,7 +278,7 @@ export default function DefensePanelScreen() {
             />
             <Text style={styles.ringTitle}>Supp</Text>
             <TouchableOpacity
-              onPress={() => router.push({ pathname: '/supplements' })}
+              onPress={() => router.push({ pathname: '/(tabs)/supplements' })}
               activeOpacity={0.75}
               accessibilityRole="button"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -412,6 +499,63 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#0F5A4E',
+  },
+  metabolismCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+    elevation: 2,
+  },
+  metabolismTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 12,
+  },
+  metabolismBarWrap: {
+    marginBottom: 14,
+  },
+  metabolismBarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  metabolismBarLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  metabolismBarValue: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#1F2937',
+  },
+  metabolismBarTrack: {
+    height: 8,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  metabolismBarFill: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  metabolismBarRiskLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    marginTop: 4,
+  },
+  metabolismBarComment: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 4,
+    lineHeight: 15,
   },
   monsterCtaMuted: {
     marginTop: 10,

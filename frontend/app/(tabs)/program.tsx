@@ -1,11 +1,25 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import AppHeader from '../../src/components/AppHeader';
 
 export default function ProgramScreen() {
   const router = useRouter();
+  const tabBarHeight = useBottomTabBarHeight();
+  const lastYRef = useRef(0);
+  const [isTabHidden, setIsTabHidden] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      setIsTabHidden(false);
+      lastYRef.current = 0;
+      router.setParams({ tabHidden: '0' });
+      return () => {};
+    }, [router])
+  );
 
   const programCards = [
     {
@@ -15,7 +29,7 @@ export default function ProgramScreen() {
       icon: 'restaurant',
       color: '#10B981',
       bg: '#DCFCE7',
-      route: '/menus',
+      route: '/(tabs)/menus',
     },
     {
       key: 'supplements',
@@ -24,7 +38,7 @@ export default function ProgramScreen() {
       icon: 'medical',
       color: '#8B5CF6',
       bg: '#EDE9FE',
-      route: '/supplements',
+      route: '/(tabs)/supplements',
     },
     {
       key: 'recipes',
@@ -33,7 +47,7 @@ export default function ProgramScreen() {
       icon: 'book',
       color: '#F59E0B',
       bg: '#FEF3C7',
-      route: '/recipes',
+      route: '/(tabs)/recipes',
     },
     {
       key: 'shopping',
@@ -42,7 +56,7 @@ export default function ProgramScreen() {
       icon: 'cart',
       color: '#06B6D4',
       bg: '#CFFAFE',
-      route: '/shopping',
+      route: '/(tabs)/shopping',
     },
     {
       key: 'smartplate',
@@ -51,9 +65,25 @@ export default function ProgramScreen() {
       icon: 'camera',
       color: '#3B82F6',
       bg: '#DBEAFE',
-      route: '/smartplate',
+      route: '/(tabs)/smartplate',
     },
   ];
+
+  const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const y = e.nativeEvent.contentOffset.y || 0;
+    const dy = y - lastYRef.current;
+    if (y <= 30) {
+      setIsTabHidden(false);
+      router.setParams({ tabHidden: '0' });
+    } else if (dy < -6) {
+      setIsTabHidden(false);
+      router.setParams({ tabHidden: '0' });
+    } else if (dy > 10 && y > 80) {
+      setIsTabHidden(true);
+      router.setParams({ tabHidden: '1' });
+    }
+    lastYRef.current = y;
+  }, [router]);
 
   return (
     <View style={styles.container}>
@@ -61,15 +91,17 @@ export default function ProgramScreen() {
       <AppHeader title="Programlar" subtitle="Plan, menüler ve araçlar" />
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: isTabHidden ? 0 : tabBarHeight }]}
         showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
       >
         <View style={styles.grid}>
           {programCards.map((card) => (
             <TouchableOpacity
               key={card.key}
               style={[styles.gridCard, card.key === 'smartplate' && styles.gridCardFull]}
-              onPress={() => router.push(card.route)}
+              onPress={() => (card.key === 'recipes' ? router.replace(card.route) : router.push(card.route))}
               activeOpacity={0.85}
             >
               <View style={styles.cardHeader}>
@@ -98,7 +130,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: 18,
-    paddingBottom: 120,
     paddingHorizontal: 20,
     gap: 16,
   },
