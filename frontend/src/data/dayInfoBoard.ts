@@ -1,9 +1,11 @@
 export type DayInfoCardData = {
   id: string;
   title: string;
-  variant: 'yellow' | 'red';
+  variant: 'yellow' | 'red' | 'green';
   contentTitle?: string;
   contentBody?: string;
+  recipeId?: string;
+  imageKey?: string;
 };
 
 export const DAY_INFO_BOARD: Record<number, { cards: DayInfoCardData[] }> = {
@@ -91,5 +93,293 @@ export const DAY_INFO_BOARD: Record<number, { cards: DayInfoCardData[] }> = {
         contentBody: 'AVOKADO: Omega-3 ve sağlıklı yağlar açısından zengin avokado, kan şekerini dengelemeye yardımcı olur. Mevsim salatasına ekleyebilir veya soğuk püre olarak tüketebilirsiniz.',
       },
     ],
+  },
+  9: {
+    cards: [
+      {
+        id: 'motivation-day-9',
+        title: 'Motivasyon',
+        variant: 'yellow',
+        contentTitle: 'Motivasyon',
+        contentBody: 'Her gün düzenli olarak kan şekerinizi ölçüyorsunuz. Cihazın üstünde gördüğünüz değerlerden daha iyi bir motivasyon olabilir mi? Açlık kan şekeri değerleri çok yüksek olan kişilerde bile, daha ilk haftadan itibaren kan şekerinin istikrarlı biçimde düşmeye başlaması doğru yolda olduğunuzun güçlü bir göstergesidir.'
+      },
+      {
+        id: 'menu-day-9',
+        title: 'Günün Menüsü',
+        variant: 'green',
+        contentTitle: 'Sote Edilmiş Karnabahar',
+        contentBody: 'Karnabaharı küçük parçalara ayırın.\n\nBuharda hafifçe pişirin.\n\nArdından tereyağında kısa süre sote edin.\n\nKaya tuzu ve karabiber ile tatlandırın.\n\nNot: Karnabahar mümkün olduğunca az pişirilmelidir.',
+        recipeId: 'sote-edilmis-karnabahar',
+        imageKey: 'sote-edilmis-karnabahar',
+      },
+      {
+        id: 'warning-day-9',
+        title: 'Dikkat okuyunuz',
+        variant: 'red',
+        contentTitle: 'Dikkat okuyunuz',
+        contentBody: 'Diyabet ilacı kullanıyorsanız, doktorunuza danışmadan ilacınızı kesmeyin. Diyabet ilaçları ancak doktor denetiminde bırakılmalıdır.'
+      }
+    ]
+  },
+  10: {
+    cards: [
+      {
+        id: 'question-day-10',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Peynir, yoğurt yiyebiliyorsam süt de içebilirim değil mi?”',
+        contentBody: 'Yukarıda da belirttiğim üzere süt yüksek miktarda laktoz içerir. Bu yüzden de anti-diyabet beslenme modelinde süt ve kremadan uzak durmanız gerekiyor. Hele hele diyet sütün şeker oranı daha da yüksektir. Sütün içinden ne kadar çok yağ çıkarırsanız şeker konsantrasyonu da o kadar artar.'
+      }
+    ]
+  },
+  11: {
+    cards: [
+      {
+        id: 'question-day-11',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Bana tatlandırıcı kullanabileceğim söylenmişti”',
+        contentBody: 'Sakın! Şekeri, şekerli yiyecekleri hayatınızdan çıkarıp yerine suni tatlandırıcıları koymak büyük bir hatadır. Neden mi? Çünkü diyetinizden bir zehir çıkarıp yerine başka bir zehir koymuş oluyorsunuz. Suni tatlandırıcıların kansere, erken bunamaya, Alzheimer’a yakalanma riskini önemli oranda artırdığı pek çok bilimsel çalışmayla kanıtlandı. Ancak suni tatlandırıcılarla ilgili pek bilinmeyen bir gerçeğe daha dikkat çekmek istiyorum: Düşünülenin aksine tatlandırıcılar diyabeti derinleştiriyor. Evet, içlerinde belki şeker yok ama bu kimyasal kokteyller aynı şeker gibi kana insülin pompalanmasına neden oluyor. Kitapta bu mekanizmayı anlattım. Zaten vücudun, sağlığın bir bütün olduğu gerçeğinden yola çıkarsak, sizi kanser yapan bir şeyin diyabetinizi iyileştirmesi mümkün mü?'
+      },
+      {
+        id: 'suggestion-day-11',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Günün Önerisi: Brokoli',
+        contentBody: 'Birçok bilim insanının brokoli üstüne çalışmalar yapması boşuna değil. Araştırmalar brokolinin içindeki bileşenlerin hücresel metabolik faaliyetleri iyileştirdiğini, kandaki lipit değerlerini düşürdüğünü gösteriyor. Hücresel aktivitenin düzene girmesi ise kilo kontrolüne yardımcı oluyor ve Tip 2 diyabetten kansere kadar pek çok kronik hastalığa karşı etkin bir koruma sağlıyor.'
+      }
+    ]
+  },
+  12: {
+    cards: [
+      {
+        id: 'suggestion-day-12',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Günün Önerisi: Mantar',
+        contentBody: 'Glisemik yükü olmayan, yani kan şekerinde dalgalanmalara neden olmayan mantar harika bir besindir. Tabii endüstriyel olarak üretilmiş, tatsız tuzsuz mantarlardan bahsetmiyorum. Bir Ege gezimde, konuk olduğum bir köy evinde tattığım bir mantarın tadı hâlâ damağımdadır. İsminin kuzugöbeği olduğunu öğrendiğim bu nefis mantar bazı yörelerde höbelen olarak da bilinir. Biraz araştırdım Fransız mutfağında çok tercih edilen, kıymetli bir mantarmış. Mantar hassas bir mevzudur, doğada yenen her mantarın zehirli bir benzeri olabileceğini aklınızdan çıkarmayın. Ama ülkemizin dört bir yanında doğada yetişen ve doğal ortamda yetiştirilen lezzetli mantarlar var. Bu konuda bilgili üreticiler bu kıymetli mantarları yurt dışına ihraç ediyor, bir kısmını da iç pazara satıyor. Bunların izini sürerseniz nefis tatlarla tanışacağınızdan emin olabilirsiniz. İşte yerel mantarlarımızdan mini bir derleme:\n\nEge, Akdeniz, bazen de Karadeniz’in kıyı şeridinde yetişen kuzugöbeği.\n\nBatı Karadeniz’in yerlilerinden çörek mantarı. Bazılarınız onu İtalyanca mealiyle yani porcini mantarı olarak biliyor.\n\nKaradeniz yöresinde yetişen ve Karadeniz mutfağında önemli bir yere sahip olan tirmit mantarı.\n\nMersin ve civarında kestane ve çınar ağaçlarının üstünde yetişen biftek mantarı. Adı üstünde tadı biftek gibi.\n\nBolu civarlarına özgü cincile mantarı. Sotesi pek lezzetli olur.'
+      },
+      {
+        id: 'tip-day-12',
+        title: 'Püf Noktası',
+        variant: 'green',
+        contentTitle: 'Püf Noktası',
+        contentBody: 'Hadi bu sayfayı mantara ayırmış olalım ve mantarın farklı pişirme tekniklerini de paylaşalım. Kuşbaşı etle birlikte pişirebilirsiniz. Mantarları tereyağında kavurup üstüne yumurta kırıp yiyebilirsiniz. Yoğun ve ayrıcalıklı lezzetleri olan türleri tek başına, zeytinyağı ya da tereyağı gezdirilmiş tavada pişirip yiyin. Doğranmış domates ve biberle sote yapın. Dilerseniz üstlerine bir parça tereyağı ve rendelenmiş kaşar koyup fırına verin. Pek çok mantar türü çorbalara, etli yemeklere çok yakışır. Bazı türleri ince ince doğrayıp pişirmeden çiğ olarak salatalara katabilirsiniz.'
+      }
+    ]
+  },
+  13: {
+    cards: [
+      {
+        id: 'recipe-day-13',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Yeşil Biberli Tavuk',
+        contentBody: '',
+        recipeId: 'yesil-biberli-tavuk',
+        imageKey: 'yesil-biberli-tavuk'
+      },
+      {
+        id: 'suggestion-day-13',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Günün Önerisi: Yerel Otları Keşfedin',
+        contentBody: 'Mutfağınızı sızma zeytinyağı ve limonla çeşnilendirilmiş ot salataları ile zenginleştirmeye ne dersiniz? Cibes, radika, şevket-i bostan, sütlü diken, sarmaşık otu, arapsaçı ve daha niceleri... Her ne kadar Ege kültürüyle özdeşmiş olsalar da, her yörenin şahsına münhasır otları vardır. Bu otlarla hazırlanan nefis salataları ve et yemeklerini yerel pazarlarda keşfedebilir, sofranıza daha fazla çeşitlilik katabilirsiniz.'
+      }
+    ]
+  },
+  14: {
+    cards: [
+      {
+        id: 'suggestion-day-14',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Günün Önerisi: Beyaz Hindiba',
+        contentBody: 'Tadı hafif buruk­tur. Marulu andırır ama maruldan çok daha lezzetlidir. Cevap, beyaz hindiba olacak. Çok bilinmeyen bu bitki nefis bir salata malzemesidir. Yemeklerde de kullanıldığını biliyorum. Ama doğrusu salatası bu kadar lezzetliyken yeni tarifler denemeye hiç gerek duymadım. Kabaca doğrayıp, üstüne mis gibi sızma zeytinyağı ekleyip, bol limon sıkın ve kaya tuzuyla çeşnilendirin. Henüz tatmadıysanız tavsiye ederim. Farkında mısınız? Aklımıza bile gelmeyen, yanından geçip gittiğimiz ne çok sebze var. Sağlıklı bir bağırsak florası için diyetinizdeki bitkisel besinlerin sayısını ve çeşitliliğini artırmanız gerektiğini hatırlatmama gerek var mı?'
+      }
+    ]
+  },
+  15: {
+    cards: [
+      {
+        id: 'faq-day-15',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Çalışıyorum, bu beslenme modelini nasıl uygulayacağım?”',
+        contentBody: 'Ertesi gün yiyeceklerinizi bir gece önceden hazırlayıp hava geçirmez kaplarda işe götürebilirsiniz. Menüde değişiklik yaparak öğünleri başka günlerle değiştirebilirsiniz. Önemli olan sistemin temel kurallarına sadık kalmaktır.'
+      },
+      {
+        id: 'recipe-day-15',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Cevizli Kuru Domates Mezesi',
+        recipeId: 'cevizli-kuru-domates-mezesi',
+        imageKey: 'cevizli-kuru-domates-mezesi'
+      }
+    ]
+  },
+  16: {
+    cards: [
+      {
+        id: 'faq-day-16',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Ekmeksiz nasıl doyacağım? Ekmeğe neden bu kadar karşısınız?”',
+        contentBody: '“Ben ekmeksiz doymam” diyenlere söyle seslenmek istiyorum: Sizi esas acıktıran ekmektir, börektir, çörektir. Oturup bir ekmek yiyen birinin iki saat sonra yine acıktığını görebilirim. Oysa bol tereyağlı iki yumurta yese aç kalmayacak. Üstelik tip 2 diyabet hastası da olmayacak. Ekmek ve unla yapılan tüm yiyecekler kan şekerinizin fırlamasına neden olur.'
+      }
+    ]
+  },
+  17: {
+    cards: [
+      {
+        id: 'restaurant-guide-day-17',
+        title: 'Restoran Kılavuzu',
+        variant: 'yellow',
+        contentTitle: 'Restoran Kılavuzu',
+        contentBody: 'Gönül isterdi ki bir restorana gittiğinizde tabağınıza serbest dolaşan tavuk eti gelsin, masamıza gelen her yemek sağlıklı yağlarla hazırlansın, yeşillikler, sebzeler organik olsun... Tabii ki böyle mekânlar var, ama sayıları çok az, fiyatları çok pahalı. “Dışarıda yemek yemeyin, eş dost evine yemeğe çağırdığında gitmeyin” demek son derece gerçek dışı bir yaklaşım. O halde ne yapacağız? Diyabet mücadelenizde de, sağlıklı beslenme savaşınızda da zaman zaman ideal olmayan seçimler yapmak zorunda kalabilirsiniz. Böyle zamanlarda amaç içinde bulunduğunuz şartlar içinde nispeten en iyi tercihi yapmak olmalı. Glisemik indeksi düşük kaliteli protein bir yemek seçin. Et ya da balık gibi... Mümkünse ilk tercihiniz balık olsun. Deniz balığı yoksa seçiminizi tavuk ya da etten yana yapın — döner de yiyebilirsiniz. Mantığı anladınız değil mi? Tabağınızdaki besinin endüstriyel besicilik ya da suni yemlerden mümkün olduğunca uzak olmasına özen gösterin. Bu anlamda en güvenli seçim deniz balığıdır. Balık ya da etinizin nasıl piştiği de son derece önemli. Bu yiyeceklerin tabağınıza en yalın halleriyle gelmesini isteyin. Tabağınızda içinde ne olduğu meçhul soslar, unla yapılmış meyaneler bulunmasını istemezsiniz! Yani, menünün ızgara etler, ızgara balıklar bölümüne odaklanmalısınız. Kızartmalardan uzak durmanız gerektiğini aklınızdan çıkarmayın. Özellikle de restoranlarda! Kızartma yağlarının içine kimyasallar konarak renklerinin kararmasının önlendiği, o yağın günlerce kullanıldığını söylememe gerek var mı? Dikkatinizi çekerim: Kızartmalar yağlı olduğu için değil kanserojen oldukları için uzak durulmalı! Yağdan korkmamanız gerektiğini artık biliyorsunuz. Tabii margarin, moleküler yapısı değişmiş sözde “sağlıklı yağlar” yerine halis tereyağı, sızma zeytinyağı gibi yağlar yiyeceksiniz. Izgara balığın, etin yanına mevsim sebzeleriyle hazırlanmış bir salata sipariş edin. Ama salatanızı sossuz sipariş edin. Zeytinyağı ve taze sıkılmış limon suyunu ayrı sipariş edip salatanızı kendiniz çeşitlendirin. Maalesef birçok restoranda – daha kalburüstü olanlarda bile – hâlâ salatalara çiçek yağı konuyor. Ege restoranlarında en sevdiğim şey salatalarda, mezelerde sızma zeytinyağı kullanmalarıdır. Yemeğinizi sade bir Türk kahvesi ya da şekersiz bir çayla noktalayabilirsiniz. Gördüğünüz üzere dışarıda yemek yediğinizde de kan şekerinizi dengeli seyretmesini sağlayan sağlıklı seçimler yapmak mümkün.'
+      }
+    ]
+  },
+  18: {
+    cards: [
+      {
+        id: 'warning-day-18',
+        title: 'Dikkat Okuyunuz',
+        variant: 'red',
+        contentTitle: 'Aman Dikkat',
+        contentBody: 'Diyabet ilacı kullanan hastalarda ani kan düşmeleri görülebilir. Hipoglisemi ataklarına karşı yanınızda hep bir kesme şeker bulundurun.'
+      }
+    ]
+  },
+  19: {
+    cards: [
+      {
+        id: 'gunun-onerisi-alabas',
+        title: 'Günün Önerisi',
+        variant: 'green',
+        contentTitle: 'Alabaş',
+        contentBody: 'Doğanın bize sunduklarını keşfettikçe seçeneklerin ne kadar çeşitli, ne kadar zengin olduğunu fark edeceksiniz. İçi kimyasallarla dolu yiyecekleri terk edip, pazar yerlerindeki tezgahları dolaşın. İşte sizi bekleyen sürprizlerden biri: Alabaş. Ödemiş civarlarında yetişen bu kök bitki büyük bir turpu andırır. Nedense pek tanınmayan bu lezzetin bağımlısı olmanız için bir kere tatmanız yeterli. Hazırlamak için fazla bir çabaya da gerek yok. Kabuğunu soyup dilimleyin. Üstüne sızma zeytinyağı gezdirin, biraz limon sıkın, biraz da kaya tuzu serpin. İşte, glisemik indeksi düşük, C vitamini zengini, güçlü antioksidanlarla dolu bir keşif daha.'
+      }
+    ]
+  },
+  20: {
+    cards: [
+      {
+        id: 'recipe-day-20',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Pirinçsiz Biber Dolması',
+        recipeId: 'pirincsiz-biber-dolmasi',
+        imageKey: 'pirincsiz-biber-dolmasi'
+      }
+    ]
+  },
+  21: {
+    cards: [
+      {
+        id: 'recipe-day-21',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Ev Yoğurdu',
+        recipeId: 'ev-yogurdu',
+        imageKey: 'ev-yogurdu'
+      },
+      {
+        id: 'motivation-day-21',
+        title: 'Motivasyon',
+        variant: 'yellow',
+        contentTitle: 'Motivasyon',
+        contentBody: 'Tip 2 diyabet iyileşmez diyenlere inat kan şekeriniz düzenli seyrediyor. Kendinizi çok iyi hissediyorsunuz. Yeni yaşamınızın ilk üç haftasını tamamladınız. Sizi gönülden kutluyorum. Üçüncü haftayla birlikte beslenme modelinizdeki çeşitlilik de genişliyor. Artık probiyotik zengini ev yoğurdu, evde kendiniz yaptığınız kefir, şirden mayasıyla yapılmış peynir çeşitleri serbest.'
+      }
+    ]
+  },
+  23: {
+    cards: [
+      {
+        id: 'tip-day-23',
+        title: 'Püf Noktası',
+        variant: 'yellow',
+        contentTitle: 'Kararında Kuru Bakliyat',
+        contentBody: 'Glisemik indeksleri nispeten yüksek olduğu için üç hafta boyunca menüde kuru bakliyat olmadığını fark etmişsinizdir. Üç haftanın sonunda artık son derece değerli besin maddeleri ile dolu nohut, kuru fasulye ve mercimek yemeklerini beslenme modelinizin bir parçası yapabilirsiniz. Tabii ki abartmamak kaydıyla! Haftada bir defadan fazla tüketmemeye özen gösterin.'
+      },
+      {
+        id: 'recipe-day-23',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Yoğurtlu Pırasa',
+        recipeId: 'yogurtlu-pirasa',
+        imageKey: 'yogurtlu-pirasa'
+      }
+    ]
+  },
+  24: {
+    cards: [
+      {
+        id: 'recipe-day-24',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Acılı Lahana Çorbası',
+        recipeId: 'acili-lahana-corbasi',
+        imageKey: 'acili-lahana-corbasi'
+      }
+    ]
+  },
+  25: {
+    cards: [
+      {
+        id: 'tip-day-25',
+        title: 'Günün Önerisi',
+        variant: 'green',
+        contentTitle: 'Tarçın',
+        contentBody: 'İnsanlık tarihi boyunca yemeklere lezzet, birçok sağlık sorununa şifa olmuş bu değerli baharatın kan şekerini düzenlemek, insülin direncini kırmak gibi pek çok marifeti var. Tarçın güzel kokusunu, içerdiği sinnamaldehit ve öjenol adlı uçucu yağ bileşenlerine borçludur. Bu maddeler aynı zamanda insülinin glikozu metabolize etme yeteneğini de güçlendiriyor. Tarçının diyabetli hastalarda yüksek seyreden trigliserit seviyesini de düşürmekte etkili olduğunu biliyor muydunuz? Alzheimer’a, kansere karşı koruyan, kilo kontrolüne yardımcı olan tarçını anti-diyabet beslenme modelinizin başköşesine yerleştirin.'
+      },
+      {
+        id: 'warning-day-25',
+        title: 'Püf Noktası',
+        variant: 'yellow',
+        contentTitle: 'Püf Noktası',
+        contentBody: 'Salatalarınızın şifa gücünü, omega-3 zengini keten tohumu, diyabetle savaşan çörekotu, B vitaminleri açısından zengin bir kaynak olan susamla artırın.'
+      }
+    ]
+  },
+  26: {
+    cards: [
+      {
+        id: 'faq-day-26',
+        title: 'Merak Ettikleriniz',
+        variant: 'green',
+        contentTitle: 'Tüm sebzeleri yiyebilir miyim?',
+        contentBody: 'Glisemik indeksi yüksek birkaç sebze dışında evet. Patates, mısır, havuç ve bezelye yüksek glisemik indekslidir ve tüketilmemelidir.'
+      }
+    ]
+  },
+  28: {
+    cards: [
+      {
+        id: 'faq-day-28',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Şekerim yüksek çıktı. Düşük kalorili bir diyete başladım. Bu yeterli değil mi?”',
+        contentBody: 'Diyabet düşük kalorili bir beslenme modeli ile iyileşmez! Çünkü şekerinizi kontrol altına almak için düşük kalorili değil düşük glisemik indeksli bir diyet yapmanız gerekiyor. Yani kaloriye takmayın, önemli olan yediğiniz yiyeceklerin vücutta şeker dalgalanmalarına yol açıp açmadığıdır. Bunu da yiyeceklerin glisemik indeksi belirler. Mesela yumurta, et, tavuk, sakatat, peynir, tereyağı yediğinizde hem kendinizi saatlerce tok hissedersiniz hem de kan şekeriniz dengeli seyreder. Neden? Çünkü bu yiyeceklerin glisemik indeksi sıfırdır. Bunların yanına yine düşük glisemik indeksli sebzeler, salatalar eklediğinizde ise kan şekerinizin de, sağlığınızın da kontrolünü elinize almış olursunuz.'
+      }
+    ]
+  },
+  29: {
+    cards: [
+      {
+        id: 'faq-day-29',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: 'Ne kadar su içmeliyim?',
+        contentBody: 'Biri çıkıyor günde 2 litre su için, diyor. Bir başkası 3 litre içseniz daha iyi, diye buyuruyor. Bu kafa karıştırıcı sağlık önerilerine son noktayı kim koyacak biliyor musunuz? Vücudunuz. Size ne kadar su içmeniz gerektiğini uzmanlar değil, ancak vücudunuz söyleyebilir. İdrarınız su renginde olduğunda doğru miktarı yakaladınız demektir. Benim bu konuda tek bir tavsiyem var: Tüketiminizi güne bölerek azar azar içmeye gayret edin.'
+      },
+      {
+        id: 'warning-day-29',
+        title: 'Dikkat Okuyunuz',
+        variant: 'red',
+        contentTitle: 'Aman Dikkat',
+        contentBody: 'Diyabet ilacı kullanan hastalarda ani kan düşmeleri görülebilir. Hipoglisemi ataklarına karşı yanınızda hep bir kesme şeker bulundurun.'
+      }
+    ]
   },
 };

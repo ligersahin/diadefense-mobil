@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { differenceInDays, parseISO } from 'date-fns';
 import * as Notifications from 'expo-notifications';
@@ -6,6 +7,8 @@ import { Stack, router } from 'expo-router';
 import { DefenseProgramProvider, useDefenseProgram } from '../src/context/DefenseProgramContext';
 import { scheduleMealsNudgeIfNotStarted } from '../src/notifications/mealsNudgeNotifications';
 import { getLocalDateISO } from '../src/utils/dateISO';
+
+SplashScreen.preventAutoHideAsync();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -202,6 +205,13 @@ function NotificationHandler() {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    const t = setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 900);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <DefenseProgramProvider>
       <NotificationHandler />

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 export type DayInfoCard = {
   id: string;
   title: string;
-  variant: 'yellow' | 'red';
+  variant: 'yellow' | 'red' | 'green';
   onPress?: () => void;
 };
 
@@ -16,25 +16,28 @@ type Props = {
 export default function DayInfoBoard({ cards, style }: Props) {
   if (!cards?.length) return null;
 
-  const cardStyle = (variant: 'yellow' | 'red') =>
-    variant === 'yellow' ? styles.cardYellow : styles.cardRed;
+  const cardStyle = (variant: 'yellow' | 'red' | 'green') =>
+    variant === 'yellow' ? styles.cardYellow : variant === 'green' ? styles.cardGreen : styles.cardRed;
+
+  const cardTextStyle = (variant: 'yellow' | 'red' | 'green') =>
+    variant === 'green' ? styles.cardTextGreen : styles.cardText;
 
   if (cards.length >= 3) {
     return (
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={[styles.row, style]}
+        style={[styles.rowScroll, style]}
         contentContainerStyle={styles.scrollContent}
       >
         {cards.map((card) => (
           <TouchableOpacity
             key={card.id}
-            style={[styles.card, styles.cardScroll, cardStyle(card.variant)]}
+            style={[styles.card, cards.length === 3 ? styles.cardCompact : styles.cardScroll, cardStyle(card.variant)]}
             onPress={card.onPress}
             activeOpacity={0.85}
           >
-            <Text style={styles.cardText} numberOfLines={1} ellipsizeMode="tail">{card.title}</Text>
+            <Text style={cardTextStyle(card.variant)} numberOfLines={1} ellipsizeMode="tail">{card.title}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -50,7 +53,7 @@ export default function DayInfoBoard({ cards, style }: Props) {
             onPress={card.onPress}
             activeOpacity={0.85}
           >
-            <Text style={styles.cardText} numberOfLines={1} ellipsizeMode="tail">{card.title}</Text>
+            <Text style={cardTextStyle(card.variant)} numberOfLines={2} ellipsizeMode="tail">{card.title}</Text>
           </TouchableOpacity>
       ))}
     </View>
@@ -66,9 +69,16 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 8,
   },
+  rowScroll: {
+    marginHorizontal: 16,
+    marginTop: 10,
+    marginBottom: 8,
+  },
   scrollContent: {
-    gap: 6,
-    paddingRight: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 4,
+    paddingRight: 0,
   },
   card: {
     height: 44,
@@ -87,6 +97,11 @@ const styles = StyleSheet.create({
   cardScroll: {
     minWidth: 120,
   },
+  cardCompact: {
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 8,
+  },
   cardYellow: {
     backgroundColor: '#FFF4C2',
     borderColor: '#F5D36B',
@@ -95,9 +110,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFE3E3',
     borderColor: '#FF6B6B',
   },
+  cardGreen: {
+    backgroundColor: '#ECFDF5',
+    borderColor: '#10B981',
+  },
   cardText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  cardTextGreen: {
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: '#065F46',
   },
 });

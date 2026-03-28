@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
@@ -20,11 +20,37 @@ const TAB_BAR_BASE = {
   shadowOpacity: 0,
 };
 
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/ı/g, 'i')
+    .replace(/İ/g, 'i')
+    .replace(/ş/g, 's')
+    .replace(/Ş/g, 's')
+    .replace(/ç/g, 'c')
+    .replace(/Ç/g, 'c')
+    .replace(/ğ/g, 'g')
+    .replace(/Ğ/g, 'g')
+    .replace(/ü/g, 'u')
+    .replace(/Ü/g, 'u')
+    .replace(/ö/g, 'o')
+    .replace(/Ö/g, 'o')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
 export default function RecipesScreen() {
   const navigation = useNavigation();
   const lastYRef = useRef(0);
   const [isTabHidden, setIsTabHidden] = useState(false);
+  const [search, setSearch] = useState('');
   const recipes = Object.values(RECIPES);
+  const normalizedQuery = normalizeText(search);
+  const filteredRecipes = recipes.filter((recipe) => {
+    const normalizedTitle = normalizeText(recipe.title);
+    return normalizedTitle.includes(normalizedQuery);
+  });
+  const sortedRecipes = [...filteredRecipes].sort((a, b) => a.title.localeCompare(b.title, 'tr'));
 
   const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
@@ -74,9 +100,21 @@ export default function RecipesScreen() {
         showsVerticalScrollIndicator={false}
         onScroll={handleScroll}
         scrollEventThrottle={16}
+        keyboardShouldPersistTaps="handled"
       >
-        {recipes.map((recipe) => {
-          const key = recipe.thumbImageKey ?? recipe.heroImageKey ?? null;
+        <View style={styles.searchContainer}>
+          <Ionicons name="search" size={18} color="#6b7280" style={styles.searchIcon} />
+          <TextInput
+            placeholder="Tarif ara..."
+            value={search}
+            onChangeText={setSearch}
+            editable={true}
+            autoFocus={true}
+            style={styles.searchInput}
+          />
+        </View>
+        {sortedRecipes.map((recipe) => {
+          const key = recipe.imageKey ?? recipe.thumbImageKey ?? recipe.heroImageKey ?? null;
           const imageSource = getRecipeImage(key);
           return (
             <TouchableOpacity
@@ -119,6 +157,22 @@ const styles = StyleSheet.create({
   },
   recipeCard: {
     marginBottom: 12,
+  },
+  searchContainer: {
+    margin: 16,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: '#f2f2f2',
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: '100%',
   },
   cardContent: {
     flexDirection: 'row',

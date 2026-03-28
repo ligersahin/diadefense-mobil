@@ -14,8 +14,18 @@ import { getRecipeImage } from '../../src/assets/recipeImages';
 import { MENUS } from '../../src/data/menus';
 import { getMetabolicFocus } from '../../src/data/metabolicFocus';
 
+function getLatestHeroMenuDay(menus: typeof MENUS) {
+  const heroDays = menus.filter(
+    (m) => typeof m.heroImageKey === 'string' && m.heroImageKey.trim() !== ''
+  );
+
+  if (!heroDays.length) return 1;
+  return Math.max(...heroDays.map((m) => m.day));
+}
+
 export default function TodayScreen() {
   const {
+    program,
     currentDayPlan,
     currentDayIndex,
     startISO,
@@ -132,9 +142,20 @@ export default function TodayScreen() {
   const totalMeals = safeMeals.length;
   const totalSupps = currentDayPlan?.supplements?.length || 0;
   const todayISO = useMemo(() => getLocalDateISO(), []);
+  // currentDayIndex is derived from startISO inside DefenseProgramContext
+  const currentDay = currentDayIndex ?? 1;
+  // TEMP CONTENT LOGIC: Today screen shows the latest menu day that has a valid hero image.
+  const displayedDay = getLatestHeroMenuDay(MENUS);
   const defiBannerMessage = useMemo(() => defiMessage ? { title: 'Defi', body: defiMessage } : null, [defiMessage]);
-  const dayMenu = MENUS.find((m) => m.day === currentDayIndex) || MENUS[0];
-  const dayHeroSource = getRecipeImage((dayMenu as { heroImageKey?: string | null }).heroImageKey);
+  const displayedDayMenu = MENUS.find((m) => m.day === displayedDay) || MENUS[0];
+  const dayHeroSource = getRecipeImage((displayedDayMenu as { heroImageKey?: string | null }).heroImageKey);
+  const displayedMeals = completedMeals[displayedDay] || [];
+  const displayedMealSlots = new Set(['breakfast', 'lunch', 'dinner']);
+  const displayedCompletedMeals = Array.from(new Set(displayedMeals.filter((slot) => displayedMealSlots.has(slot))));
+  const displayedSupps = completedSupplements[displayedDay] || [];
+  const displayedDayPlan = program.find((p) => p.dayIndex === displayedDay);
+  const displayedTotalMeals = Object.keys(displayedDayMenu.meals || {}).length || 3;
+  const displayedTotalSupps = displayedDayPlan?.supplements?.length || 3;
 
   return (
     <View style={styles.container}>
@@ -173,7 +194,7 @@ export default function TodayScreen() {
 
         {/* Metabolik Durum */}
         {(() => {
-          const day = currentDayIndex ?? 1;
+          const day = currentDay;
           const mf = getMetabolicFocus(day);
           return (
             <View style={styles.metabolismCard}>
@@ -187,28 +208,32 @@ export default function TodayScreen() {
 
         {/* Today's Meal Plan Card */}
         <TouchableOpacity 
-            style={styles.mealCtaCard}
-            onPress={() => router.push('/(tabs)/menus')}
+          style={styles.mealCtaCard}
+          onPress={() => router.push({ pathname: '/menus', params: { day: String(displayedDay) } })}
           activeOpacity={0.85}
         >
-          <View style={styles.mealCtaLeft}>
+          <View style={styles.mealCtaHeroBannerWrap}>
             {dayHeroSource ? (
-              <View style={styles.mealCtaHeroWrap}>
-                <Image source={dayHeroSource} style={styles.mealCtaHero} resizeMode="cover" />
-              </View>
+              <Image source={dayHeroSource} style={styles.mealCtaHeroBanner} resizeMode="cover" />
             ) : (
-              <View style={styles.sharedIconChip}>
-                <Ionicons name="restaurant" size={20} color="#10B981" />
+              <View style={styles.mealCtaHeroFallback}>
+                <Ionicons name="restaurant" size={24} color="#10B981" />
               </View>
             )}
-            <View style={styles.mealCtaText}>
-              <Text style={styles.mealCtaTitle}>Bugünün Yemek Planı</Text>
-              <Text style={styles.mealCtaSubtitle}>
-                {todayMeals.length}/{totalMeals} öğün • {todaySupps.length}/{totalSupps} takviye
-              </Text>
+            <View style={styles.mealCtaDayBadge}>
+              <Text style={styles.mealCtaDayBadgeText}>Gün {displayedDay}</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          <View style={styles.mealCtaBottomRow}>
+            <View style={styles.mealCtaText}>
+              <Text style={styles.mealCtaTitle}>Bugünün Yemek Planı</Text>
+              <Text style={styles.mealCtaSubtitle}>Gün {displayedDay}</Text>
+              <Text style={styles.mealCtaMeta}>
+                {displayedCompletedMeals.length}/{displayedTotalMeals} öğün • {displayedSupps.length}/{displayedTotalSupps} takviye
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+          </View>
         </TouchableOpacity>
 
         {/* Canavar ve Savunma Skoru */}
@@ -244,7 +269,7 @@ export default function TodayScreen() {
         <View ref={sectionRefs.current.meals}>
           <TouchableOpacity
             style={styles.taskCard}
-            onPress={() => router.push('/(tabs)/menus')}
+            onPress={() => router.push({ pathname: '/menus', params: { day: String(displayedDay) } })}
           >
             <View style={styles.sharedIconChip}>
               <Ionicons name="restaurant" size={20} color="#10B981" />
@@ -921,22 +946,20 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   mealCtaCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 10,
+    marginBottom: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 1
+  },
+  mealCtaBottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 14,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2
-  },
-  mealCtaLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
     flex: 1
   },
   mealCtaText: {
@@ -946,11 +969,49 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: '#1F2937',
-    marginBottom: 2
+    marginBottom: 2,
   },
   mealCtaSubtitle: {
     fontSize: 12,
-    color: '#6B7280'
+    color: '#6B7280',
+    marginBottom: 2,
+  },
+  mealCtaMeta: {
+    fontSize: 12,
+    color: '#6B7280',
+  },
+  mealCtaHeroBannerWrap: {
+    width: '100%',
+    height: 90,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 10,
+    position: 'relative',
+  },
+  mealCtaHeroBanner: {
+    width: '100%',
+    height: '100%',
+  },
+  mealCtaHeroFallback: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#F1F5F9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  mealCtaDayBadge: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  mealCtaDayBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: '600',
   },
   warningBanner: {
     flexDirection: 'row',

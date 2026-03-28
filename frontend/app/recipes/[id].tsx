@@ -32,7 +32,7 @@ export default function RecipeDetailScreen() {
         ) : (
           <View style={styles.content}>
             {(() => {
-              const img = getRecipeImage(recipe.heroImageKey);
+              const img = getRecipeImage(recipe.imageKey ?? recipe.heroImageKey ?? null);
               return img ? (
                 <Image source={img} style={styles.heroImage} resizeMode="cover" />
               ) : (
