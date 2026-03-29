@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { Theme } from '../../src/config/theme';
 
 const TAB_BAR_BASE = {
-  backgroundColor: Theme.surface,
+  backgroundColor: '#FFFFFF',
   borderTopWidth: 1,
-  borderTopColor: Theme.border,
+  borderTopColor: '#E3E8E6',
   elevation: 0,
   shadowOpacity: 0,
   height: 54,
@@ -23,8 +23,7 @@ export default function TabLayout() {
       screenOptions={({ route }) => {
         const hidden = (route?.params as { tabHidden?: string } | undefined)?.tabHidden === '1';
         return {
-          tabBarActiveTintColor: Theme.primary,
-          tabBarInactiveTintColor: "#94A3B8",
+          tabBarInactiveTintColor: '#A0A7B1',
           tabBarStyle: hidden
             ? { ...TAB_BAR_BASE, height: 0, paddingBottom: 0, opacity: 0, transform: [{ translateY: 80 }], overflow: 'hidden' as const }
             : { ...TAB_BAR_BASE },
@@ -47,7 +46,7 @@ export default function TabLayout() {
         headerStyle: {
           backgroundColor: Theme.primary
         },
-        headerTintColor: Theme.surface,
+        headerTintColor: '#FFFFFF',
         headerTitleStyle: {
           fontWeight: 'bold'
         },
@@ -59,6 +58,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Bugün',
+          tabBarActiveTintColor: '#3F78A2',
           tabBarIcon: ({ color }) => (
             <Ionicons name="home-outline" size={21} color={color} />
           )
@@ -68,6 +68,7 @@ export default function TabLayout() {
         name="program"
         options={{
           title: 'Program',
+          tabBarActiveTintColor: '#4C8E9A',
           tabBarIcon: ({ color }) => (
             <Ionicons name="clipboard-outline" size={21} color={color} />
           )
@@ -77,6 +78,7 @@ export default function TabLayout() {
         name="defense"
         options={{
           title: 'Savunma',
+          tabBarActiveTintColor: '#58A48F',
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="shield-checkmark-outline" size={21} color={color} />
@@ -87,6 +89,7 @@ export default function TabLayout() {
         name="tracking"
         options={{
           title: 'Verilerim',
+          tabBarActiveTintColor: '#63B383',
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="pulse-outline" size={21} color={color} />
@@ -97,6 +100,7 @@ export default function TabLayout() {
         name="info"
         options={{
           title: 'Eğitim',
+          tabBarActiveTintColor: '#72C77F',
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <Ionicons name="book-outline" size={21} color={color} />

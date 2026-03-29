@@ -39,6 +39,8 @@ const RECIPE_IMAGES = {
   'sarimsakli-tereyagli-somon': require('../../assets/recipes/sarimsakli-tereyagli-somon.png'),
   'yogurt-corbasi': require('../../assets/recipes/yogurt-corbasi.png'),
   'peynirli-domates-dolmasi': require('../../assets/recipes/peynirli-domates-dolmasi.png'),
+  'day31': require('../../assets/images/day31.jpg'),
+  'yogurtlu-pancar-salatasi': require('../../assets/images/yogurtlu-pancar.jpg'),
 };
 
 export type RecipeImageKey = keyof typeof RECIPE_IMAGES;

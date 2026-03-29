@@ -1813,6 +1813,128 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
     };
   }
 
+  if (day === 31) {
+    return {
+      day,
+      dayTitle: 'Gün 31 — Yağ tüketimini artır',
+      daySummary: 'Sağlıklı yağlarla tokluk ve glisemik dengeyi güçlendirme günü.',
+      metabolicLine: 'Yağlar, birlikte tüketilen besinlerin glisemik etkisini düşürmeye yardımcı olur.',
+      defenseFocus: 'Glisemik Denge',
+      focusTag: 'Sağlıklı Yağlar',
+      heroImageKey: 'day31',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Kıymalı Yumurta',
+          description:
+            'Sahanda kıymalı yumurta, çoban salata veya yeşil salata, kaşar/beyaz/tulum peyniri, 10-15 adet siyah ya da yeşil zeytin, 4-5 adet ceviz ve şekersiz çay/yeşil çay/sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Kıyma',
+            'Biber',
+            'Salatalık',
+            'Domates',
+            'Sızma zeytinyağı',
+            'Limon',
+            'Kekik',
+            'Kaşar / beyaz / tulum peyniri',
+            'Siyah veya yeşil zeytin',
+            'Ceviz',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Sebze Çorbası',
+          description:
+            'Sebze çorbası (et suyu ve mevsim sebzeleri ile), mevsimine göre yoğurtlu pancar salatası veya yoğurtlu semizotu salatası.',
+          recipeId: null,
+          shoppingItems: [
+            'Et suyu',
+            'Mevsim sebzeleri',
+            'Pancar veya semizotu',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'lunch-default',
+        },
+        dinner: {
+          title: 'Kemikli Etle Kuru Fasulye',
+          description:
+            'Kemikli etle pişirilmiş kuru fasulye, mevsim salatası ve ev yoğurdu ile hazırlanmış cacık (kuru nane ve sızma zeytinyağı ile).',
+          recipeId: null,
+          shoppingItems: [
+            'Kemikli et',
+            'Kuru fasulye',
+            'Mevsim salatası malzemeleri',
+            'Ev yoğurdu',
+            'Salatalık',
+            'Kuru nane',
+            'Sızma zeytinyağı',
+          ],
+          imageKey: 'day31',
+        },
+      },
+    };
+  }
+
+  if (day === 32) {
+    return {
+      day,
+      dayTitle: 'Gün 32 — Doğal dengeyi koru',
+      daySummary: 'Doğal dengeyi koruyarak glisemik istikrarı sürdür.',
+      metabolicLine: 'Düşük glisemik yük ve dengeli yağ-protein alımı destekleniyor.',
+      defenseFocus: 'Doğal Denge',
+      focusTag: 'Denge',
+      heroImageKey: 'yogurt-corbasi',
+      meals: {
+        breakfast: {
+          title: 'Haşlanmış Yumurta',
+          description:
+            '2 adet haşlanmış yumurta (kayısı kıvamında), mevsim salata, kaşar/beyaz/tulum peyniri (şirden mayalı), 10-15 adet siyah ya da yeşil zeytin, 10-15 adet çiğ fındık ya da badem ve şekersiz çay/yeşil çay/sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mevsim salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Siyah veya yeşil zeytin',
+            'Çiğ fındık veya badem',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Yoğurt Çorbası',
+          description:
+            'Yoğurt çorbası, zeytinyağlı taze fasulye veya zeytinyağlı pırasa (şeker ve pirinç eklenmeden), mevsim salata.',
+          recipeId: 'yogurt-corbasi',
+          shoppingItems: [
+            'Ev yoğurdu',
+            'Yumurta',
+            'Et suyu',
+            'Taze fasulye veya pırasa',
+            'Sızma zeytinyağı',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'yogurt-corbasi',
+        },
+        dinner: {
+          title: 'Patlıcan Musakka veya Kıymalı Karnabahar',
+          description:
+            'Patlıcan musakka veya kıymalı karnabahar yemeği, yanında ev yoğurdu.',
+          recipeId: null,
+          shoppingItems: [
+            'Patlıcan veya karnabahar',
+            'Kıyma',
+            'Soğan',
+            'Domates veya salça',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'dinner-default',
+        },
+      },
+    };
+  }
+
   return {
     day,
     dayTitle: `Gün ${day} — Rutin`,

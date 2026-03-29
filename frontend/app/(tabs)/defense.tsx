@@ -13,9 +13,9 @@ import { ProgressCircle } from '../../src/components/ProgressCircle';
 import { Theme } from '../../src/config/theme';
 
 const TAB_BAR_BASE = {
-  backgroundColor: Theme.surface,
+  backgroundColor: '#FFFFFF',
   borderTopWidth: 1,
-  borderTopColor: Theme.border,
+  borderTopColor: '#E3E8E6',
   height: 60,
   paddingTop: 6,
   paddingBottom: 6,
@@ -148,7 +148,7 @@ export default function DefensePanelScreen() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <AppHeader title="Savunma" subtitle="Canavar durumu, savunma gücü ve araçlar" />
+      <AppHeader title="Savunma" subtitle="Canavar durumu, savunma gücü ve araçlar" showBack={true} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}

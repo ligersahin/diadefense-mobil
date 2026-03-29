@@ -88,7 +88,7 @@ export default function ProgramScreen() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <AppHeader title="Programlar" subtitle="Plan, menüler ve araçlar" />
+      <AppHeader title="Programlar" subtitle="Plan, menüler ve araçlar" showBack={true} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={[styles.scrollContent, { paddingBottom: isTabHidden ? 0 : tabBarHeight }]}
@@ -108,7 +108,7 @@ export default function ProgramScreen() {
                 <View style={[styles.iconContainer, { backgroundColor: card.bg }]}>
                   <Ionicons name={card.icon as any} size={22} color={card.color} />
                 </View>
-                <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+                <Ionicons name="chevron-forward" size={18} color="#5FAF86" />
               </View>
               <Text style={styles.cardTitle}>{card.title}</Text>
               <Text style={styles.cardDescription}>{card.description}</Text>

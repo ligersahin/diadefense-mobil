@@ -159,7 +159,7 @@ export default function TodayScreen() {
 
   return (
     <View style={styles.container}>
-      <AppHeader title="Bugün" subtitle="Günün görevleri ve takibi" />
+      <AppHeader title="Bugün" subtitle="Günün görevleri ve takibi" showBack={false} />
       <Animated.ScrollView 
         ref={scrollViewRef}
         style={styles.scrollView}
@@ -232,7 +232,7 @@ export default function TodayScreen() {
                 {displayedCompletedMeals.length}/{displayedTotalMeals} öğün • {displayedSupps.length}/{displayedTotalSupps} takviye
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </View>
         </TouchableOpacity>
 
@@ -259,7 +259,7 @@ export default function TodayScreen() {
             </View>
           </View>
 
-          <Ionicons name="chevron-forward" size={22} color="#9CA3AF" />
+          <Ionicons name="chevron-forward" size={22} color="#5FAF86" />
         </TouchableOpacity>
 
         {/* Günlük Görevler */}
@@ -286,7 +286,7 @@ export default function TodayScreen() {
                 ]} />
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={24} color="#5FAF86" />
           </TouchableOpacity>
         </View>
 
@@ -311,7 +311,7 @@ export default function TodayScreen() {
                 ]} />
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={24} color="#5FAF86" />
           </TouchableOpacity>
         </View>
 
@@ -336,7 +336,7 @@ export default function TodayScreen() {
                 ]} />
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={24} color="#5FAF86" />
           </TouchableOpacity>
         </View>
 
@@ -361,7 +361,7 @@ export default function TodayScreen() {
                 ]} />
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={24} color="#5FAF86" />
           </TouchableOpacity>
         </View>
 
@@ -385,7 +385,7 @@ export default function TodayScreen() {
               ]} />
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={24} color="#9CA3AF" />
+          <Ionicons name="chevron-forward" size={24} color="#5FAF86" />
         </TouchableOpacity>
 
         <View style={styles.bottomSpacer} />

@@ -833,4 +833,25 @@ export const RECIPES = {
       '180 derece fırında pişirin.'
     ]
   },
+  'yogurtlu-pancar-salatasi': {
+    id: 'yogurtlu-pancar-salatasi',
+    title: 'Yoğurtlu Pancar Salatası',
+    imageKey: 'yogurtlu-pancar-salatasi',
+    ingredients: [
+      '2 adet kırmızı pancar',
+      '6 yemek kaşığı ev yoğurdu',
+      '4 diş sarımsak',
+      'Sızma zeytinyağı',
+      'Kuru nane',
+      'Kaya tuzu'
+    ],
+    steps: [
+      'Pancarları kabukları ile birlikte haşla',
+      'Tamamen piştikten sonra çıkarıp soğumaya bırak',
+      'Kabuklarını soy ve rendele',
+      'Sarımsakları ezip yoğurtla karıştır',
+      'Yoğurt karışımını pancarlarla karıştır',
+      'Üzerine sızma zeytinyağı gezdir ve kuru nane serp'
+    ]
+  },
 };

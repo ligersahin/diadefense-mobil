@@ -9,9 +9,9 @@ import AppHeader from '../../src/components/AppHeader';
 import { Theme } from '../../src/config/theme';
 
 const TAB_BAR_BASE = {
-  backgroundColor: Theme.surface,
+  backgroundColor: '#FFFFFF',
   borderTopWidth: 1,
-  borderTopColor: Theme.border,
+  borderTopColor: '#E3E8E6',
   height: 60,
   paddingTop: 6,
   paddingBottom: 6,
@@ -95,6 +95,7 @@ export default function TrackingScreen() {
       <AppHeader
         title="Verilerim"
         subtitle="Günlük, haftalık ve uzun vadeli sağlık verileri"
+        showBack={true}
       />
       <ScrollView
         style={styles.scrollView}

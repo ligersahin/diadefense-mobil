@@ -124,7 +124,7 @@ export default function SettingsScreen() {
               <Ionicons name="person-outline" size={24} color="#6B7280" />
               <Text style={styles.menuItemText}>Profil</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </TouchableOpacity>
           <View style={styles.menuDivider} />
           <TouchableOpacity 
@@ -135,7 +135,7 @@ export default function SettingsScreen() {
               <Ionicons name="flag-outline" size={24} color="#6B7280" />
               <Text style={styles.menuItemText}>Hedefler</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </TouchableOpacity>
         </Card>
 
@@ -160,7 +160,7 @@ export default function SettingsScreen() {
               <Ionicons name="language-outline" size={24} color="#6B7280" />
               <Text style={styles.menuItemText}>Dil</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </TouchableOpacity>
           <View style={styles.menuDivider} />
           <View style={styles.menuItem}>
@@ -187,7 +187,7 @@ export default function SettingsScreen() {
               <Ionicons name="shield-checkmark-outline" size={24} color="#6B7280" />
               <Text style={styles.menuItemText}>Gizlilik (KVKK/GDPR)</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </TouchableOpacity>
           <View style={styles.menuDivider} />
           <TouchableOpacity 
@@ -198,7 +198,7 @@ export default function SettingsScreen() {
               <Ionicons name="lock-closed-outline" size={24} color="#6B7280" />
               <Text style={styles.menuItemText}>İzinler</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </TouchableOpacity>
           <View style={styles.menuDivider} />
           <TouchableOpacity 
@@ -209,7 +209,7 @@ export default function SettingsScreen() {
               <Ionicons name="information-circle-outline" size={24} color="#6B7280" />
               <Text style={styles.menuItemText}>Hakkında / Sürüm</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
+            <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </TouchableOpacity>
         </Card>
 

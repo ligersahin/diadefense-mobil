@@ -95,7 +95,7 @@ export default function MediaHubScreen() {
 
   return (
     <View style={styles.screen}>
-      <AppHeader title="Info Hub" subtitle="Videolar, Podcastler ve Makaleler" />
+      <AppHeader title="Info Hub" subtitle="Videolar, Podcastler ve Makaleler" showBack={true} />
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}

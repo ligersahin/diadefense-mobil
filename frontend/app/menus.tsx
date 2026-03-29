@@ -788,6 +788,56 @@ const DAY30_INFO: InfoMap = {
   ],
 };
 
+const DAY31_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda kıymalı yumurta.',
+    'Çoban salata (biber, salatalık, domates, bol sızma zeytinyağı, limon ve kekik) veya yeşil salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '4-5 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü (200 mg), magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Sebze çorbası (et suyu ve mevsim sebzeleri ile hazırlanmış).',
+    'Mevsimine göre yoğurtlu pancar salatası veya yoğurtlu semizotu salatası.',
+    'Öğle yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Kemikli etle pişirilmiş kuru fasulye.',
+    'Mevsim salatası.',
+    'Ev yoğurdu ile hazırlanmış cacık (kuru nane ve sızma zeytinyağı ile).',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY32_INFO: InfoMap = {
+  breakfast: [
+    '2 adet haşlanmış yumurta (kayısı kıvamında).',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü (200 mg), magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Yoğurt çorbası.',
+    'Zeytinyağlı taze fasulye veya zeytinyağlı pırasa (şeker ve pirinç eklenmeden).',
+    'Mevsim salata.',
+    'Öğle yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Patlıcan musakka veya kıymalı karnabahar yemeği.',
+    'Ev yoğurdu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
 function MealCard({ title, description, recipeId, infoLines, isCompleted, onToggle, thumbKey, showSupplementsAction, onSupplementsPress, supplementSummary, mealKey }: MealCardProps & { infoLines?: string[] }) {
   const [open, setOpen] = useState(false);
   const infoLinesToRender = infoLines || [];
@@ -1230,7 +1280,7 @@ export default function MenusScreen() {
             const config = DAY_INFO_BOARD[selectedDay]?.cards ?? [];
             const card = config.find((c) => c.id === activeInfoId) as DayInfoCardData | undefined;
             if (!card) return null;
-            const isRecipeInfoCard = card.id === 'menu-day-9' || card.id === 'recipe-day-13' || card.id === 'recipe-day-15' || card.id === 'recipe-day-16' || card.id === 'recipe-day-20' || card.id === 'recipe-day-21' || card.id === 'recipe-day-23' || card.id === 'recipe-day-24' || card.recipeId === 'sote-edilmis-karnabahar' || card.recipeId === 'yesil-biberli-tavuk' || card.recipeId === 'cevizli-kuru-domates-mezesi' || card.recipeId === 'terbiyeli-karalahana-corbasi' || card.recipeId === 'pirincsiz-biber-dolmasi' || card.recipeId === 'ev-yogurdu' || card.recipeId === 'yogurtlu-pirasa' || card.recipeId === 'acili-lahana-corbasi';
+            const isRecipeInfoCard = card.id === 'menu-day-9' || card.id === 'recipe-day-13' || card.id === 'recipe-day-15' || card.id === 'recipe-day-16' || card.id === 'recipe-day-20' || card.id === 'recipe-day-21' || card.id === 'recipe-day-23' || card.id === 'recipe-day-24' || card.id === 'recipe-day-31' || card.id === 'recipe-day-32' || card.recipeId === 'sote-edilmis-karnabahar' || card.recipeId === 'yesil-biberli-tavuk' || card.recipeId === 'cevizli-kuru-domates-mezesi' || card.recipeId === 'terbiyeli-karalahana-corbasi' || card.recipeId === 'pirincsiz-biber-dolmasi' || card.recipeId === 'ev-yogurdu' || card.recipeId === 'yogurtlu-pirasa' || card.recipeId === 'acili-lahana-corbasi' || card.recipeId === 'yogurtlu-pancar-salatasi' || card.recipeId === 'yogurt-corbasi';
             if (!isRecipeInfoCard && !card.contentBody) return null;
             return (
               <View style={styles.infoDetailPanel}>
@@ -1333,7 +1383,7 @@ export default function MenusScreen() {
 
         {SECTION_META.map((section) => {
           const meal = dayMenu.meals[section.key as MealKey];
-          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : selectedDay === 2 ? DAY2_INFO[section.key] : selectedDay === 3 ? DAY3_INFO[section.key] : selectedDay === 4 ? DAY4_INFO[section.key] : selectedDay === 5 ? DAY5_INFO[section.key] : selectedDay === 6 ? DAY6_INFO[section.key] : selectedDay === 7 ? DAY7_INFO[section.key] : selectedDay === 8 ? DAY8_INFO[section.key] : selectedDay === 9 ? DAY9_INFO[section.key] : selectedDay === 10 ? DAY10_INFO[section.key] : selectedDay === 11 ? DAY11_INFO[section.key] : selectedDay === 12 ? DAY12_INFO[section.key] : selectedDay === 13 ? DAY13_INFO[section.key] : selectedDay === 14 ? DAY14_INFO[section.key] : selectedDay === 15 ? DAY15_INFO[section.key] : selectedDay === 16 ? DAY16_INFO[section.key] : selectedDay === 17 ? DAY17_INFO[section.key] : selectedDay === 18 ? DAY18_INFO[section.key] : selectedDay === 19 ? DAY19_INFO[section.key] : selectedDay === 20 ? DAY20_INFO[section.key] : selectedDay === 21 ? DAY21_INFO[section.key] : selectedDay === 22 ? DAY22_INFO[section.key] : selectedDay === 23 ? DAY23_INFO[section.key] : selectedDay === 24 ? DAY24_INFO[section.key] : selectedDay === 25 ? DAY25_INFO[section.key] : selectedDay === 26 ? DAY26_INFO[section.key] : selectedDay === 27 ? DAY27_INFO[section.key] : selectedDay === 28 ? DAY28_INFO[section.key] : selectedDay === 29 ? DAY29_INFO[section.key] : selectedDay === 30 ? DAY30_INFO[section.key] : undefined;
+          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : selectedDay === 2 ? DAY2_INFO[section.key] : selectedDay === 3 ? DAY3_INFO[section.key] : selectedDay === 4 ? DAY4_INFO[section.key] : selectedDay === 5 ? DAY5_INFO[section.key] : selectedDay === 6 ? DAY6_INFO[section.key] : selectedDay === 7 ? DAY7_INFO[section.key] : selectedDay === 8 ? DAY8_INFO[section.key] : selectedDay === 9 ? DAY9_INFO[section.key] : selectedDay === 10 ? DAY10_INFO[section.key] : selectedDay === 11 ? DAY11_INFO[section.key] : selectedDay === 12 ? DAY12_INFO[section.key] : selectedDay === 13 ? DAY13_INFO[section.key] : selectedDay === 14 ? DAY14_INFO[section.key] : selectedDay === 15 ? DAY15_INFO[section.key] : selectedDay === 16 ? DAY16_INFO[section.key] : selectedDay === 17 ? DAY17_INFO[section.key] : selectedDay === 18 ? DAY18_INFO[section.key] : selectedDay === 19 ? DAY19_INFO[section.key] : selectedDay === 20 ? DAY20_INFO[section.key] : selectedDay === 21 ? DAY21_INFO[section.key] : selectedDay === 22 ? DAY22_INFO[section.key] : selectedDay === 23 ? DAY23_INFO[section.key] : selectedDay === 24 ? DAY24_INFO[section.key] : selectedDay === 25 ? DAY25_INFO[section.key] : selectedDay === 26 ? DAY26_INFO[section.key] : selectedDay === 27 ? DAY27_INFO[section.key] : selectedDay === 28 ? DAY28_INFO[section.key] : selectedDay === 29 ? DAY29_INFO[section.key] : selectedDay === 30 ? DAY30_INFO[section.key] : selectedDay === 31 ? DAY31_INFO[section.key] : selectedDay === 32 ? DAY32_INFO[section.key] : undefined;
           const isCompleted = safeCompleted.includes(section.key);
           return (
             <View key={section.key} style={styles.section}>

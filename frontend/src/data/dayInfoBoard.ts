@@ -382,4 +382,34 @@ export const DAY_INFO_BOARD: Record<number, { cards: DayInfoCardData[] }> = {
       }
     ]
   },
+  31: {
+    cards: [
+      {
+        id: 'recipe-day-31',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Yoğurtlu Pancar Salatası',
+        recipeId: 'yogurtlu-pancar-salatasi',
+        imageKey: 'yogurtlu-pancar-salatasi'
+      },
+      {
+        id: 'suggestion-day-31',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Sağlıklı Yağlar',
+        contentBody: 'Sağlıklı yağlar sizi tok tutar ve kan şekerinin dengeli seyretmesini sağlar. Düşük yağlı diyet diyabeti derinleştirebilir. Sızma zeytinyağı, tereyağı, kuyruk yağı, et, yağlı balıklar ve kuruyemişler anti-diyabet modelin temelidir. Yağlar birlikte tüketilen besinlerin glisemik etkisini düşürür.'
+      }
+    ]
+  },
+  32: {
+    cards: [
+      {
+        id: 'faq-day-32',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: 'Gerçekten sadece beslenmemi düzenleyerek iyileşebilir miyim?',
+        contentBody: '• Gluten ve basit karbonhidratları çıkardığınızda kısa sürede kendinizi daha iyi hissedersiniz.\n• Kan şekeri dengelenmeye başlar.\n• Tip 2 diyabet doğru beslenme ve hareketle ciddi şekilde iyileşebilir.\n• İlaçlar tek başına çözüm değildir, yaşam tarzı değişimi şarttır.'
+      }
+    ]
+  },
 };
