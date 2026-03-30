@@ -854,4 +854,211 @@ export const RECIPES = {
       'Üzerine sızma zeytinyağı gezdir ve kuru nane serp'
     ]
   },
+  'dovmec': {
+    id: 'dovmec',
+    title: 'Dövmeç',
+    imageKey: 'dovmec',
+    description:
+      'Adıyaman’da kahvaltıda da tüketilen, et, tavuk ve balığın yanına çok yakışan köz sebze yemeği.',
+    ingredients: [
+      '1 kg patlıcan',
+      '4 orta boy domates',
+      '6-8 adet yeşilbiber',
+      '10 diş sarımsak',
+      '6 yemek kaşığı sızma zeytinyağı',
+      '1 çay kaşığı kaya tuzu'
+    ],
+    steps: [
+      'Patlıcan, domates ve biberleri tepsiye yerleştirip 180° ısıtılmış fırında közleyin. Patlıcan ve domateslere birkaç ufak delik açın.',
+      'Sebzeler iyice közlenince fırından çıkarın, kabuklarını soyup yıkayın.',
+      'Kararmamaları için birkaç damla limon sıkın.',
+      'Sarımsağı dövün.',
+      'Patlıcan, domates ve biberleri dövülmüş sarımsakla birlikte çatalla iyice ezin.',
+      'İçine zeytinyağı ve kaya tuzu ekleyin.',
+      'Karışımı ısıya dayanıklı kaba alıp 180° fırında 10-15 dakika pişirin.',
+      'Afiyet olsun.'
+    ],
+    notes:
+      'Adıyaman’da kahvaltıda yenen bu yemek, özellikle et, tavuk ve balığın yanına çok yakışır.',
+  },
+  'cevizli-lahana-salatasi': {
+    id: 'cevizli-lahana-salatasi',
+    title: 'Cevizli Lahana Salatası',
+    imageKey: 'cevizli-lahana-salatasi',
+    ingredients: [
+      '1/2 beyaz lahana',
+      '1 su bardağı ceviz içi',
+      '1-1,5 su bardağı ev yoğurdu',
+      'Kaya tuzu',
+      'Sızma zeytinyağı',
+      '1/2 limonun suyu',
+      '1 diş sarımsak'
+    ],
+    steps: [
+      'Lahanayı ince ince kıyıp tuzla ovun.',
+      'Sarımsağı dövüp yoğurtla karıştırın.',
+      'Karışımı lahananın üstüne dökün.',
+      'Ceviz, zeytinyağı ve limon suyunu ekleyip karıştırın.',
+      'İsteğe göre dereotu eklenebilir.'
+    ],
+    description: 'Ceviz ve yoğurtla zenginleştirilmiş, düşük glisemik indeksli lahana salatası.',
+  },
+  'bobrek-sote': {
+    id: 'bobrek-sote',
+    title: 'Böbrek Sote',
+    imageKey: 'bobrek-sote',
+    ingredients: [
+      '500 gr kuzu böbrek',
+      '2 yemek kaşığı tereyağı',
+      '1 adet büyük kuru soğan',
+      '2 adet yeşil biber',
+      '2 diş sarımsak',
+      'Kaya tuzu',
+      'Karabiber',
+      'Kimyon'
+    ],
+    steps: [
+      'Böbrekleri zarlarından temizleyip küçük küpler halinde doğrayın.',
+      'Tavada tereyağını eritip ince doğranmış soğanı kavurun.',
+      'Biber ve sarımsağı ekleyip kısa süre soteleyin.',
+      'Böbrekleri ekleyip yüksek ateşte suyunu salıp çekene kadar pişirin.',
+      'Kaya tuzu, karabiber ve kimyonla tatlandırın.',
+      'Sıcak servis edin.'
+    ],
+    description: 'Protein açısından güçlü, düşük karbonhidratlı sıcak ana yemek.',
+  },
+  'sarimsakli-et-suyu-corbasi': {
+    id: 'sarimsakli-et-suyu-corbasi',
+    title: 'Sarımsaklı Et Suyu Çorbası',
+    imageKey: 'sarimsakli-et-suyu-corbasi',
+    ingredients: [
+      '6-7 adet kuşbaşı et (haşlanmış)',
+      '5 su bardağı et suyu',
+      '2 su bardağı ev yoğurdu',
+      '1 adet yumurta',
+      '2 diş sarımsak',
+      'Kaya tuzu',
+      '3 çorba kaşığı tereyağı'
+    ],
+    steps: [
+      'Et suyunu kaynatın.',
+      'Yoğurt ve yumurtayı bir kapta pürüzsüz olana kadar karıştırın.',
+      'Kaynayan et suyundan biraz alıp terbiyeye ekleyerek ılıştırın.',
+      'Karışımı yavaş yavaş çorbaya ekleyin ve sürekli karıştırarak kaynatın.',
+      'Kaynadıktan sonra altını kısın, doğranmış etleri ve dövülmüş sarımsağı ekleyin.',
+      'Ayrı bir tavada tereyağını eritip pul biber ve nane ile sos hazırlayın.',
+      'Sosu çorbaya ekleyip kısa süre kaynatın.'
+    ],
+    description: 'Yoğurt terbiyesi ve sarımsakla güçlendirilmiş geleneksel et suyu çorbası.',
+  },
+  'tavuk-sote': {
+    id: 'tavuk-sote',
+    title: 'Tavuk Sote',
+    imageKey: 'tavuk-sote',
+    ingredients: [
+      '6 adet tavuk but',
+      '2 tatlı kaşığı kimyon',
+      '1 tatlı kaşığı kırmızı pul biber',
+      '5 diş sarımsak',
+      '2 adet kuru soğan',
+      '4 yemek kaşığı sızma zeytinyağı',
+      '2 adet közlenmiş biber',
+      '1/2 su bardağı tavuk suyu',
+      'Kaya tuzu ve karabiber'
+    ],
+    steps: [
+      'Sarımsakları ayıklayıp ince ince doğrayın.',
+      'Önceden közlediğiniz biberlerin kabuklarını soyun ve şerit şeklinde kesin.',
+      'Kuru soğanı doğrayın.',
+      'Tavuk butlarının her birini eşit dört parça olacak şekilde kesin.',
+      'Tüm bu malzemeleri bir kenara ayırıp sosu hazırlamaya başlayın.',
+      'Yayvan bir çanağa ince doğranmış sarımsakları, sızma zeytinyağını, kimyon, kırmızı pul biber, tuz ve karabiberi koyup iyice karıştırın.',
+      'Tavukları bu sosa yatırıp bir güzel harmanlayın.',
+      'Bir saat kadar dinlenmeye bırakın.',
+      'Yayvan bir tencerede zeytinyağını kızdırın, kuru soğanları ilave edin.',
+      'Soğanlar pembeleşince içine közlenmiş biberleri, tavuk suyunu ekleyin.',
+      'Kaya tuzu ve karabiberle çeşnilendirip bir taşım kaynatın.',
+      'Sosta beklettiğiniz tavukları kızgın bir tavada kızartın.',
+      'Tavukları servis tabağına alın ve üstüne közlenmiş biberli harcı dökün.',
+      'Afiyet olsun.'
+    ],
+    description: 'Baharatlı marinasyonla hazırlanan, protein odaklı ana yemek.',
+  },
+  'sebze-turlusu': {
+    id: 'sebze-turlusu',
+    title: 'Sebze Türlüsü',
+    imageKey: 'sebze-turlusu',
+    ingredients: [
+      '2 adet kabak',
+      '2 adet patlıcan',
+      '3-4 adet çarliston biber',
+      '1 adet orta boy soğan',
+      '2-3 diş sarımsak',
+      '2-3 adet domates',
+      '1 yemek kaşığı domates salçası',
+      '3 yemek kaşığı sızma zeytinyağı',
+      '1 bardak su',
+      '200 gr rendelenmiş kaşar peyniri',
+      'Kaya tuzu',
+      'Karabiber'
+    ],
+    steps: [
+      'Tüm sebzeleri irice doğrayın ve fırın tepsisine koyun.',
+      'Ayrı bir kâsede domates salçası, zeytinyağı, tuz, karabiber ve suyu karıştırın, sebzelerin üzerine dökün ve harmanlayın.',
+      'Tuz, karabiber ilave edip hepsini fırın kabına alın.',
+      'Önceden 180 derece ısıtılmış fırına verin ve ara ara karıştırarak 40-45 dakika pişirin.',
+      'Tepsiyi fırından çıkarmaya 15 dakika kala üzerine kaşar peynirini serpin.',
+      '15 dakika daha ya da peynir eriyip rengi dönünceye kadar pişirin.',
+      'Afiyet olsun.'
+    ],
+    description: 'Kaşar peynirli, fırında pişen düşük glisemik sebze yemeği.',
+  },
+  'sevket-i-bostan': {
+    id: 'sevket-i-bostan',
+    title: 'Şevket-i Bostan',
+    imageKey: 'sevket-i-bostan',
+    ingredients: [
+      '1/2 kg şevket-i bostan',
+      '200 gram kuşbaşı kuzu eti',
+      '1 kuru soğan',
+      '2-3 diş sarımsak',
+      '2 yemek kaşığı sızma zeytinyağı',
+      'Kaya tuzu',
+      'Karabiber'
+    ],
+    steps: [
+      'Şevket-i bostanı iyice yıkayıp süzün.',
+      'Tencereye zeytinyağını koyup kuzu etini suyunu çekene kadar kavurun.',
+      'Doğranmış soğan ve sarımsağı ekleyip kavurmaya devam edin.',
+      'Şevket-i bostanı ekleyin, tuz ve karabiberle çeşnilendirin.',
+      'Kapağını kapatıp ot suyunu salana kadar 5-10 dakika pişirin.',
+      'Üzerini geçecek kadar sıcak su ekleyin.',
+      'Kısık ateşte tüm malzemeler yumuşayana kadar pişirin.'
+    ],
+    description: 'Kuzu etiyle pişirilen geleneksel ve besleyici bir Ege yemeği.',
+  },
+  'taze-soganli-biftek': {
+    id: 'taze-soganli-biftek',
+    title: 'Taze Soğanlı Biftek',
+    imageKey: 'taze-soganli-biftek',
+    ingredients: [
+      '1/2 kilo biftek',
+      '1/2 su bardağı zeytinyağı',
+      '7-8 adet taze soğan',
+      '1/2 demet dereotu',
+      '1 yemek kaşığı limon suyu',
+      '1.5 su bardağı su',
+      '1 tatlı kaşığı tereyağı',
+      'Kaya tuzu',
+      'Karabiber'
+    ],
+    steps: [
+      'Zeytinyağında biftekleri mühürleyin.',
+      'Su, tereyağı, tuz ve karabiber ekleyin.',
+      'Taze soğanları doğrayın.',
+      'Pişmeye yakın taze soğanları ekleyin.',
+      'Biftekler yumuşayınca dereotunu ekleyin.',
+      '2-3 dakika daha pişirin.'
+    ]
+  },
 };

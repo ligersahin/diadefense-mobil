@@ -412,4 +412,89 @@ export const DAY_INFO_BOARD: Record<number, { cards: DayInfoCardData[] }> = {
       }
     ]
   },
+  33: {
+    cards: [
+      {
+        id: 'suggestion-day-33',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Günün Önerisi: Ispanak',
+        contentBody: '• Ispanak potasyum ve magnezyum açısından zengindir.\n• Muzdan daha fazla potasyum içerir.\n• Diyabet riskini azaltmaya yardımcı olur.\n• Salata, yemek ve garnitür olarak tüketilebilir.'
+      }
+    ]
+  },
+  34: {
+    cards: [
+      {
+        id: 'faq-day-34',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Şirden mayasıyla yapılmış peynir veriyorsunuz. Nedir bu şirden mayası?”',
+        contentBody: 'Peynirin faydalı bir probiyotik kaynağı olabilmesi için şirden mayasıyla mayalanması gerekir. Bazı yörelerde kursak mayası da denen bu yöntemi kısaca anlatmak istiyorum. Şirden, hayvanın sindirim organlarından bir bölümdür ve probiyotik bakteriler içerir. Oğlak ya da dana kesilir, şirdeni kurutulur, suya yatırılır, maya haline getirilir. İşte bu mayayla da peynir mayalanır. Marketlerde satılan peynirlerde ise hazır maya kullanılır.'
+      }
+    ]
+  },
+  35: {
+    cards: [
+      {
+        id: 'warning-day-35',
+        title: 'Dikkat Okuyunuz',
+        variant: 'red',
+        contentTitle: 'Aman Dikkat',
+        contentBody: 'Diyabet ilacı kullanan hastalarda ani kan düşmeleri görülebilir. Hipoglisemi ataklarına karşı yanınızda hep bir kesme şeker bulundurun.'
+      }
+    ]
+  },
+  36: {
+    cards: [
+      {
+        id: 'faq-day-36',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: 'Diyabet ailemde var. Genetik kaderimi değiştiremem ki!',
+        contentBody: 'Eğer diyabet genetikse neden eskiden sadece yaşlılarda görülen bir hastalık artık çocukları bile tehdit eder oldu? Diyabet genetikse neden son 70 yıldır son derece dik bir ivmeyle tırmanışa geçti? Bugün toplumun yarısı diyabet hastası geri kalan diğer yarısı da diyabet yolcusu ise bunun suçunu genetik kaderimizde değil beslenme modelimizde aramalıyız. Diyabete genetik bir eğiliminiz olabilir ama asıl önemli olan nasıl beslendiğinizdir. Yani siz doğru beslenir, hareket ederseniz diyabet yeşerecek toprak bulamaz. Bir de yetiştiğiniz ailenin beslenme alışkanlıklarını benimsediğinizi unutmayın. Sofrasında baklava, börek, çörek, mantı eksik olmayan bir ailenin nesilden nesile aktardığı bu beslenme modeli, dedenin de torunun da diyabet hastası olması anlamına gelir.'
+      }
+    ]
+  },
+  37: {
+    cards: [
+      {
+        id: 'recipe-day-37',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Cevizli Lahana Salatası',
+        recipeId: 'cevizli-lahana-salatasi',
+        imageKey: 'cevizli-lahana-salatasi'
+      },
+      {
+        id: 'ginger-day-37',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Zencefil',
+        contentBody: 'Zencefil kan şekerini dengelemeye yardımcı olabilir. Anti-enflamatuar etkisi sayesinde metabolik süreçleri destekler. Et, tavuk ve balık yemeklerinde kullanılabilir, ayrıca çay olarak da tüketilebilir.'
+      }
+    ]
+  },
+  38: {
+    cards: [
+      {
+        id: 'faq-day-38',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Mısır özü yağı, çiçek yağı sağlıklı yağlardır. Bu beslenme modelinde neden yoklar?”',
+        contentBody: 'Bu yağlar bitkisel orijinli oldukları için insanlarda sanki sağlıklıymış gibi bir algı yaratırlar. Ancak vücut bu yağları doğal haliyle tanımaz. Yağlar bitkiden ayrıştırılırken yüksek ısı ve kimyasal işlemlerden geçer ve bu süreçte zararlı hale gelebilir. Bu nedenle bu yağlar damar sağlığını olumsuz etkileyebilir ve diyabeti derinleştirebilir. Bu beslenme modelinde bu tür işlenmiş yağlara yer verilmez.'
+      }
+    ]
+  },
+  40: {
+    cards: [
+      {
+        id: 'faq-day-40',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: 'Diyet kola içebilir miyim değil mi?',
+        contentBody: 'Kesinlikle hayır! Yukarıda neden çayınıza, kahvenize tatlandırıcı katmamanız gerektiğini anlattım. Söylediklerim gazlı diyet içecekler için de geçerli. Öncelikle sağlıklı bir beslenme modelinde içi kimyasallarla, zehirle dolu gazlı içeceklerin, hele hele içine tatlandırıcı eklenmiş “diyet” versiyonlarının kesinlikle yeri yoktur! Diyet içeceklerin zayıflatmak şöyle dursun daha da kilo aldırdığını, diyabeti derinleştirdiğini gösteren pek çok araştırma var. Kanserden Alzheimer’a tatlandırıcılarla ilişkilendirilen tüm sağlık sorunları diyet içecekler için de geçerli. Bu sene yayınlanan bir araştırmaya göre diyet içecekler inme ve demans (bunama) riskini üçe katlıyor!'
+      }
+    ]
+  },
 };

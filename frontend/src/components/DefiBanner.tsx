@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable, Animated, Easing } from 'react-native';
 import { hideDefiForToday } from '../defi/defiVisibility';
 
 type DefiMessage = {
@@ -23,23 +23,62 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [displayBody, setDisplayBody] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const lastRunAtRef = useRef(0);
   const typingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pulse = useRef(new Animated.Value(0)).current;
+  const pulseLoopRef = useRef<Animated.CompositeAnimation | null>(null);
   const firstVisibleDoneRef = useRef(false);
   const prevBodyRef = useRef<string | null>(null);
 
   const stopTyping = useCallback(() => {
     if (typingTimerRef.current) clearInterval(typingTimerRef.current);
     typingTimerRef.current = null;
+    setIsTyping(false);
   }, []);
 
+  const stopPulse = useCallback(() => {
+    pulseLoopRef.current?.stop();
+    pulseLoopRef.current = null;
+    pulse.stopAnimation(() => {
+      pulse.setValue(0);
+    });
+  }, [pulse]);
+
+  const startPulse = useCallback(() => {
+    if (pulseLoopRef.current) return;
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: 700,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0,
+          duration: 700,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    pulseLoopRef.current = loop;
+    loop.start();
+  }, [pulse]);
+
   const startTypewriter = useCallback((reason: 'first-visible' | 'idle-60s' | 'tap' | 'message-change') => {
-    if (!message?.body) { setDisplayBody(''); return; }
+    if (!message?.body) {
+      setDisplayBody('');
+      setIsTyping(false);
+      return;
+    }
     const now = Date.now();
     const isCooldownReason = reason === 'tap' || reason === 'idle-60s';
     if (isCooldownReason && now - lastRunAtRef.current < 12000) return;
     stopTyping();
     setDisplayBody('');
+    setIsTyping(true);
     const full = message.body;
     const total = full.length;
     const targetMs = Math.min(1600, Math.max(900, total * 25));
@@ -52,6 +91,14 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
     }, perChar);
     lastRunAtRef.current = now;
   }, [message?.body, stopTyping]);
+
+  useEffect(() => {
+    if (isTyping) {
+      startPulse();
+      return;
+    }
+    stopPulse();
+  }, [isTyping, startPulse, stopPulse]);
 
   // first visible (once)
   useEffect(() => {
@@ -82,9 +129,22 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
   }, [enableTypewriter, message?.body, startTypewriter]);
 
   // cleanup on unmount
-  useEffect(() => () => stopTyping(), [stopTyping]);
+  useEffect(() => () => {
+    stopTyping();
+    stopPulse();
+  }, [stopTyping, stopPulse]);
 
   if (!message || hidden) return null;
+
+  const dotScale = pulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.85, 1.15],
+  });
+
+  const dotOpacity = pulse.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.5, 1],
+  });
 
   const handleHideForToday = async () => {
     if (!todayISO) return;
@@ -99,7 +159,22 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
         onPress={() => setOpen((prev) => !prev)}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
       >
-        <Text style={styles.title}>{message.title}</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{message.title}</Text>
+          <View style={styles.dotSlot}>
+            {isTyping ? (
+              <Animated.View
+                style={[
+                  styles.thinkingDot,
+                  {
+                    transform: [{ scale: dotScale }],
+                    opacity: dotOpacity,
+                  },
+                ]}
+              />
+            ) : null}
+          </View>
+        </View>
         <Text style={styles.body}>{enableTypewriter ? displayBody : message.body}</Text>
       </Pressable>
 
@@ -149,6 +224,23 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#0F172A',
     marginBottom: 6
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dotSlot: {
+    width: 12,
+    height: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  thinkingDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#1A1A1A',
   },
   body: {
     fontSize: 14,

@@ -4,7 +4,7 @@ import { Stack, useLocalSearchParams, router } from 'expo-router';
 import AppHeader from '../../src/components/AppHeader';
 import { Card } from '../../src/components/Card';
 import { RECIPES } from '../../src/data/recipes';
-import { getRecipeImage } from '../../src/assets/recipeImages';
+import { getRecipeImageOrNull } from '../../src/assets/recipeImages';
 
 export default function RecipeDetailScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -32,15 +32,8 @@ export default function RecipeDetailScreen() {
         ) : (
           <View style={styles.content}>
             {(() => {
-              const img = getRecipeImage(recipe.imageKey ?? recipe.heroImageKey ?? null);
-              return img ? (
-                <Image source={img} style={styles.heroImage} resizeMode="cover" />
-              ) : (
-                <View style={styles.heroPlaceholder}>
-                  <Text style={styles.heroEmoji}>🛡️</Text>
-                  <Text style={styles.heroPlaceholderText}>Görsel yakında</Text>
-                </View>
-              );
+              const img = getRecipeImageOrNull(recipe.imageKey ?? recipe.heroImageKey ?? null);
+              return img ? <Image source={img} style={styles.heroImage} resizeMode="cover" /> : null;
             })()}
             {ingredients.length > 0 ? (
               <Card style={styles.sectionCard}>

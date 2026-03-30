@@ -112,6 +112,10 @@ export default function TabLayout() {
         options={{ href: null }}
       />
       <Tabs.Screen
+        name="today"
+        options={{ href: null }}
+      />
+      <Tabs.Screen
         name="supplements"
         options={{ href: null }}
       />

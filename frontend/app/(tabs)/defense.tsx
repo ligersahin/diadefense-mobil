@@ -296,7 +296,7 @@ export default function DefensePanelScreen() {
             />
             <Text style={styles.ringTitle}>Su</Text>
             <TouchableOpacity
-              onPress={() => router.push({ pathname: '/', params: { focus: 'water' } })}
+              onPress={() => router.push({ pathname: '/(tabs)', params: { focus: 'water' } })}
               activeOpacity={0.75}
               accessibilityRole="button"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -314,7 +314,7 @@ export default function DefensePanelScreen() {
             />
             <Text style={styles.ringTitle}>Aktivite</Text>
             <TouchableOpacity
-              onPress={() => router.push({ pathname: '/', params: { focus: 'activity' } })}
+              onPress={() => router.push({ pathname: '/(tabs)', params: { focus: 'activity' } })}
               activeOpacity={0.75}
               accessibilityRole="button"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -327,7 +327,7 @@ export default function DefensePanelScreen() {
             <ProgressCircle progress={sleepRatio} size={64} strokeWidth={6} color="#6366F1" />
             <Text style={styles.ringTitle}>Uyku</Text>
             <TouchableOpacity
-              onPress={() => router.push({ pathname: '/', params: { focus: 'sleep' } })}
+              onPress={() => router.push({ pathname: '/(tabs)', params: { focus: 'activity' } })}
               activeOpacity={0.75}
               accessibilityRole="button"
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

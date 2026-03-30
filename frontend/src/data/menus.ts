@@ -1935,6 +1935,557 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
     };
   }
 
+  if (day === 33) {
+    return {
+      day,
+      dayTitle: 'Gün 33 — Doğal Güç: Ispanak',
+      daySummary: 'Ispanak ve dengeli protein kaynaklarıyla doğal gücü destekleme günü.',
+      metabolicLine: 'Düşük glisemik yük ve mineral zengini öğünler dengeyi destekler.',
+      defenseFocus: 'Mineral ve Denge',
+      focusTag: 'Doğal Güç',
+      heroImageKey: 'terbiyeli-tavuk-suyu-corbasi',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Yumurta',
+          description:
+            'Sahanda yumurta (2 adet, bol tereyağı), kaşar/beyaz/tulum peyniri (şirden mayalı), yeşil salata veya çoban salata, 10-15 adet siyah ya da yeşil zeytin, 7-8 adet çiğ fındık veya badem ve şekersiz çay/yeşil çay/Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Tereyağı',
+            'Kaşar / beyaz / tulum peyniri',
+            'Yeşil salata veya çoban salata malzemeleri',
+            'Siyah veya yeşil zeytin',
+            'Çiğ fındık veya badem',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Terbiyeli Tavuk Suyu Çorbası',
+          description:
+            'Terbiyeli tavuk suyu çorbası, tulum peynirli ve cevizli ıspanak salatası veya çoban salata, ev yoğurdu.',
+          recipeId: 'terbiyeli-tavuk-suyu-corbasi',
+          shoppingItems: [
+            'Tavuk suyu',
+            'Yumurta sarısı',
+            'Limon',
+            'Tulum peyniri',
+            'Ceviz',
+            'Ispanak veya çoban salata malzemeleri',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'terbiyeli-tavuk-suyu-corbasi',
+        },
+        dinner: {
+          title: 'Sardalye / Hamsi / Somon',
+          description:
+            'Sardalye, hamsi veya somon (ızgara ya da buğulama), mevsim salatası.',
+          recipeId: null,
+          shoppingItems: [
+            'Sardalye veya hamsi veya somon',
+            'Mevsim salatası malzemeleri',
+          ],
+          imageKey: 'dinner-default',
+        },
+      },
+    };
+  }
+
+  if (day === 34) {
+    return {
+      day,
+      dayTitle: 'Gün 34 — Taze Soğanlı Biftek',
+      daySummary: 'Protein ve yeşil sebze dengesini koruyarak metabolik ritmi destekleme günü.',
+      metabolicLine: 'Düşük glisemik yük ve dengeli yağ/protein kombinasyonu ile stabilite korunur.',
+      defenseFocus: 'Protein ve Denge',
+      focusTag: 'Doğal Güç',
+      heroImageKey: 'taze-soganli-biftek',
+      meals: {
+        breakfast: {
+          title: 'Kavurmalı Yumurta',
+          description:
+            'Kavurmalı yumurta, mevsim salata, peynir çeşitleri, 10-15 zeytin, 5-6 ceviz ve şekersiz içecekler.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Kavurma',
+            'Mevsim salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Domates Çorbası',
+          description:
+            'Domates çorbası, börülce salatası veya kırmızı lahana salatası ve yoğurt.',
+          recipeId: 'domates-corbasi',
+          shoppingItems: [
+            'Domates çorbası malzemeleri',
+            'Börülce veya kırmızı lahana',
+            'Yoğurt',
+          ],
+          imageKey: 'domates-corbasi',
+        },
+        dinner: {
+          title: 'Taze Soğanlı Biftek',
+          description:
+            'Taze soğanlı biftek, çoban salata veya karnabahar salatası.',
+          recipeId: null,
+          shoppingItems: [
+            'Biftek',
+            'Zeytinyağı',
+            'Taze soğan',
+            'Dereotu',
+            'Limon',
+            'Tereyağı',
+            'Kaya tuzu',
+            'Karabiber',
+            'Çoban salata veya karnabahar salatası malzemeleri',
+          ],
+          imageKey: 'taze-soganli-biftek',
+        },
+      },
+    };
+  }
+
+  if (day === 35) {
+    return {
+      day,
+      dayTitle: 'Gün 35 — Otuz beşinci gün',
+      daySummary: 'Mineral ve protein dengesiyle metabolik istikrarı koruma günü.',
+      metabolicLine: 'Düşük glisemik yük ve dengeli öğün yapısı kan şekeri stabilitesini destekler.',
+      defenseFocus: 'Denge ve Güç',
+      focusTag: 'Doğal Güç: Ispanak',
+      heroImageKey: 'dovmec',
+      meals: {
+        breakfast: {
+          title: 'Omlet',
+          description:
+            'Omlet (iki yumurta), mevsim salatası, kaşar/beyaz/tulum peyniri (şirden mayalı), 10-15 siyah ya da yeşil zeytin, 10-15 çiğ fındık ya da badem, şekersiz çay/yeşil çay/sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mevsim salatası malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Siyah veya yeşil zeytin',
+            'Çiğ fındık veya badem',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Sebzeli Paça Çorbası',
+          description:
+            'Sebzeli paça çorbası, fırında kabak mücver (tarif için sayfa 268’e bakınız) ya da fırında peynirli mantar, ev yoğurdu veya ev yoğurdu ile hazırlanmış ayran.',
+          recipeId: 'sebzeli-paca-corbasi',
+          shoppingItems: [
+            'Paça suyu',
+            'Düşük glisemik sebzeler',
+            'Kabak mücver veya peynirli mantar malzemeleri',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'sebzeli-paca-corbasi',
+        },
+        dinner: {
+          title: 'Çeşnili Tavuk Izgara + Dövmeç',
+          description:
+            'Çeşnili tavuk ızgara (fileto göğüs eti; biberiye, kekik, 1 tatlı kaşığı limon suyu, dövülmüş sarımsak ile 2-3 saat marine edilip tavada kızartılır), dövmeç ve çoban salata ya da mevsim salata.',
+          recipeId: 'dovmec',
+          shoppingItems: [
+            'Tavuk göğsü',
+            'Biberiye',
+            'Kekik',
+            'Limon',
+            'Sarımsak',
+            'Dövmeç malzemeleri',
+            'Çoban salata veya mevsim salata malzemeleri',
+          ],
+          imageKey: 'dovmec',
+        },
+      },
+    };
+  }
+
+  if (day === 36) {
+    return {
+      day,
+      dayTitle: 'Gün 36 — Otuz altıncı gün',
+      daySummary: 'Protein, sağlıklı yağ ve sebze dengesiyle metabolik ritmi sürdürme günü.',
+      metabolicLine: 'Düşük glisemik yük ve düzenli öğün akışı şeker dengesini destekler.',
+      defenseFocus: 'Denge ve Süreklilik',
+      focusTag: 'Otuz altıncı gün',
+      heroImageKey: 'bobrek-sote',
+      meals: {
+        breakfast: {
+          title: 'Pastırma Tabağı',
+          description:
+            'Pastırma, avokado ya da mevsim salatası, peynir, zeytin, ceviz ve şekersiz çay/yeşil çay/Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Pastırma',
+            'Avokado veya mevsim salatası malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Menemen',
+          description:
+            'Menemen, mevsim salatası, kuruyemiş ve tarçınlı yoğurt.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Domates',
+            'Biber',
+            'Mevsim salatası malzemeleri',
+            'Kuruyemiş',
+            'Tarçın',
+            'Yoğurt',
+          ],
+          imageKey: 'lunch-default',
+        },
+        dinner: {
+          title: 'Böbrek Sote',
+          description:
+            'Böbrek sote ve kök salata ya da çoban salata.',
+          recipeId: 'bobrek-sote',
+          shoppingItems: [
+            'Kuzu böbrek',
+            'Soğan',
+            'Biber',
+            'Sarımsak',
+            'Tereyağı',
+            'Kök salata veya çoban salata malzemeleri',
+          ],
+          imageKey: 'bobrek-sote',
+        },
+      },
+    };
+  }
+
+  if (day === 37) {
+    return {
+      day,
+      dayTitle: 'Gün 37 — Otuz yedinci gün',
+      daySummary: 'Dengeli protein ve sağlıklı yağlarla metabolik istikrarı sürdürme günü.',
+      metabolicLine: 'Düşük glisemik yük ve anti-inflamatuar içerikler kan şekeri dengesini destekler.',
+      defenseFocus: 'Denge ve Stabilite',
+      focusTag: 'Otuz yedinci gün',
+      heroImageKey: 'cevizli-lahana-salatasi',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Sucuklu Yumurta',
+          description:
+            'Sahanda sucuklu yumurta, mevsim salata, peynir, zeytin, badem veya fındık ve şekersiz çay/yeşil çay/Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Sucuk',
+            'Mevsim salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Badem veya fındık',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'İşkembe Çorbası',
+          description:
+            'İşkembe çorbası ve cevizli beyaz lahana salatası.',
+          recipeId: 'cevizli-lahana-salatasi',
+          shoppingItems: [
+            'İşkembe çorbası malzemeleri',
+            'Beyaz lahana',
+            'Ceviz',
+            'Ev yoğurdu',
+            'Limon',
+            'Sarımsak',
+          ],
+          imageKey: 'cevizli-lahana-salatasi',
+        },
+        dinner: {
+          title: 'Zencefilli Somon Izgara',
+          description:
+            'Zencefilli somon ızgara, tereyağında sebze ve mevsim salata.',
+          recipeId: null,
+          shoppingItems: [
+            'Somon',
+            'Taze zencefil',
+            'Tereyağı',
+            'Mevsim sebzeleri',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'dinner-default',
+        },
+      },
+    };
+  }
+
+  if (day === 38) {
+    return {
+      day,
+      dayTitle: 'Gün 38 — Otuz sekizinci gün',
+      daySummary: 'Dengeli protein ve fermente destekle metabolik istikrarı sürdürme günü.',
+      metabolicLine: 'Düşük glisemik yük ve düzenli öğün akışı kan şekeri dengesini destekler.',
+      defenseFocus: 'Denge ve Süreklilik',
+      focusTag: 'Otuz sekizinci gün',
+      heroImageKey: 'sarimsakli-et-suyu-corbasi',
+      meals: {
+        breakfast: {
+          title: 'Yumurta Dolması',
+          description:
+            'Yumurta dolması (2 adet), mevsim salata, peynir, zeytin, ceviz ve şekersiz çay/yeşil çay/Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mevsim salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Sarımsaklı Et Suyu Çorbası',
+          description:
+            'Sarımsaklı et suyu çorbası, zeytinyağlı pırasa veya bamya ve mevsim salata.',
+          recipeId: 'sarimsakli-et-suyu-corbasi',
+          shoppingItems: [
+            'Et suyu',
+            'Kuşbaşı et',
+            'Ev yoğurdu',
+            'Yumurta',
+            'Sarımsak',
+            'Tereyağı',
+            'Zeytinyağlı pırasa veya bamya',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'sarimsakli-et-suyu-corbasi',
+        },
+        dinner: {
+          title: 'Etli Nohut',
+          description:
+            'Kemikli etle hazırlanmış etli nohut, cacık ve ev turşusu.',
+          recipeId: null,
+          shoppingItems: [
+            'Kemikli et',
+            'Nohut',
+            'Yoğurt',
+            'Salatalık',
+            'Ev turşusu',
+          ],
+          imageKey: 'dinner-default',
+        },
+      },
+    };
+  }
+
+  if (day === 39) {
+    return {
+      day,
+      dayTitle: 'Gün 39 — Otuz dokuzuncu gün',
+      daySummary: 'Düşük glisemik yükle sürdürülebilir beslenme düzenini devam ettirme günü.',
+      metabolicLine: 'Protein ve sağlıklı yağ dengesiyle glisemik dalgalanmaları sınırlama.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Otuz dokuzuncu gün',
+      heroImageKey: 'tavuk-sote',
+      meals: {
+        breakfast: {
+          title: 'Kahvaltı',
+          description:
+            'Pastırma, geleneksel yöntemlerle hazırlanmış pastırmaları tercih edin. Mevsim salata. Kaşar, beyaz ya da tulum peyniri, peynir şirden mayası ile hazırlanmış olmalı. 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ badem ya da fındık. Şekersiz çay, yeşil çay ya da sade Türk kahvesi. Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü. Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'Pastırma',
+            'Mevsim salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Çiğ badem veya fındık',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Öğlen',
+          description:
+            'Mantarlı omlet. Çoban salatası ya da roka, maydanoz, taze soğan, taze nane ile hazırlanmış yeşil salata. Bir bardak kefir kokteyli - kefir, öğütülmüş keten tohumu, taze nane ya da kuru nane ile hazırlanmış. Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mantar',
+            'Çoban salata veya yeşil salata malzemeleri',
+            'Kefir',
+            'Öğütülmüş keten tohumu',
+            'Taze veya kuru nane',
+          ],
+          imageKey: 'lunch-default',
+        },
+        dinner: {
+          title: 'Akşam',
+          description:
+            'Tavuk sote. Mevsim salatası. Cacık, kuru nane ve sızma zeytinyağı ile çeşnilendirin. Ev turşusu. Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü. Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+          recipeId: 'tavuk-sote',
+          shoppingItems: [
+            'Tavuk but',
+            'Sarımsak',
+            'Kuru soğan',
+            'Közlenmiş biber',
+            'Zeytinyağı',
+            'Mevsim salata malzemeleri',
+            'Yoğurt',
+            'Salatalık',
+            'Kuru nane',
+            'Ev turşusu',
+          ],
+          imageKey: 'tavuk-sote',
+        },
+      },
+    };
+  }
+
+  if (day === 40) {
+    return {
+      day,
+      dayTitle: 'Gün 40 — Kırkıncı gün',
+      daySummary: 'Protein, fermente besinler ve düşük glisemik sebze dengesiyle devam günü.',
+      metabolicLine: 'Düzenli öğün ritmi ve sağlıklı yağlarla glisemik denge korunur.',
+      defenseFocus: 'Denge ve Süreklilik',
+      focusTag: 'Kırkıncı gün',
+      heroImageKey: 'sebze-turlusu',
+      meals: {
+        breakfast: {
+          title: 'Peynirli Menemen',
+          description:
+            'Peynirli menemen (iki yumurta ile hazırlanmış), yeşil salata ya da çoban salata (biber, salatalık, domates, bol sızma zeytinyağı, limon ve kekikle hazırlanmış), 10-15 adet siyah ya da yeşil zeytin, 5-6 adet ceviz ve şekersiz çay/yeşil çay/sade Türk kahvesi. Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü ve zeytin yaprağı kapsülü, 1 saat sonra krill yağı kapsülü ve 200 mg magnezyum.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Peynir',
+            'Biber',
+            'Domates',
+            'Salatalık',
+            'Yeşillik',
+            'Zeytin',
+            'Ceviz',
+            'Zeytinyağı',
+            'Limon',
+            'Kekik',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Terbiyeli Tavuk Suyu Çorbası + Kaşar Peynirli Sebze Türlüsü',
+          description:
+            'Terbiyeli tavuk suyu çorbası (tavuk suyunu iyice kaynatıp bir kâseye alın; içine yumurtanın sarısını kırıp bir çatalla iyice çırpın; limon, ince doğranmış taze maydanoz ve kaya tuzuyla çeşnilendirin), kaşar peynirli sebze türlüsü ve ev turşusu. Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+          recipeId: 'sebze-turlusu',
+          shoppingItems: [
+            'Tavuk suyu',
+            'Yumurta sarısı',
+            'Limon',
+            'Taze maydanoz',
+            'Kaya tuzu',
+            'Kabak',
+            'Patlıcan',
+            'Çarliston biber',
+            'Soğan',
+            'Sarımsak',
+            'Domates',
+            'Domates salçası',
+            'Kaşar peyniri',
+            'Ev turşusu',
+          ],
+          imageKey: 'sebze-turlusu',
+        },
+        dinner: {
+          title: 'Kıymalı Domates Dolması',
+          description:
+            'Kıymalı domates dolması (pirinçsiz hazırlayın), mevsimine göre beyaz lahana salatası ya da yeşil salata ve ev yoğurdu. Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü ve zeytin yaprağı kapsülü, 1 saat sonra krill yağı kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'Domates',
+            'Kıyma',
+            'Beyaz lahana veya yeşil salata malzemeleri',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'dinner-default',
+        },
+      },
+    };
+  }
+
+  if (day === 41) {
+    return {
+      day,
+      dayTitle: 'Gün 41 — Kırk birinci gün',
+      daySummary: 'Dengeli protein, fermente destek ve sebze ağırlıklı akşam öğünüyle ritmi koru.',
+      metabolicLine: 'Öğünlerde düşük glisemik yük ve düzenli takviye dengesi sürdürülür.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk birinci gün',
+      heroImageKey: 'sevket-i-bostan',
+      meals: {
+        breakfast: {
+          title: 'Haşlanmış Yumurta',
+          description:
+            'İki adet haşlanmış yumurta (kayısı kıvamında), mevsim salata, kaşar/beyaz/tulum peyniri (şirden mayalı), 10-15 adet siyah ya da yeşil zeytin ve şekersiz çay/yeşil çay/Türk kahvesi. Kahvaltıdan 30 dk önce enterik probiyotik + zeytin yaprağı, 1 saat sonra krill yağı + 200 mg magnezyum.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mevsim salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Terbiyeli Paça Çorbası',
+          description:
+            'Terbiyeli paça çorbası, beyaz peynirli Ege salatası ve kuruyemiş + tarçınlı ev yoğurdu. Öğlen yemeğinden 30 dk önce çemen otu.',
+          recipeId: 'paca-corbasi',
+          shoppingItems: [
+            'Paça',
+            'Yumurta',
+            'Limon',
+            'Sirke',
+            'Sarımsak',
+            'Beyaz peynir',
+            'Ege salatası malzemeleri',
+            'Kuruyemiş',
+            'Tarçın',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'paca-corbasi',
+        },
+        dinner: {
+          title: 'Etli Şevket-i Bostan',
+          description:
+            'Etli şevket-i bostan, tereyağında çevrilmiş Brüksel lahanası veya kırmızı biber ve ev turşusu. Akşam yemeğinden 30 dk önce enterik probiyotik + zeytin yaprağı, 1 saat sonra krill yağı.',
+          recipeId: 'sevket-i-bostan',
+          shoppingItems: [
+            'Şevket-i bostan',
+            'Kuşbaşı kuzu eti',
+            'Soğan',
+            'Sarımsak',
+            'Tereyağı',
+            'Brüksel lahanası veya kırmızı biber',
+            'Ev turşusu',
+          ],
+          imageKey: 'sevket-i-bostan',
+        },
+      },
+    };
+  }
+
   return {
     day,
     dayTitle: `Gün ${day} — Rutin`,

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Animated, Pressable, Modal, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import AppHeader from '../src/components/AppHeader';
@@ -10,7 +10,7 @@ import { MENUS } from '../src/data/menus';
 import { supplementRules } from '../src/data/supplementRules';
 import { useDefenseProgram } from '../src/context/DefenseProgramContext';
 import { MealSlot } from '../src/types';
-import { getRecipeImage } from '../src/assets/recipeImages';
+import { getMenuThumbnailImage, getRecipeImage, getRecipeImageOrNull } from '../src/assets/recipeImages';
 import { markMealsInteractedToday } from '../src/notifications/mealsNudgeNotifications';
 import { getLocalDateISO } from '../src/utils/dateISO';
 import { shouldShowDefi, shouldShowMessage, markMessageShown } from '../src/defi/defiVisibility';
@@ -19,6 +19,7 @@ import DayInfoBoard, { type DayInfoCard } from '../src/components/DayInfoBoard';
 import { DAY_INFO_BOARD, type DayInfoCardData } from '../src/data/dayInfoBoard';
 import { Theme } from '../src/config/theme';
 import { getMetabolicFocus } from '../src/data/metabolicFocus';
+import { supabase } from '../src/lib/supabase';
 
 const SECTION_META = [
   { key: 'breakfast', title: 'Kahvaltı' },
@@ -39,6 +40,7 @@ type MealCardProps = {
   onSupplementsPress?: () => void;
   supplementSummary?: string;
   mealKey?: string;
+  resetSignal?: number;
 };
 
 type InfoMap = {
@@ -838,11 +840,243 @@ const DAY32_INFO: InfoMap = {
   ],
 };
 
-function MealCard({ title, description, recipeId, infoLines, isCompleted, onToggle, thumbKey, showSupplementsAction, onSupplementsPress, supplementSummary, mealKey }: MealCardProps & { infoLines?: string[] }) {
+const DAY33_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda yumurta, 2 adet ve bol tereyağı ile hazırlanmış.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı).',
+    'Yeşil salata veya çoban salata.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '7-8 adet çiğ fındık veya badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü (200 mg), magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Terbiyeli tavuk suyu çorbası.',
+    'Tulum peynirli ve cevizli ıspanak salatası veya çoban salata.',
+    'Ev yoğurdu.',
+    'Öğle yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Sardalye / hamsi / somon (ızgara veya buğulama).',
+    'Mevsim salatası.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY34_INFO: InfoMap = {
+  breakfast: [
+    'Kavurmalı yumurta.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '5-6 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü (200 mg), magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Domates çorbası.',
+    'Börülce salatası veya kırmızı lahana salatası.',
+    'Yoğurt.',
+    'Öğle yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Taze soğanlı biftek.',
+    'Çoban salata veya karnabahar salatası.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY35_INFO: InfoMap = {
+  breakfast: [
+    'Omlet, iki adet yumurta ile hazırlanmış.',
+    'Mevsim salatası.',
+    'Kaşar, beyaz ya da tulum peyniri, peynir şirden mayası ile hazırlanmış olmalı.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Sebzeli paça çorbası.',
+    'Fırında kabak mücver (tarif için sayfa 268’e bakınız) ya da fırında peynirli mantar.',
+    'Ev yoğurdu ya da ev yoğurdu ile hazırlanmış ayran.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Çeşnili tavuk ızgara. Fileto şeklinde kesilmiş göğüs etini biberiye, kekik, bir tatlı kaşığı limon suyu, dövülmüş sarımsakla harmanlayın. 2-3 saat marine ettikten sonra tavada kızartın.',
+    'Dövmeç.',
+    'Çoban salata ya da mevsim salata.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY36_INFO: InfoMap = {
+  breakfast: [
+    'Pastırma.',
+    'Avokado ya da mevsim salatası.',
+    'Peynir.',
+    'Zeytin.',
+    'Ceviz.',
+    'Şekersiz çay, yeşil çay ya da Türk kahvesi.',
+    'Kahvaltıdan 30 dk önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Menemen.',
+    'Mevsim salatası.',
+    'Kuruyemiş ve tarçınlı yoğurt.',
+    'Öğlen yemeğinden 30 dk önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Böbrek sote.',
+    'Kök salata ya da çoban salata.',
+    'Akşam yemeğinden 30 dk önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY37_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda sucuklu yumurta.',
+    'Mevsim salata.',
+    'Peynir.',
+    'Zeytin.',
+    'Badem veya fındık.',
+    'Şekersiz çay, yeşil çay ya da Türk kahvesi.',
+    'Kahvaltıdan 30 dk önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'İşkembe çorbası.',
+    'Cevizli beyaz lahana salatası.',
+    'Öğlen yemeğinden 30 dk önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Zencefilli somon ızgara.',
+    'Tereyağında sebze.',
+    'Mevsim salata.',
+    'Akşam yemeğinden 30 dk önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY38_INFO: InfoMap = {
+  breakfast: [
+    'Yumurta dolması (2 adet).',
+    'Mevsim salata.',
+    'Peynir.',
+    'Zeytin.',
+    'Ceviz.',
+    'Şekersiz çay, yeşil çay ya da Türk kahvesi.',
+    'Kahvaltıdan 30 dk önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Sarımsaklı et suyu çorbası.',
+    'Zeytinyağlı pırasa veya bamya.',
+    'Mevsim salata.',
+    'Öğlen yemeğinden 30 dk önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Etli nohut (kemikli etle).',
+    'Cacık.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dk önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY39_INFO: InfoMap = {
+  breakfast: [
+    'Pastırma, geleneksel yöntemlerle hazırlanmış pastırmaları tercih edin.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri, peynir şirden mayası ile hazırlanmış olmalı.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ badem ya da fındık.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Mantarlı omlet.',
+    'Çoban salatası ya da roka, maydanoz, taze soğan, taze nane ile hazırlanmış yeşil salata.',
+    'Bir bardak kefir kokteyli - kefir, öğütülmüş keten tohumu, taze nane ya da kuru nane ile hazırlanmış.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Tavuk sote.',
+    'Mevsim salatası.',
+    'Cacık, kuru nane ve sızma zeytinyağı ile çeşnilendirin.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY40_INFO: InfoMap = {
+  breakfast: [
+    'Peynirli menemen, iki yumurta ile hazırlanmış.',
+    'Yeşil salata ya da çoban salata, biber, salatalık, domates, bol sızma zeytinyağı, limon ve kekikle hazırlanmış.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '5-6 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dk önce: Enterik probiyotik + Zeytin yaprağı.',
+    '1 saat sonra: Krill yağı + 200 mg magnezyum.',
+  ],
+  lunch: [
+    'Terbiyeli tavuk suyu çorbası, tavuk suyunu iyice kaynatıp bir kâseye alın. İçine yumurtanın sarısını kırıp bir çatalla iyice çırpın. Limon, ince doğranmış taze maydanoz ve kaya tuzuyla çeşnilendirin.',
+    'Kaşar peynirli sebze türlüsü.',
+    'Ev turşusu.',
+    'Öğlen yemeğinden 30 dk önce: Çemen otu.',
+  ],
+  dinner: [
+    'Kıymalı domates dolması, pirinçsiz hazırlayın.',
+    'Mevsimine göre beyaz lahana salatası ya da yeşil salata.',
+    'Ev yoğurdu.',
+    'Akşam yemeğinden 30 dk önce: Enterik probiyotik + Zeytin yaprağı.',
+    '1 saat sonra: Krill yağı.',
+  ],
+};
+
+const DAY41_INFO: InfoMap = {
+  breakfast: [
+    'İki adet haşlanmış yumurta, kayısı kıvamında.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    'Şekersiz çay / yeşil çay / Türk kahvesi.',
+    '30 dk önce: Enterik probiyotik + Zeytin yaprağı.',
+    '1 saat sonra: Krill yağı + 200 mg magnezyum.',
+  ],
+  lunch: [
+    'Terbiyeli paça çorbası.',
+    'Beyaz peynirli Ege salatası.',
+    'Kuruyemiş + tarçınlı ev yoğurdu.',
+    '30 dk önce: Çemen otu.',
+  ],
+  dinner: [
+    'Etli şevket-i bostan.',
+    'Tereyağında çevrilmiş Brüksel lahanası veya kırmızı biber.',
+    'Ev turşusu.',
+    '30 dk önce: Enterik probiyotik + Zeytin yaprağı.',
+    '1 saat sonra: Krill yağı.',
+  ],
+};
+
+function MealCard({ title, description, recipeId, infoLines, isCompleted, onToggle, thumbKey, showSupplementsAction, onSupplementsPress, supplementSummary, mealKey, resetSignal }: MealCardProps & { infoLines?: string[] }) {
   const [open, setOpen] = useState(false);
   const infoLinesToRender = infoLines || [];
   const summaryLine = infoLinesToRender.length > 0 ? infoLinesToRender[0] : description;
-  const thumbSource = getRecipeImage(thumbKey);
+  const thumbSource = getMenuThumbnailImage(thumbKey);
+  useEffect(() => {
+    setOpen(false);
+  }, [resetSignal]);
   return (
     <Card style={styles.mealCard}>
       <View style={styles.mealTopRow}>
@@ -873,7 +1107,7 @@ function MealCard({ title, description, recipeId, infoLines, isCompleted, onTogg
         >
           <Text style={styles.actionText}>Bilgiler</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        <Pressable
           onPress={() =>
             recipeId
               ? router.push({
@@ -882,13 +1116,17 @@ function MealCard({ title, description, recipeId, infoLines, isCompleted, onTogg
                 })
               : undefined
           }
-          activeOpacity={recipeId ? 0.8 : 1}
-          style={[styles.actionButton, !recipeId && styles.actionButtonDisabled, !!recipeId && styles.recipeButtonHasRecipe]}
+          style={({ pressed }) => [
+            styles.actionButton,
+            !recipeId && styles.actionButtonDisabled,
+            !!recipeId && styles.recipeButtonHasRecipe,
+            !!recipeId && pressed && styles.recipeButtonHasRecipePressed,
+          ]}
         >
           <Text style={[styles.actionText, !recipeId && styles.actionTextDisabled, !!recipeId && styles.recipeButtonTextHasRecipe]}>
             Tarife git
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
       {open ? (
         <View style={styles.infoList}>
@@ -923,7 +1161,9 @@ function MealCard({ title, description, recipeId, infoLines, isCompleted, onTogg
   );
 }
 
-const DEBUG_SHOW_DEFI_MENUS = true; // TEMP: set false after visual verification
+const DEBUG_SHOW_DEFI_MENUS = false; // Keep debug infra, but do not override normal flow.
+const RECIPE_CTA_BG = '#4F9B78';
+const RECIPE_CTA_BG_PRESSED = '#3F8A69';
 
 const TAB_BAR_BASE = {
   backgroundColor: Theme.surface,
@@ -938,8 +1178,12 @@ const TAB_BAR_BASE = {
 
 export default function MenusScreen() {
   const navigation = useNavigation();
-  const { day } = useLocalSearchParams<{ day?: string | string[] }>();
+  const { day: dayParam, resetToken } = useLocalSearchParams<{ day?: string | string[]; resetToken?: string | string[] }>();
   const { currentDayIndex, completedMeals, toggleMealCompleted } = useDefenseProgram();
+  const [day, setDay] = useState<any>(null);
+  const [supabaseDayNumber, setSupabaseDayNumber] = useState<number | null>(null);
+  const [meals, setMeals] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
   const [defiVisible, setDefiVisible] = useState(true);
   const [isTabHidden, setIsTabHidden] = useState(false);
   const lastYRef = useRef(0);
@@ -949,29 +1193,81 @@ export default function MenusScreen() {
   const daySelectorViewportWidthRef = useRef(0);
   const [isDaySelectorAtStart, setIsDaySelectorAtStart] = useState(true);
   const [isDaySelectorAtEnd, setIsDaySelectorAtEnd] = useState(false);
-  const [defiMessage, setDefiMessage] = useState<{ title: string; body: string; detail?: string } | null>(null);
+  const [defiBannerMessage, setDefiBannerMessage] = useState<{ title: string; body: string; detail?: string } | null>(null);
+  const [defiMessage, setDefiMessage] = useState<string | null>(null);
   const hasShownOnceRef = useRef(false);
+  const selectedDayRef = useRef(1);
+  const loadRequestIdRef = useRef(0);
+  const lastEntrySyncKeyRef = useRef<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
   const defiRevealAnim = useRef(new Animated.Value(0)).current;
   const defiMsgTextRef = useRef<string | null>(null);
   const lastRevealAtRef = useRef(0);
   const [selectedDay, setSelectedDay] = useState(currentDayIndex || 1);
+  const effectiveDay = selectedDay;
   const [manualDay, setManualDay] = useState(false);
   const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
+  const [panelResetTick, setPanelResetTick] = useState(0);
   const days = useMemo(() => MENUS.map((item) => item.day), []);
   const dayFromRoute = useMemo(() => {
-    const raw = Array.isArray(day) ? day[0] : day;
+    const raw = Array.isArray(dayParam) ? dayParam[0] : dayParam;
     if (!raw) return null;
     const parsed = Number(raw);
     if (!Number.isFinite(parsed)) return null;
     const value = Math.trunc(parsed);
     return days.includes(value) ? value : null;
-  }, [day, days]);
-  const dayMenu = MENUS.find((item) => item.day === selectedDay) || MENUS[0];
-  const dayMeals = completedMeals[selectedDay] || [];
+  }, [dayParam, days]);
+  const resetTokenValue = useMemo(() => {
+    const raw = Array.isArray(resetToken) ? resetToken[0] : resetToken;
+    return raw ?? null;
+  }, [resetToken]);
+  const entrySyncKey = useMemo(() => {
+    if (!dayFromRoute) return null;
+    return resetTokenValue ? `${dayFromRoute}:${resetTokenValue}` : `${dayFromRoute}:no-token`;
+  }, [dayFromRoute, resetTokenValue]);
+  const localDayMenu = MENUS.find((item) => item.day === effectiveDay) || MENUS[0];
+  const hasSupabaseForSelectedDay = supabaseDayNumber === effectiveDay && !!day;
+  const breakfastMeal = meals.find((m) => m.meal_type === 'breakfast');
+  const lunchMeal = meals.find((m) => m.meal_type === 'lunch');
+  const dinnerMeal = meals.find((m) => m.meal_type === 'dinner');
+  const dayMenu = useMemo(() => {
+    if (!hasSupabaseForSelectedDay) {
+      return localDayMenu;
+    }
+    return {
+      ...localDayMenu,
+      day: effectiveDay,
+      dayTitle: day?.title ? `Gün ${effectiveDay} — ${day.title}` : localDayMenu.dayTitle,
+      heroImageKey: day?.hero_image_key || localDayMenu.heroImageKey,
+      meals: {
+        breakfast: {
+          ...localDayMenu.meals.breakfast,
+          title: breakfastMeal?.title_tr || 'Haşlanmış Yumurta',
+          description: breakfastMeal?.description_tr || localDayMenu.meals.breakfast.description,
+          recipeId: breakfastMeal?.recipe_id ?? localDayMenu.meals.breakfast.recipeId,
+          imageKey: breakfastMeal?.image_key || localDayMenu.meals.breakfast.imageKey,
+        },
+        lunch: {
+          ...localDayMenu.meals.lunch,
+          title: lunchMeal?.title_tr || 'Terbiyeli Paça Çorbası',
+          description: lunchMeal?.description_tr || localDayMenu.meals.lunch.description,
+          recipeId: lunchMeal?.recipe_id ?? localDayMenu.meals.lunch.recipeId,
+          imageKey: lunchMeal?.image_key || localDayMenu.meals.lunch.imageKey,
+        },
+        dinner: {
+          ...localDayMenu.meals.dinner,
+          title: dinnerMeal?.title_tr || 'Etli Şevket-i Bostan',
+          description: dinnerMeal?.description_tr || localDayMenu.meals.dinner.description,
+          recipeId: dinnerMeal?.recipe_id ?? localDayMenu.meals.dinner.recipeId,
+          imageKey: dinnerMeal?.image_key || localDayMenu.meals.dinner.imageKey,
+        },
+      },
+    };
+  }, [hasSupabaseForSelectedDay, effectiveDay, day, breakfastMeal, lunchMeal, dinnerMeal, localDayMenu]);
+  const dayMeals = completedMeals[effectiveDay] || [];
   const safeCompleted = Array.from(new Set(dayMeals.filter((s) => s === 'breakfast' || s === 'lunch' || s === 'dinner')));
   const completedCount = safeCompleted.length;
-  const hasAnyMealCompletedToday = (completedMeals[currentDayIndex] || []).length > 0;
+  const hasAnyMealCompletedForSelectedDay = (completedMeals[effectiveDay] || []).length > 0;
   const todayISO = useMemo(() => getLocalDateISO(), []);
   const supplementsByMeal = useMemo(() => {
     const enabled = supplementRules.filter((rule) => rule.enabled);
@@ -998,16 +1294,166 @@ export default function MenusScreen() {
       (DEBUG_SHOW_DEFI_MENUS || defiVisible)
         ? getDefiMessage({
             screen: 'meals',
-            hasStartedToday: hasAnyMealCompletedToday,
+            hasStartedToday: hasAnyMealCompletedForSelectedDay,
             remainingMeals: undefined,
           })
         : null,
-    [defiVisible, hasAnyMealCompletedToday]
+    [defiVisible, hasAnyMealCompletedForSelectedDay]
   );
+  // Temporary schema adapter: keep Supabase message-field drift localized.
+  const resolvedSupabaseDefiText = useMemo(() => {
+    // Primary: defi_daily_messages resolved payload. Fallback: days.defi_message (test screen parity).
+    const fromDailyMessages = typeof defiMessage === 'string' ? defiMessage.trim() : '';
+    if (fromDailyMessages.length) return fromDailyMessages;
+    const fromDayRow = typeof day?.defi_message === 'string' ? day.defi_message.trim() : '';
+    return fromDayRow.length ? fromDayRow : null;
+  }, [defiMessage, day]);
+  const supabaseDefiMessage = useMemo(() => {
+    if (!hasSupabaseForSelectedDay) return null;
+    if (!resolvedSupabaseDefiText) return null;
+    return { title: 'Defi', body: resolvedSupabaseDefiText };
+  }, [hasSupabaseForSelectedDay, resolvedSupabaseDefiText, day]);
+  const day41DirectSupabaseDefiMessage = useMemo(() => {
+    if (effectiveDay !== 41) return null;
+    if (!hasSupabaseForSelectedDay) return null;
+    const text = typeof day?.defi_message === 'string' ? day.defi_message.trim() : '';
+    if (!text) return null;
+    return { title: 'Defi', body: text };
+  }, [effectiveDay, hasSupabaseForSelectedDay, day]);
+  const menusDefiCandidate = useMemo(() => {
+    if (!defiVisible && !DEBUG_SHOW_DEFI_MENUS) return null;
+    if (day41DirectSupabaseDefiMessage) return day41DirectSupabaseDefiMessage;
+    if (supabaseDefiMessage) return supabaseDefiMessage;
+    if (baseDefiMessage) return baseDefiMessage;
+    return { title: 'Defi', body: 'Defi notu şu anda hazır değil.' };
+  }, [defiVisible, day41DirectSupabaseDefiMessage, supabaseDefiMessage, baseDefiMessage]);
 
   const handleOpenPlan = () => {
     router.push('/(tabs)/defense');
   };
+
+  useEffect(() => {
+    loadSupabaseMenu();
+  }, [selectedDay]);
+
+  useEffect(() => {
+    selectedDayRef.current = selectedDay;
+  }, [selectedDay]);
+
+  useEffect(() => {
+    console.log('[Menus] selected/effective day', { selectedDay, effectiveDay });
+  }, [selectedDay, effectiveDay]);
+
+  useEffect(() => {
+    console.log('[Menus] hero day source', {
+      selectedDay,
+      heroImageKey: dayMenu.heroImageKey,
+      source: hasSupabaseForSelectedDay ? 'supabase' : 'local',
+    });
+  }, [selectedDay, dayMenu.heroImageKey, hasSupabaseForSelectedDay]);
+
+  useEffect(() => {
+    console.log('[Menus Defi] source', {
+      effectiveDay,
+      hasSupabaseForSelectedDay,
+      day41DirectAccepted: !!day41DirectSupabaseDefiMessage,
+      accepted: !!supabaseDefiMessage,
+      fallbackToLocal: hasSupabaseForSelectedDay && !supabaseDefiMessage,
+    });
+  }, [effectiveDay, hasSupabaseForSelectedDay, day41DirectSupabaseDefiMessage, supabaseDefiMessage]);
+
+  async function loadSupabaseMenu() {
+    const requestId = ++loadRequestIdRef.current;
+    const requestedDay = effectiveDay;
+    setLoading(true);
+    console.log('[Menus] load request', { requestId, requestedDay });
+
+    const isStale = () =>
+      requestId !== loadRequestIdRef.current || requestedDay !== selectedDayRef.current;
+
+    try {
+      const { data: dayData, error: dayError } = await supabase
+        .from('days')
+        .select('*')
+        .eq('day_number', requestedDay)
+        .single();
+
+      if (isStale()) {
+        console.log('[Menus] ignored stale response', { requestId, requestedDay, stage: 'days' });
+        return;
+      }
+
+      if (dayError) {
+        console.log('DAY ERROR', dayError);
+        setDay(null);
+        setSupabaseDayNumber(null);
+        setMeals([]);
+        setDefiMessage(null);
+        setLoading(false);
+        return;
+      }
+
+      setDay(dayData);
+      setSupabaseDayNumber(typeof dayData?.day_number === 'number' ? dayData.day_number : null);
+      console.log('[Menus] Supabase note query day', { requestedDay, dayId: dayData.id });
+      console.log('[Menus] supabase day object', dayData);
+
+      const { data: defiData } = await supabase
+        .from('defi_daily_messages')
+        .select('*')
+        .eq('day_id', dayData.id)
+        .eq('message_type', 'daily')
+        .single();
+      console.log('DEFI NOTE OBJECT', defiData);
+
+      if (isStale()) {
+        console.log('[Menus] ignored stale response', { requestId, requestedDay, stage: 'defi' });
+        return;
+      }
+
+      if (defiData) {
+        const resolvedDefiMessage =
+          [defiData.message, defiData.body, defiData.content, defiData.note, defiData.text, defiData.message_tr]
+            .find((v) => typeof v === 'string' && v.trim().length > 0) ?? null;
+        setDefiMessage(resolvedDefiMessage);
+        console.log('[Menus] resolved defi text', resolvedDefiMessage);
+      } else {
+        setDefiMessage(null);
+        console.log('[Menus] resolved defi text', null);
+      }
+
+      const { data: mealsData, error: mealsError } = await supabase
+        .from('meals')
+        .select('*')
+        .eq('day_id', dayData.id);
+
+      if (isStale()) {
+        console.log('[Menus] ignored stale response', { requestId, requestedDay, stage: 'meals' });
+        return;
+      }
+
+      if (mealsError) {
+        console.log('MEALS ERROR', mealsError);
+        setMeals([]);
+        setLoading(false);
+        return;
+      }
+
+      setMeals(mealsData || []);
+      setLoading(false);
+    } catch (err) {
+      if (isStale()) {
+        console.log('[Menus] ignored stale response', { requestId, requestedDay, stage: 'catch' });
+        return;
+      }
+      console.log('SUPABASE LOAD ERROR', err);
+      setDay(null);
+      setSupabaseDayNumber(null);
+      setMeals([]);
+      setDefiMessage(null);
+      setLoading(false);
+    }
+  }
 
   const handleScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = e.nativeEvent.contentOffset.y;
@@ -1086,17 +1532,40 @@ export default function MenusScreen() {
 
   useEffect(() => {
     if (!dayFromRoute) return;
+    const isTokenedEntry = !!resetTokenValue;
+    if (isTokenedEntry) {
+      if (lastEntrySyncKeyRef.current === entrySyncKey) {
+        console.log('[Menus Sync] skipped (already synced)', { entrySyncKey, selectedBefore: selectedDayRef.current });
+        return;
+      }
+      lastEntrySyncKeyRef.current = entrySyncKey;
+    }
+    const selectedBefore = selectedDayRef.current;
+    console.log('[Menus Sync] applying route day', { incomingDayParam: dayFromRoute, selectedBefore, entrySyncKey });
+    setPanelResetTick((prev) => prev + 1);
+    setActiveInfoId(null);
+    setManualDay(false);
     setSelectedDay(dayFromRoute);
-    setManualDay(true);
     const timer = setTimeout(() => {
+      scrollViewRef.current?.scrollTo({ y: 0, animated: false });
       scrollDaySelectorToDay(dayFromRoute);
+      console.log('[Menus Sync] selectedAfter', { selectedAfter: selectedDayRef.current, incomingDayParam: dayFromRoute });
     }, 0);
     return () => clearTimeout(timer);
-  }, [dayFromRoute, scrollDaySelectorToDay]);
+  }, [dayFromRoute, resetTokenValue, entrySyncKey, scrollDaySelectorToDay]);
 
   useEffect(() => {
     setActiveInfoId(null);
+    setPanelResetTick((prev) => prev + 1);
   }, [selectedDay]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setActiveInfoId(null);
+      setPanelResetTick((prev) => prev + 1);
+      return () => {};
+    }, [])
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -1110,39 +1579,39 @@ export default function MenusScreen() {
 
   useEffect(() => {
     let active = true;
-    if (!baseDefiMessage) {
-      setDefiMessage(null);
+    if (!menusDefiCandidate) {
+      setDefiBannerMessage(null);
       return () => {
         active = false;
       };
     }
     // TEMP: debug bypass — skip cooldown/visibility gates
     if (DEBUG_SHOW_DEFI_MENUS) {
-      setDefiMessage(baseDefiMessage);
+      setDefiBannerMessage(menusDefiCandidate);
       return () => { active = false; };
     }
     if (!hasShownOnceRef.current) {
-      setDefiMessage(baseDefiMessage);
-      void markMessageShown('meals', baseDefiMessage.body);
+      setDefiBannerMessage(menusDefiCandidate);
+      void markMessageShown('meals', menusDefiCandidate.body);
       hasShownOnceRef.current = true;
       return () => {
         active = false;
       };
     }
     (async () => {
-      const shouldShow = await shouldShowMessage('meals', baseDefiMessage.body);
+      const shouldShow = await shouldShowMessage('meals', menusDefiCandidate.body);
       if (!active) return;
       if (!shouldShow) {
-        setDefiMessage(null);
+        setDefiBannerMessage(null);
         return;
       }
-      setDefiMessage(baseDefiMessage);
-      await markMessageShown('meals', baseDefiMessage.body);
+      setDefiBannerMessage(menusDefiCandidate);
+      await markMessageShown('meals', menusDefiCandidate.body);
     })();
     return () => {
       active = false;
     };
-  }, [baseDefiMessage]);
+  }, [menusDefiCandidate]);
 
   const runRevealAnimation = useCallback((reason: string) => {
     const now = Date.now();
@@ -1162,7 +1631,7 @@ export default function MenusScreen() {
   }, [defiRevealAnim]);
 
 
-  const nowVisible = Boolean(defiVisible) && Boolean(defiMessage);
+  const nowVisible = Boolean(defiVisible) && Boolean(defiBannerMessage);
   const wasVisibleRef = useRef(false);
 
   useEffect(() => {
@@ -1179,12 +1648,12 @@ export default function MenusScreen() {
   }, [nowVisible, runRevealAnimation]);
 
   useEffect(() => {
-    if (!defiMessage) return;
-    const body = defiMessage.body;
+    if (!defiBannerMessage) return;
+    const body = defiBannerMessage.body;
     const isNew = defiMsgTextRef.current !== body;
     defiMsgTextRef.current = body;
     if (isNew) runRevealAnimation('message-change');
-  }, [defiMessage, runRevealAnimation]);
+  }, [defiBannerMessage, runRevealAnimation]);
 
   return (
     <View style={styles.container}>
@@ -1226,10 +1695,12 @@ export default function MenusScreen() {
               onContentSizeChange={(w) => {
                 daySelectorContentWidthRef.current = w;
                 updateDaySelectorEdges(daySelectorXRef.current);
+                scrollDaySelectorToDay(selectedDay);
               }}
               onLayout={(e) => {
                 daySelectorViewportWidthRef.current = e.nativeEvent.layout.width;
                 updateDaySelectorEdges(daySelectorXRef.current);
+                scrollDaySelectorToDay(selectedDay);
               }}
             >
               {days.map((day) => {
@@ -1241,6 +1712,7 @@ export default function MenusScreen() {
                     onPress={() => {
                       setSelectedDay(day);
                       setManualDay(true);
+                      scrollDaySelectorToDay(day);
                     }}
                     activeOpacity={0.8}
                   >
@@ -1260,27 +1732,30 @@ export default function MenusScreen() {
             ) : null}
           </View>
         </View>
-        <Text style={styles.dayIndicator}>Gün {selectedDay} / 91 • {completedCount}/3 öğün tamamlandı</Text>
+        <Text style={styles.dayIndicator}>
+          {loading ? 'Yükleniyor...' : `Gün ${selectedDay} / 91 • ${completedCount}/3 öğün tamamlandı`}
+        </Text>
 
-        <View style={styles.infoBoardWrap}>
-          <DayInfoBoard
-            cards={(() => {
-              const config = DAY_INFO_BOARD[selectedDay]?.cards ?? [];
-              return config.map((c): DayInfoCard => {
-                const data = c as DayInfoCardData;
-                const hasContent = !!((data.contentBody && data.contentTitle) || (data.recipeId && data.imageKey && data.contentTitle));
-                const onPress = hasContent
-                  ? () => setActiveInfoId((prev) => (prev === data.id ? null : data.id))
-                  : undefined;
-                return { ...c, onPress };
-              });
-            })()}
-          />
-          {activeInfoId ? (() => {
-            const config = DAY_INFO_BOARD[selectedDay]?.cards ?? [];
+        {(() => {
+          const config = DAY_INFO_BOARD[selectedDay]?.cards ?? [];
+          if (!config.length) return null;
+          return (
+            <View style={styles.infoBoardWrap}>
+              <DayInfoBoard
+                cards={config.map((c): DayInfoCard => {
+                  const data = c as DayInfoCardData;
+                  const hasContent = !!((data.contentBody && data.contentTitle) || (data.recipeId && data.imageKey && data.contentTitle));
+                  const onPress = hasContent
+                    ? () => setActiveInfoId((prev) => (prev === data.id ? null : data.id))
+                    : undefined;
+                  return { ...c, onPress };
+                })}
+              />
+              {activeInfoId ? (() => {
+                const config = DAY_INFO_BOARD[selectedDay]?.cards ?? [];
             const card = config.find((c) => c.id === activeInfoId) as DayInfoCardData | undefined;
             if (!card) return null;
-            const isRecipeInfoCard = card.id === 'menu-day-9' || card.id === 'recipe-day-13' || card.id === 'recipe-day-15' || card.id === 'recipe-day-16' || card.id === 'recipe-day-20' || card.id === 'recipe-day-21' || card.id === 'recipe-day-23' || card.id === 'recipe-day-24' || card.id === 'recipe-day-31' || card.id === 'recipe-day-32' || card.recipeId === 'sote-edilmis-karnabahar' || card.recipeId === 'yesil-biberli-tavuk' || card.recipeId === 'cevizli-kuru-domates-mezesi' || card.recipeId === 'terbiyeli-karalahana-corbasi' || card.recipeId === 'pirincsiz-biber-dolmasi' || card.recipeId === 'ev-yogurdu' || card.recipeId === 'yogurtlu-pirasa' || card.recipeId === 'acili-lahana-corbasi' || card.recipeId === 'yogurtlu-pancar-salatasi' || card.recipeId === 'yogurt-corbasi';
+            const isRecipeInfoCard = card.id === 'menu-day-9' || card.id === 'recipe-day-13' || card.id === 'recipe-day-15' || card.id === 'recipe-day-16' || card.id === 'recipe-day-20' || card.id === 'recipe-day-21' || card.id === 'recipe-day-23' || card.id === 'recipe-day-24' || card.id === 'recipe-day-31' || card.id === 'recipe-day-32' || card.id === 'recipe-day-34' || card.id === 'recipe-day-35' || card.recipeId === 'sote-edilmis-karnabahar' || card.recipeId === 'yesil-biberli-tavuk' || card.recipeId === 'cevizli-kuru-domates-mezesi' || card.recipeId === 'terbiyeli-karalahana-corbasi' || card.recipeId === 'pirincsiz-biber-dolmasi' || card.recipeId === 'ev-yogurdu' || card.recipeId === 'yogurtlu-pirasa' || card.recipeId === 'acili-lahana-corbasi' || card.recipeId === 'yogurtlu-pancar-salatasi' || card.recipeId === 'yogurt-corbasi' || card.recipeId === 'taze-soganli-biftek' || card.recipeId === 'dovmec' || card.recipeId === 'cevizli-lahana-salatasi';
             if (!isRecipeInfoCard && !card.contentBody) return null;
             return (
               <View style={styles.infoDetailPanel}>
@@ -1314,27 +1789,29 @@ export default function MenusScreen() {
                     <Text style={styles.infoDetailBody}>{card.contentBody}</Text>
                   ) : null}
                   {card.recipeId ? (
-                    <TouchableOpacity
+                    <Pressable
                       onPress={() =>
                         router.push({
                           pathname: '/recipes/[id]',
                           params: { id: card.recipeId! },
                         })
                       }
-                      activeOpacity={0.8}
-                      style={[
+                      style={({ pressed }) => [
                         styles.infoDetailRecipeButton,
                         isRecipeInfoCard && styles.infoDetailMenuButton,
+                        pressed && styles.infoDetailRecipeButtonPressed,
                       ]}
                     >
                       <Text style={styles.infoDetailRecipeButtonText}>Tarife git</Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   ) : null}
                 </ScrollView>
               </View>
             );
-          })() : null}
-        </View>
+              })() : null}
+            </View>
+          );
+        })()}
 
         <View style={styles.defiBlock}>
           <Animated.View style={{
@@ -1342,7 +1819,7 @@ export default function MenusScreen() {
             transform: [{ translateY: defiRevealAnim.interpolate({ inputRange: [0, 1], outputRange: [-8, 0] }) }],
           }}>
             <DefiBanner
-              message={DEBUG_SHOW_DEFI_MENUS ? (defiMessage ?? { title: 'Defi', body: 'Debug: Defi card görünürlük testi.' }) : defiMessage}
+              message={defiBannerMessage}
               onOpenPlan={handleOpenPlan}
               todayISO={todayISO}
               onHidden={() => setDefiVisible(false)}
@@ -1354,36 +1831,67 @@ export default function MenusScreen() {
           </Animated.View>
         </View>
 
-        <Card style={styles.heroCard}>
-          <Image
-            source={getRecipeImage(dayMenu.heroImageKey)!}
-            style={{
-              width: '100%',
-              height: 150,
-              borderTopLeftRadius: 16,
-              borderTopRightRadius: 16,
-            }}
-            resizeMode="cover"
-          />
-          <View style={styles.heroContent}>
-            {(() => {
-              const mf = getMetabolicFocus(selectedDay);
-              return (
-                <>
-                  <Text style={styles.heroTitle}>{mf.headline}</Text>
-                  <Text style={styles.metabolicLine} numberOfLines={3}>{mf.description}</Text>
-                  <View style={styles.heroTag}>
-                    <Text style={styles.heroTagText}>🛡 Savunma Odağı: {mf.defenseFocus}</Text>
-                  </View>
-                </>
-              );
-            })()}
-          </View>
-        </Card>
+        {(() => {
+          const heroSource = getRecipeImageOrNull(dayMenu.heroImageKey);
+          if (!heroSource) return null;
+          return (
+            <Card style={styles.heroCard}>
+              <Image
+                source={heroSource}
+                style={{
+                  width: '100%',
+                  height: 150,
+                  borderTopLeftRadius: 16,
+                  borderTopRightRadius: 16,
+                }}
+                resizeMode="cover"
+              />
+              <View style={styles.heroContent}>
+                {(() => {
+                  const mf = getMetabolicFocus(selectedDay);
+                  const profile = day?.metabolic_profile;
+                  const metabolicProfileSummary = (() => {
+                    if (!hasSupabaseForSelectedDay || !profile) return null;
+                    if (typeof profile === 'string') return profile;
+                    if (typeof profile !== 'object') return null;
+                    const parts: string[] = [];
+                    if (profile.lowCarb) parts.push('düşük karbonhidrat');
+                    if (profile.highProtein) parts.push('yüksek protein');
+                    if (profile.healthyFats) parts.push('sağlıklı yağ dengesi');
+                    if (profile.insulinImpact === 'low') parts.push('düşük insülin etkisi');
+                    if (!parts.length) return null;
+                    const body =
+                      parts.length === 1
+                        ? parts[0]
+                        : `${parts.slice(0, -1).join(', ')} ve ${parts[parts.length - 1]}`;
+                    return `Bu gün ${body} sunar.`;
+                  })();
+                  const heroTitleText =
+                    hasSupabaseForSelectedDay
+                      ? (day?.title || mf.headline)
+                      : mf.headline;
+                  const heroSummaryText =
+                    hasSupabaseForSelectedDay
+                      ? (metabolicProfileSummary || mf.description)
+                      : mf.description;
+                  return (
+                    <>
+                      <Text style={styles.heroTitle}>{heroTitleText}</Text>
+                      <Text style={styles.metabolicLine} numberOfLines={3}>{heroSummaryText}</Text>
+                      <View style={styles.heroTag}>
+                        <Text style={styles.heroTagText}>🛡 Savunma Odağı: {mf.defenseFocus}</Text>
+                      </View>
+                    </>
+                  );
+                })()}
+              </View>
+            </Card>
+          );
+        })()}
 
         {SECTION_META.map((section) => {
           const meal = dayMenu.meals[section.key as MealKey];
-          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : selectedDay === 2 ? DAY2_INFO[section.key] : selectedDay === 3 ? DAY3_INFO[section.key] : selectedDay === 4 ? DAY4_INFO[section.key] : selectedDay === 5 ? DAY5_INFO[section.key] : selectedDay === 6 ? DAY6_INFO[section.key] : selectedDay === 7 ? DAY7_INFO[section.key] : selectedDay === 8 ? DAY8_INFO[section.key] : selectedDay === 9 ? DAY9_INFO[section.key] : selectedDay === 10 ? DAY10_INFO[section.key] : selectedDay === 11 ? DAY11_INFO[section.key] : selectedDay === 12 ? DAY12_INFO[section.key] : selectedDay === 13 ? DAY13_INFO[section.key] : selectedDay === 14 ? DAY14_INFO[section.key] : selectedDay === 15 ? DAY15_INFO[section.key] : selectedDay === 16 ? DAY16_INFO[section.key] : selectedDay === 17 ? DAY17_INFO[section.key] : selectedDay === 18 ? DAY18_INFO[section.key] : selectedDay === 19 ? DAY19_INFO[section.key] : selectedDay === 20 ? DAY20_INFO[section.key] : selectedDay === 21 ? DAY21_INFO[section.key] : selectedDay === 22 ? DAY22_INFO[section.key] : selectedDay === 23 ? DAY23_INFO[section.key] : selectedDay === 24 ? DAY24_INFO[section.key] : selectedDay === 25 ? DAY25_INFO[section.key] : selectedDay === 26 ? DAY26_INFO[section.key] : selectedDay === 27 ? DAY27_INFO[section.key] : selectedDay === 28 ? DAY28_INFO[section.key] : selectedDay === 29 ? DAY29_INFO[section.key] : selectedDay === 30 ? DAY30_INFO[section.key] : selectedDay === 31 ? DAY31_INFO[section.key] : selectedDay === 32 ? DAY32_INFO[section.key] : undefined;
+          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : selectedDay === 2 ? DAY2_INFO[section.key] : selectedDay === 3 ? DAY3_INFO[section.key] : selectedDay === 4 ? DAY4_INFO[section.key] : selectedDay === 5 ? DAY5_INFO[section.key] : selectedDay === 6 ? DAY6_INFO[section.key] : selectedDay === 7 ? DAY7_INFO[section.key] : selectedDay === 8 ? DAY8_INFO[section.key] : selectedDay === 9 ? DAY9_INFO[section.key] : selectedDay === 10 ? DAY10_INFO[section.key] : selectedDay === 11 ? DAY11_INFO[section.key] : selectedDay === 12 ? DAY12_INFO[section.key] : selectedDay === 13 ? DAY13_INFO[section.key] : selectedDay === 14 ? DAY14_INFO[section.key] : selectedDay === 15 ? DAY15_INFO[section.key] : selectedDay === 16 ? DAY16_INFO[section.key] : selectedDay === 17 ? DAY17_INFO[section.key] : selectedDay === 18 ? DAY18_INFO[section.key] : selectedDay === 19 ? DAY19_INFO[section.key] : selectedDay === 20 ? DAY20_INFO[section.key] : selectedDay === 21 ? DAY21_INFO[section.key] : selectedDay === 22 ? DAY22_INFO[section.key] : selectedDay === 23 ? DAY23_INFO[section.key] : selectedDay === 24 ? DAY24_INFO[section.key] : selectedDay === 25 ? DAY25_INFO[section.key] : selectedDay === 26 ? DAY26_INFO[section.key] : selectedDay === 27 ? DAY27_INFO[section.key] : selectedDay === 28 ? DAY28_INFO[section.key] : selectedDay === 29 ? DAY29_INFO[section.key] : selectedDay === 30 ? DAY30_INFO[section.key] : selectedDay === 31 ? DAY31_INFO[section.key] : selectedDay === 32 ? DAY32_INFO[section.key] : selectedDay === 33 ? DAY33_INFO[section.key] : selectedDay === 34 ? DAY34_INFO[section.key] : selectedDay === 35 ? DAY35_INFO[section.key] : selectedDay === 36 ? DAY36_INFO[section.key] : selectedDay === 37 ? DAY37_INFO[section.key] : selectedDay === 38 ? DAY38_INFO[section.key] : selectedDay === 39 ? DAY39_INFO[section.key] : selectedDay === 40 ? DAY40_INFO[section.key] : selectedDay === 41 ? DAY41_INFO[section.key] : undefined;
           const isCompleted = safeCompleted.includes(section.key);
           return (
             <View key={section.key} style={styles.section}>
@@ -1395,6 +1903,7 @@ export default function MenusScreen() {
                 description={meal.description}
                 recipeId={meal.recipeId}
                 infoLines={infoLines}
+                resetSignal={panelResetTick}
                 isCompleted={isCompleted}
                 onToggle={() => {
                   void markMealsInteractedToday(getLocalDateISO());
@@ -1484,10 +1993,13 @@ const styles = StyleSheet.create({
   infoDetailRecipeButton: {
     marginTop: 12,
     alignSelf: 'flex-start',
-    backgroundColor: '#0F5A4E',
+    backgroundColor: RECIPE_CTA_BG,
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 8,
+  },
+  infoDetailRecipeButtonPressed: {
+    backgroundColor: RECIPE_CTA_BG_PRESSED,
   },
   infoDetailRecipeButtonText: {
     fontSize: 13,
@@ -1574,7 +2086,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   dayChipActive: {
-    backgroundColor: '#0F5A4E',
+    backgroundColor: '#4F9B78',
   },
   dayText: {
     fontSize: 13,
@@ -1681,7 +2193,10 @@ const styles = StyleSheet.create({
     color: '#94A3B8',
   },
   recipeButtonHasRecipe: {
-    backgroundColor: '#0F5A4E',
+    backgroundColor: RECIPE_CTA_BG,
+  },
+  recipeButtonHasRecipePressed: {
+    backgroundColor: RECIPE_CTA_BG_PRESSED,
   },
   recipeButtonTextHasRecipe: {
     color: '#FFFFFF',

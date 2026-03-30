@@ -14,15 +14,6 @@ import { getRecipeImage } from '../../src/assets/recipeImages';
 import { MENUS } from '../../src/data/menus';
 import { getMetabolicFocus } from '../../src/data/metabolicFocus';
 
-function getLatestHeroMenuDay(menus: typeof MENUS) {
-  const heroDays = menus.filter(
-    (m) => typeof m.heroImageKey === 'string' && m.heroImageKey.trim() !== ''
-  );
-
-  if (!heroDays.length) return 1;
-  return Math.max(...heroDays.map((m) => m.day));
-}
-
 export default function TodayScreen() {
   const {
     program,
@@ -88,7 +79,7 @@ export default function TodayScreen() {
 
   const focusValue =
     typeof focus === "string" ? focus : Array.isArray(focus) ? focus[0] : null;
-  const normalizedFocus = focusValue === 'steps' ? 'activity' : focusValue;
+  const normalizedFocus = focusValue === 'steps' || focusValue === 'sleep' ? 'activity' : focusValue;
 
   useEffect(() => {
     if (!normalizedFocus) return;
@@ -144,8 +135,7 @@ export default function TodayScreen() {
   const todayISO = useMemo(() => getLocalDateISO(), []);
   // currentDayIndex is derived from startISO inside DefenseProgramContext
   const currentDay = currentDayIndex ?? 1;
-  // TEMP CONTENT LOGIC: Today screen shows the latest menu day that has a valid hero image.
-  const displayedDay = getLatestHeroMenuDay(MENUS);
+  const displayedDay = MENUS.some((m) => m.day === currentDay) ? currentDay : 1;
   const defiBannerMessage = useMemo(() => defiMessage ? { title: 'Defi', body: defiMessage } : null, [defiMessage]);
   const displayedDayMenu = MENUS.find((m) => m.day === displayedDay) || MENUS[0];
   const dayHeroSource = getRecipeImage((displayedDayMenu as { heroImageKey?: string | null }).heroImageKey);
@@ -209,7 +199,12 @@ export default function TodayScreen() {
         {/* Today's Meal Plan Card */}
         <TouchableOpacity 
           style={styles.mealCtaCard}
-          onPress={() => router.push({ pathname: '/menus', params: { day: String(displayedDay) } })}
+          onPress={() =>
+            router.push({
+              pathname: '/(tabs)/menus',
+              params: { day: String(displayedDay), resetToken: String(Date.now()) },
+            })
+          }
           activeOpacity={0.85}
         >
           <View style={styles.mealCtaHeroBannerWrap}>
@@ -269,7 +264,12 @@ export default function TodayScreen() {
         <View ref={sectionRefs.current.meals}>
           <TouchableOpacity
             style={styles.taskCard}
-            onPress={() => router.push({ pathname: '/menus', params: { day: String(displayedDay) } })}
+            onPress={() =>
+              router.push({
+                pathname: '/(tabs)/menus',
+                    params: { day: String(displayedDay), resetToken: String(Date.now()) },
+              })
+            }
           >
             <View style={styles.sharedIconChip}>
               <Ionicons name="restaurant" size={20} color="#10B981" />
