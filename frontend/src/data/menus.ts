@@ -22,7 +22,46 @@ const baseMeals = {
   },
 };
 
-export const MENUS = Array.from({ length: 91 }, (_, i) => {
+export type DefiInsightSwapRule = {
+  trigger: string;
+  alternatives: string[];
+  reason: string;
+};
+
+export type DefiInsight = {
+  focus: string;
+  goal: string;
+  primaryFoods: string[];
+  metabolicTags: string[];
+  explanation: string;
+  swapRules?: DefiInsightSwapRule[];
+};
+
+export type MenuMeal = {
+  title: string;
+  description: string;
+  recipeId: string | null;
+  shoppingItems: string[];
+  imageKey: string | null;
+};
+
+export type MenuDay = {
+  day: number;
+  dayTitle: string;
+  daySummary: string;
+  metabolicLine: string;
+  defenseFocus: string;
+  focusTag: string;
+  heroImageKey: string | null;
+  meals: {
+    breakfast: MenuMeal;
+    lunch: MenuMeal;
+    dinner: MenuMeal;
+  };
+  defiInsight?: DefiInsight;
+};
+
+export const MENUS: MenuDay[] = Array.from({ length: 91 }, (_, i) => {
   const day = i + 1;
   if (day === 1) {
     return {
@@ -1822,6 +1861,13 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Glisemik Denge',
       focusTag: 'Sağlıklı Yağlar',
       heroImageKey: 'day31',
+      defiInsight: {
+        focus: 'Düşük karbonhidrat dengesi',
+        goal: 'Kan şekeri dalgalanmasını azaltıp daha dengeli tokluk sağlamak',
+        primaryFoods: ['yumurta', 'zeytinyağı', 'ceviz'],
+        metabolicTags: ['lowCarb', 'glucoseStability', 'satietySupport'],
+        explanation: 'Bugünün menüsü protein, lif ve dengeli yağ kombinasyonuyla daha kontrollü bir enerji akışı hedefler.',
+      },
       meals: {
         breakfast: {
           title: 'Sahanda Kıymalı Yumurta',
@@ -1886,6 +1932,20 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Doğal Denge',
       focusTag: 'Denge',
       heroImageKey: 'yogurt-corbasi',
+      defiInsight: {
+        focus: 'Protein ve fermente denge',
+        goal: 'Öğün ritmini koruyarak uzun süreli tokluk desteği sağlamak',
+        primaryFoods: ['yumurta', 'yoğurt çorbası', 'zeytinyağlı sebzeler'],
+        metabolicTags: ['proteinBalance', 'satietySupport', 'lowCarb'],
+        explanation: 'Günün yapısı, düşük karbonhidrat çizgisini bozmadan öğünler arasında enerji dengesini korumaya odaklanır.',
+        swapRules: [
+          {
+            trigger: 'yoğurt',
+            alternatives: ['kefir', 'yumurta', 'zeytinyağlı sebze'],
+            reason: 'tokluk ve dengeli içerik etkisini korumak',
+          },
+        ],
+      },
       meals: {
         breakfast: {
           title: 'Haşlanmış Yumurta',
@@ -2119,6 +2179,20 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Denge ve Süreklilik',
       focusTag: 'Otuz altıncı gün',
       heroImageKey: 'bobrek-sote',
+      defiInsight: {
+        focus: 'Protein yoğunluk ve glisemik kontrol',
+        goal: 'Karbonhidrat yükünü düşük tutarken tokluk süresini uzatmak',
+        primaryFoods: ['pastırma', 'menemen', 'böbrek sote'],
+        metabolicTags: ['proteinBalance', 'glucoseStability', 'satietySupport'],
+        explanation: 'Günlük plan protein odağını koruyarak gün içi açlık dalgalanmalarını azaltmayı hedefler.',
+        swapRules: [
+          {
+            trigger: 'sakatat',
+            alternatives: ['yumurta', 'ızgara et', 'zeytinyağlı sebze yanında protein'],
+            reason: 'protein ve tokluk desteğini korumak',
+          },
+        ],
+      },
       meals: {
         breakfast: {
           title: 'Pastırma Tabağı',
@@ -2238,6 +2312,20 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Denge ve Süreklilik',
       focusTag: 'Otuz sekizinci gün',
       heroImageKey: 'sarimsakli-et-suyu-corbasi',
+      defiInsight: {
+        focus: 'Hafif akşam ve denge',
+        goal: 'Akşam öğününde yükü artırmadan ritmi korumak',
+        primaryFoods: ['et suyu çorbası', 'zeytinyağlı sebze', 'cacık'],
+        metabolicTags: ['eveningLightness', 'glucoseStability', 'satietySupport'],
+        explanation: 'Plan, günün ikinci yarısında daha kontrollü bir tabakla metabolik ritmin dengede kalmasını destekler.',
+        swapRules: [
+          {
+            trigger: 'yoğurt',
+            alternatives: ['kefir', 'haşlanmış yumurta', 'zeytinyağlı salata'],
+            reason: 'hafif akşam dengesini ve tokluk desteğini korumak',
+          },
+        ],
+      },
       meals: {
         breakfast: {
           title: 'Yumurta Dolması',
@@ -2361,6 +2449,13 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Denge ve Süreklilik',
       focusTag: 'Kırkıncı gün',
       heroImageKey: 'sebze-turlusu',
+      defiInsight: {
+        focus: 'Protein + lif dengesi',
+        goal: 'Gün boyu daha stabil enerji ve kontrollü açlık sağlamak',
+        primaryFoods: ['menemen', 'sebze türlüsü', 'yoğurt'],
+        metabolicTags: ['fiberSupport', 'glucoseStability', 'proteinBalance'],
+        explanation: 'Bugünün tabak kurgusu, lif ve protein kombinasyonunu kullanarak ani enerji düşüşlerini azaltmayı hedefler.',
+      },
       meals: {
         breakfast: {
           title: 'Peynirli Menemen',

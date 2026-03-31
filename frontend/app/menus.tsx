@@ -20,6 +20,7 @@ import { DAY_INFO_BOARD, type DayInfoCardData } from '../src/data/dayInfoBoard';
 import { Theme } from '../src/config/theme';
 import { getMetabolicFocus } from '../src/data/metabolicFocus';
 import { supabase } from '../src/lib/supabase';
+import { buildDefiInsightPayload } from '../src/utils/defiInsight';
 
 const SECTION_META = [
   { key: 'breakfast', title: 'Kahvaltı' },
@@ -1320,13 +1321,23 @@ export default function MenusScreen() {
     if (!text) return null;
     return { title: 'Defi', body: text };
   }, [effectiveDay, hasSupabaseForSelectedDay, day]);
+  const defiInsightPayload = useMemo(() => buildDefiInsightPayload(dayMenu), [dayMenu]);
+  const localInsightDefiMessage = useMemo(() => {
+    if (!defiInsightPayload) return null;
+    return {
+      title: 'Defi',
+      body: defiInsightPayload.comment,
+      detail: defiInsightPayload.suggestion ?? undefined,
+    };
+  }, [defiInsightPayload]);
   const menusDefiCandidate = useMemo(() => {
     if (!defiVisible && !DEBUG_SHOW_DEFI_MENUS) return null;
     if (day41DirectSupabaseDefiMessage) return day41DirectSupabaseDefiMessage;
     if (supabaseDefiMessage) return supabaseDefiMessage;
+    if (localInsightDefiMessage) return localInsightDefiMessage;
     if (baseDefiMessage) return baseDefiMessage;
     return { title: 'Defi', body: 'Defi notu şu anda hazır değil.' };
-  }, [defiVisible, day41DirectSupabaseDefiMessage, supabaseDefiMessage, baseDefiMessage]);
+  }, [defiVisible, day41DirectSupabaseDefiMessage, supabaseDefiMessage, localInsightDefiMessage, baseDefiMessage]);
 
   const handleOpenPlan = () => {
     router.push('/(tabs)/defense');
