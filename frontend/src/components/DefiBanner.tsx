@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Pressable, Animated, Easing } from 'react-native';
 import { hideDefiForToday } from '../defi/defiVisibility';
 
@@ -24,6 +24,7 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
   const [hidden, setHidden] = useState(false);
   const [displayBody, setDisplayBody] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [bodyExpanded, setBodyExpanded] = useState(false);
   const lastRunAtRef = useRef(0);
   const typingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulse = useRef(new Animated.Value(0)).current;
@@ -124,9 +125,19 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
     const prev = prevBodyRef.current;
     prevBodyRef.current = message.body;
     if (prev && prev !== message.body) {
+      setBodyExpanded(false);
       startTypewriter('message-change');
     }
   }, [enableTypewriter, message?.body, startTypewriter]);
+
+  // İlk cümleyi ayır (nokta/ünlem/soru işaretinden sonra boşluk varsa böl)
+  const firstSentence = useMemo(() => {
+    if (!message?.body) return '';
+    const match = message.body.match(/^(.+?[.!?])\s+\S/s);
+    return match ? match[1] : message.body;
+  }, [message?.body]);
+
+  const hasMore = !!message?.body && message.body.length > firstSentence.length;
 
   // cleanup on unmount
   useEffect(() => () => {
@@ -175,7 +186,24 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
             ) : null}
           </View>
         </View>
-        <Text style={styles.body}>{enableTypewriter ? displayBody : message.body}</Text>
+        <Text style={styles.body}>
+          {bodyExpanded
+            ? message.body
+            : enableTypewriter
+              ? displayBody.slice(0, firstSentence.length)
+              : firstSentence}
+        </Text>
+        {hasMore && (
+          <TouchableOpacity
+            onPress={() => setBodyExpanded((prev) => !prev)}
+            activeOpacity={0.7}
+            style={styles.expandButton}
+          >
+            <Text style={styles.expandButtonText}>
+              {bodyExpanded ? 'Daralt ↑' : 'Devamını oku ↓'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </Pressable>
 
       {open && (
@@ -280,5 +308,14 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#94A3B8',
     marginTop: 4
-  }
+  },
+  expandButton: {
+    marginTop: 6,
+    alignSelf: 'flex-start',
+  },
+  expandButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0F5A4E',
+  },
 });

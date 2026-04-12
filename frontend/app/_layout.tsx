@@ -3,6 +3,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { differenceInDays, parseISO } from 'date-fns';
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { DefenseProgramProvider, useDefenseProgram } from '../src/context/DefenseProgramContext';
 import { scheduleMealsNudgeIfNotStarted } from '../src/notifications/mealsNudgeNotifications';
@@ -173,6 +174,7 @@ function NotificationHandler() {
   };
 
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     let isMounted = true;
 
     Notifications.getLastNotificationResponseAsync().then((response) => {

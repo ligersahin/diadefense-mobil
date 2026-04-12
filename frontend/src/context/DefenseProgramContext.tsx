@@ -1,9 +1,17 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  ReactNode,
+} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { differenceInDays, parseISO } from 'date-fns';
 import { DayPlan, MealSlot, BloodValues, MonsterState, DefiMood, UserProgress } from '../types';
 import { TR_PROGRAM } from '../config/program/tr-program';
-import { getDefiMessage, getMonsterState } from '../logic/defiMessages';
+import { computeDefenseMetrics, DEFAULT_DEFENSE_METRICS } from '../logic/defenseMetrics';
 
 type DefenseProgramContextType = {
   // Program data
@@ -11,7 +19,7 @@ type DefenseProgramContextType = {
   startISO: string | null;
   currentDayIndex: number;
   currentDayPlan: DayPlan | null;
-  
+
   // User progress
   completedMeals: Record<number, MealSlot[]>;
   completedSupplements: Record<number, string[]>;
@@ -24,7 +32,7 @@ type DefenseProgramContextType = {
   glucoseByDay: Record<number, number>; // mg/dL per day
   weightByDay: Record<number, number>; // kg per day
   bloodValues: BloodValues;
-  
+
   // Calculated values
   mealRatio: number;
   supplementRatio: number;
@@ -36,7 +44,7 @@ type DefenseProgramContextType = {
   monsterState: MonsterState;
   defiMood: DefiMood;
   defiMessage: string;
-  
+
   // Actions
   setStartISO: (dateString: string) => void;
   markMealCompleted: (dayIndex: number, slot: MealSlot) => void;
@@ -63,6 +71,8 @@ type DefenseProgramContextType = {
   setBloodValues: (values: BloodValues) => void;
   resetDailyProgress: () => void;
   resetProgram: () => Promise<void>;
+  sakatatRestriction: boolean;
+  updateSakatatRestriction: (value: boolean) => void;
 };
 
 const DefenseProgramContext = createContext<DefenseProgramContextType | undefined>(undefined);
@@ -80,15 +90,25 @@ const STORAGE_KEYS = {
   GLUCOSE_BY_DAY: '@diadefense_glucose_by_day',
   WEIGHT_BY_DAY: '@diadefense_weight_by_day',
   BLOOD: '@diadefense_blood',
-  LAST_RESET_DATE: '@diadefense_last_reset'
+  LAST_RESET_DATE: '@diadefense_last_reset',
 };
+
+const VALID_MEAL_SLOTS = new Set<MealSlot>(['breakfast', 'lunch', 'dinner']);
+
+function isValidMealSlot(slot: MealSlot): boolean {
+  return VALID_MEAL_SLOTS.has(slot);
+}
+
+function cleanMealSlots(slots: MealSlot[]): MealSlot[] {
+  return Array.from(new Set(slots.filter(isValidMealSlot)));
+}
 
 export function DefenseProgramProvider({ children }: { children: ReactNode }) {
   const [program] = useState<DayPlan[]>(TR_PROGRAM);
   const [startISO, setStartISOState] = useState<string | null>(null);
   const [currentDayIndex, setCurrentDayIndex] = useState<number>(1);
   const [currentDayPlan, setCurrentDayPlan] = useState<DayPlan | null>(null);
-  
+
   // User progress state
   const [completedMeals, setCompletedMeals] = useState<Record<number, MealSlot[]>>({});
   const [completedSupplements, setCompletedSupplements] = useState<Record<number, string[]>>({});
@@ -101,18 +121,32 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
   const [glucoseByDay, setGlucoseByDayState] = useState<Record<number, number>>({});
   const [weightByDay, setWeightByDayState] = useState<Record<number, number>>({});
   const [bloodValues, setBloodValuesState] = useState<BloodValues>({});
-  
-  // Calculated state
-  const [mealRatio, setMealRatio] = useState<number>(0);
-  const [supplementRatio, setSupplementRatio] = useState<number>(0);
-  const [waterRatio, setWaterRatio] = useState<number>(0);
-  const [activityRatio, setActivityRatio] = useState<number>(0);
-  const [sleepRatio, setSleepRatio] = useState<number>(0);
-  const [bloodModifier, setBloodModifier] = useState<number>(0);
-  const [defenseScore, setDefenseScore] = useState<number>(0);
-  const [monsterState, setMonsterState] = useState<MonsterState>('neutral');
-  const [defiMood, setDefiMood] = useState<DefiMood>('idle');
-  const [defiMessage, setDefiMessage] = useState<string>('Merhaba! Programına başlamaya hazır mısın?');
+  const [sakatatRestriction, setSakatatRestriction] = useState<boolean>(false);
+
+  // Derived defense metrics — pure computation, no intermediate useState cascade
+  const metrics = useMemo(
+    () =>
+      computeDefenseMetrics({
+        currentDayPlan,
+        currentDayIndex,
+        completedMeals,
+        completedSupplements,
+        waterIntakeByDay,
+        activityMinutesByDay,
+        sleepHoursByDay,
+        bloodValues,
+      }),
+    [
+      currentDayPlan,
+      currentDayIndex,
+      completedMeals,
+      completedSupplements,
+      waterIntakeByDay,
+      activityMinutesByDay,
+      sleepHoursByDay,
+      bloodValues,
+    ],
+  );
 
   // Load saved data on mount
   useEffect(() => {
@@ -132,33 +166,27 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
       const daysPassed = differenceInDays(today, start) + 1;
       const newDayIndex = Math.min(Math.max(daysPassed, 1), 90);
       setCurrentDayIndex(newDayIndex);
-      
-      // Find current day plan
       const plan = program.find(p => p.dayIndex === newDayIndex);
       setCurrentDayPlan(plan || program[0] || null);
     }
   }, [startISO, program]);
 
-  // Recalculate everything when progress changes
-  useEffect(() => {
-    calculateDefenseMetrics();
-  }, [
-    currentDayPlan,
-    currentDayIndex,
-    completedMeals,
-    completedSupplements,
-    waterIntakeLiters,
-    activityScore,
-    sleepHours,
-    waterIntakeByDay,
-    activityMinutesByDay,
-    sleepHoursByDay,
-    bloodValues
-  ]);
-
   async function loadSavedData() {
     try {
-      const [savedStart, savedMeals, savedSupps, savedWater, savedActivity, savedSleep, savedWaterByDay, savedActivityByDay, savedSleepByDay, savedGlucoseByDay, savedWeightByDay, savedBlood] = await Promise.all([
+      const [
+        savedStart,
+        savedMeals,
+        savedSupps,
+        savedWater,
+        savedActivity,
+        savedSleep,
+        savedWaterByDay,
+        savedActivityByDay,
+        savedSleepByDay,
+        savedGlucoseByDay,
+        savedWeightByDay,
+        savedBlood,
+      ] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEYS.START_DATE),
         AsyncStorage.getItem(STORAGE_KEYS.COMPLETED_MEALS),
         AsyncStorage.getItem(STORAGE_KEYS.COMPLETED_SUPPS),
@@ -170,14 +198,14 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
         AsyncStorage.getItem(STORAGE_KEYS.SLEEP_BY_DAY),
         AsyncStorage.getItem(STORAGE_KEYS.GLUCOSE_BY_DAY),
         AsyncStorage.getItem(STORAGE_KEYS.WEIGHT_BY_DAY),
-        AsyncStorage.getItem(STORAGE_KEYS.BLOOD)
+        AsyncStorage.getItem(STORAGE_KEYS.BLOOD),
       ]);
 
       // Auto-init: if startISO is missing, set it to today
       if (savedStart) {
         setStartISOState(savedStart);
       } else {
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const today = new Date().toISOString().split('T')[0];
         setStartISOState(today);
         await AsyncStorage.setItem(STORAGE_KEYS.START_DATE, today);
       }
@@ -192,6 +220,8 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
       if (savedGlucoseByDay) setGlucoseByDayState(JSON.parse(savedGlucoseByDay));
       if (savedWeightByDay) setWeightByDayState(JSON.parse(savedWeightByDay));
       if (savedBlood) setBloodValuesState(JSON.parse(savedBlood));
+      const savedSakatat = await AsyncStorage.getItem('@diadefense_sakatat_restriction');
+      if (savedSakatat !== null) setSakatatRestriction(JSON.parse(savedSakatat));
     } catch (error) {
       console.error('Failed to load saved data:', error);
     }
@@ -201,10 +231,8 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
     try {
       const lastReset = await AsyncStorage.getItem(STORAGE_KEYS.LAST_RESET_DATE);
       const today = new Date().toDateString();
-      
       if (lastReset !== today) {
-        // Reset daily progress
-        await resetDailyProgress();
+        resetDailyProgress();
         await AsyncStorage.setItem(STORAGE_KEYS.LAST_RESET_DATE, today);
       }
     } catch (error) {
@@ -212,420 +240,256 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function resetDailyProgress() {
+  // ─── Actions (all use functional setState to avoid stale closures) ───────────
+
+  const setStartISO = useCallback((dateString: string) => {
+    setStartISOState(dateString);
+    AsyncStorage.setItem(STORAGE_KEYS.START_DATE, dateString).catch(e =>
+      console.error('Failed to save start date:', e),
+    );
+  }, []);
+
+  const markMealCompleted = useCallback((dayIndex: number, slot: MealSlot) => {
+    if (!isValidMealSlot(slot)) return;
+    setCompletedMeals(prev => {
+      const clean = cleanMealSlots(prev[dayIndex] || []);
+      if (clean.includes(slot)) return prev;
+      const next = { ...prev, [dayIndex]: [...clean, slot] };
+      AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_MEALS, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save completed meal:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const toggleMealCompleted = useCallback((dayIndex: number, slot: MealSlot) => {
+    if (!isValidMealSlot(slot)) return;
+    setCompletedMeals(prev => {
+      const clean = cleanMealSlots(prev[dayIndex] || []);
+      const next = {
+        ...prev,
+        [dayIndex]: clean.includes(slot)
+          ? clean.filter(s => s !== slot)
+          : [...clean, slot],
+      };
+      AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_MEALS, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save completed meal:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const markSupplementTaken = useCallback((dayIndex: number, id: string) => {
+    setCompletedSupplements(prev => {
+      const daySupps = prev[dayIndex] || [];
+      if (daySupps.includes(id)) return prev;
+      const next = { ...prev, [dayIndex]: [...daySupps, id] };
+      AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_SUPPS, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save completed supplement:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const setSupplementTaken = useCallback((dayIndex: number, id: string) => {
+    setCompletedSupplements(prev => {
+      const daySupps = prev[dayIndex] || [];
+      if (daySupps.includes(id)) return prev;
+      const next = { ...prev, [dayIndex]: [...daySupps, id] };
+      AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_SUPPS, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save completed supplement:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const toggleSupplementTaken = useCallback((dayIndex: number, id: string) => {
+    setCompletedSupplements(prev => {
+      const daySupps = prev[dayIndex] || [];
+      const next = {
+        ...prev,
+        [dayIndex]: daySupps.includes(id)
+          ? daySupps.filter(s => s !== id)
+          : [...daySupps, id],
+      };
+      AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_SUPPS, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save completed supplement:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  // Legacy water/activity/sleep actions
+  const addWater = useCallback((liters: number) => {
+    setWaterIntakeLiters(prev => {
+      const next = prev + liters;
+      AsyncStorage.setItem(STORAGE_KEYS.WATER, next.toString()).catch(e =>
+        console.error('Failed to save water intake:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const setWater = useCallback((liters: number) => {
+    setWaterIntakeLiters(liters);
+    AsyncStorage.setItem(STORAGE_KEYS.WATER, liters.toString()).catch(e =>
+      console.error('Failed to save water intake:', e),
+    );
+  }, []);
+
+  const setActivityScore = useCallback((value: number) => {
+    setActivityScoreState(value);
+    AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY, value.toString()).catch(e =>
+      console.error('Failed to save activity score:', e),
+    );
+  }, []);
+
+  const setSleepHours = useCallback((value: number) => {
+    setSleepHoursState(value);
+    AsyncStorage.setItem(STORAGE_KEYS.SLEEP, value.toString()).catch(e =>
+      console.error('Failed to save sleep hours:', e),
+    );
+  }, []);
+
+  // Day-based actions
+  const addWaterByDay = useCallback((dayIndex: number, amountMl: number) => {
+    setWaterIntakeByDay(prev => {
+      const next = { ...prev, [dayIndex]: (prev[dayIndex] || 0) + amountMl };
+      AsyncStorage.setItem(STORAGE_KEYS.WATER_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save water by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const resetWaterByDay = useCallback((dayIndex: number) => {
+    setWaterIntakeByDay(prev => {
+      const next = { ...prev, [dayIndex]: 0 };
+      AsyncStorage.setItem(STORAGE_KEYS.WATER_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to reset water by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const addActivityByDay = useCallback((dayIndex: number, minutes: number) => {
+    setActivityMinutesByDay(prev => {
+      const next = { ...prev, [dayIndex]: (prev[dayIndex] || 0) + minutes };
+      AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save activity by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const resetActivityByDay = useCallback((dayIndex: number) => {
+    setActivityMinutesByDay(prev => {
+      const next = { ...prev, [dayIndex]: 0 };
+      AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to reset activity by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const setSleepByDay = useCallback((dayIndex: number, hours: number) => {
+    setSleepHoursByDay(prev => {
+      const next = { ...prev, [dayIndex]: hours };
+      AsyncStorage.setItem(STORAGE_KEYS.SLEEP_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save sleep by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const addSleepByDay = useCallback((dayIndex: number, deltaHours: number) => {
+    setSleepHoursByDay(prev => {
+      const next = { ...prev, [dayIndex]: (prev[dayIndex] || 0) + deltaHours };
+      AsyncStorage.setItem(STORAGE_KEYS.SLEEP_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to add sleep by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const resetSleepByDay = useCallback((dayIndex: number) => {
+    setSleepHoursByDay(prev => {
+      const next = { ...prev, [dayIndex]: 0 };
+      AsyncStorage.setItem(STORAGE_KEYS.SLEEP_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to reset sleep by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const setGlucoseByDay = useCallback((dayIndex: number, mgdl: number) => {
+    setGlucoseByDayState(prev => {
+      const next = { ...prev, [dayIndex]: mgdl };
+      AsyncStorage.setItem(STORAGE_KEYS.GLUCOSE_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save glucose by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const resetGlucoseByDay = useCallback((dayIndex: number) => {
+    setGlucoseByDayState(prev => {
+      const next = { ...prev };
+      delete next[dayIndex];
+      AsyncStorage.setItem(STORAGE_KEYS.GLUCOSE_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to reset glucose by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const setWeightByDay = useCallback((dayIndex: number, kg: number) => {
+    setWeightByDayState(prev => {
+      const next = { ...prev, [dayIndex]: kg };
+      AsyncStorage.setItem(STORAGE_KEYS.WEIGHT_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to save weight by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const resetWeightByDay = useCallback((dayIndex: number) => {
+    setWeightByDayState(prev => {
+      const next = { ...prev };
+      delete next[dayIndex];
+      AsyncStorage.setItem(STORAGE_KEYS.WEIGHT_BY_DAY, JSON.stringify(next)).catch(e =>
+        console.error('Failed to reset weight by day:', e),
+      );
+      return next;
+    });
+  }, []);
+
+  const setBloodValues = useCallback((values: BloodValues) => {
+    setBloodValuesState(values);
+    AsyncStorage.setItem(STORAGE_KEYS.BLOOD, JSON.stringify(values)).catch(e =>
+      console.error('Failed to save blood values:', e),
+    );
+  }, []);
+
+  const updateSakatatRestriction = useCallback((value: boolean) => {
+    setSakatatRestriction(value);
+    AsyncStorage.setItem('@diadefense_sakatat_restriction', JSON.stringify(value)).catch(console.error);
+  }, []);
+
+  const resetDailyProgress = useCallback(() => {
     setWaterIntakeLiters(0);
     setActivityScoreState(0);
     setSleepHoursState(0);
-    
-    try {
-      await Promise.all([
-        AsyncStorage.setItem(STORAGE_KEYS.WATER, '0'),
-        AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY, '0'),
-        AsyncStorage.setItem(STORAGE_KEYS.SLEEP, '0')
-      ]);
-    } catch (error) {
-      console.error('Failed to reset daily progress:', error);
-    }
-  }
+    Promise.all([
+      AsyncStorage.setItem(STORAGE_KEYS.WATER, '0'),
+      AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY, '0'),
+      AsyncStorage.setItem(STORAGE_KEYS.SLEEP, '0'),
+    ]).catch(e => console.error('Failed to reset daily progress:', e));
+  }, []);
 
-  function calculateDefenseMetrics() {
-    if (!currentDayPlan) {
-      setDefenseScore(0);
-      return;
-    }
-
-    const dayMeals = completedMeals[currentDayIndex] || [];
-    const daySupps = completedSupplements[currentDayIndex] || [];
-    
-    // Calculate ratios - filter out any potential snack entries and deduplicate
-    const safeMeals = (currentDayPlan?.meals ?? []).filter(
-      (m: any) => m?.type !== "snack" && m?.slot !== "snack" && m?.label !== "Ara Öğün"
-    );
-    const safeMealSlots = new Set(safeMeals.map(m => m.slot));
-    
-    // Filter and deduplicate completed meals to only include safe meal slots
-    const completedSafe = Array.from(new Set(dayMeals.filter(slot => safeMealSlots.has(slot))));
-    
-    const totalMeals = safeMeals.length || 1;
-    const newMealRatio = Math.min(Math.max(completedSafe.length / totalMeals, 0), 1);
-    
-    const totalSupps = currentDayPlan.supplements.length;
-    const newSuppRatio = totalSupps > 0 ? daySupps.length / totalSupps : 0;
-    
-    const targetWater = currentDayPlan.defenseTargets.waterLiters;
-    const currentWaterMl = waterIntakeByDay[currentDayIndex] || 0;
-    const currentWaterLiters = currentWaterMl / 1000;
-    const newWaterRatio = Math.min(currentWaterLiters / targetWater, 1);
-    
-    const targetSteps = currentDayPlan.defenseTargets.steps;
-    const currentActivityMinutes = activityMinutesByDay[currentDayIndex] || 0;
-    // Convert minutes to estimated steps (rough estimate: 1 minute = ~100 steps)
-    const newActivityRatio = (typeof targetSteps === 'number' && targetSteps > 0)
-      ? Math.min(Math.min(currentActivityMinutes * 100, targetSteps) / targetSteps, 1)
-      : 0;
-    
-    const targetSleep = currentDayPlan.defenseTargets.sleepHours;
-    const currentSleepHours = sleepHoursByDay[currentDayIndex] || 0;
-    const newSleepRatio = (typeof targetSleep === 'number' && targetSleep > 0)
-      ? Math.min(currentSleepHours / targetSleep, 1)
-      : 0;
-    
-    // Blood modifier: -10 to +10
-    let newBloodModifier = 0;
-    if (bloodValues.lastGlucose) {
-      if (bloodValues.lastGlucose < 70) newBloodModifier = -10;
-      else if (bloodValues.lastGlucose > 180) newBloodModifier = -5;
-      else if (bloodValues.lastGlucose >= 80 && bloodValues.lastGlucose <= 120) newBloodModifier = 5;
-    }
-    
-    // Calculate defense score (0-100)
-    const baseScore = (
-      newMealRatio * 30 +
-      newSuppRatio * 20 +
-      newWaterRatio * 15 +
-      newActivityRatio * 20 +
-      newSleepRatio * 15
-    );
-    
-    const finalScore = Math.min(Math.max(baseScore + newBloodModifier, 0), 100);
-    
-    // Update all calculated values
-    setMealRatio(newMealRatio);
-    setSupplementRatio(newSuppRatio);
-    setWaterRatio(newWaterRatio);
-    setActivityRatio(newActivityRatio);
-    setSleepRatio(newSleepRatio);
-    setBloodModifier(newBloodModifier);
-    setDefenseScore(finalScore);
-    
-    // Calculate monster state
-    const newMonsterState = getMonsterState(finalScore);
-    setMonsterState(newMonsterState);
-    
-    // Get Defi message - use safe meals only
-    const allMeals = safeMeals.map(m => m.slot);
-    const missedMeals = allMeals.filter(slot => !completedSafe.includes(slot));
-    const missedSupplements = totalSupps - daySupps.length;
-    
-    const defiResponse = getDefiMessage({
-      defenseScore: finalScore,
-      mealRatio: newMealRatio,
-      supplementRatio: newSuppRatio,
-      waterRatio: newWaterRatio,
-      sleepRatio: newSleepRatio,
-      activityRatio: newActivityRatio,
-      missedMeals,
-      missedSupplements,
-      monsterState: newMonsterState
-    });
-    
-    setDefiMood(defiResponse.mood);
-    setDefiMessage(defiResponse.message);
-  }
-
-  async function setStartISO(dateString: string) {
-    setStartISOState(dateString);
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.START_DATE, dateString);
-    } catch (error) {
-      console.error('Failed to save start date:', error);
-    }
-  }
-
-  async function markMealCompleted(dayIndex: number, slot: MealSlot) {
-    // Prevent adding snack or invalid slots
-    if (slot === 'snack' || (slot !== 'breakfast' && slot !== 'lunch' && slot !== 'dinner')) {
-      return;
-    }
-    
-    const dayMeals = completedMeals[dayIndex] || [];
-    // Deduplicate existing entries and filter out snacks
-    const cleanDayMeals = Array.from(new Set(dayMeals.filter(s => s !== 'snack' && (s === 'breakfast' || s === 'lunch' || s === 'dinner'))));
-    
-    if (!cleanDayMeals.includes(slot)) {
-      const updated = { ...completedMeals, [dayIndex]: [...cleanDayMeals, slot] };
-      setCompletedMeals(updated);
-      
-      try {
-        await AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_MEALS, JSON.stringify(updated));
-      } catch (error) {
-        console.error('Failed to save completed meal:', error);
-      }
-    }
-  }
-
-  async function toggleMealCompleted(dayIndex: number, slot: MealSlot) {
-    // Prevent adding snack or invalid slots
-    if (slot === 'snack' || (slot !== 'breakfast' && slot !== 'lunch' && slot !== 'dinner')) {
-      return;
-    }
-    
-    const dayMeals = completedMeals[dayIndex] || [];
-    // Deduplicate existing entries and filter out snacks
-    const cleanDayMeals = Array.from(new Set(dayMeals.filter(s => s !== 'snack' && (s === 'breakfast' || s === 'lunch' || s === 'dinner'))));
-    
-    let updated: Record<number, MealSlot[]>;
-    
-    if (cleanDayMeals.includes(slot)) {
-      // Remove if already completed
-      updated = {
-        ...completedMeals,
-        [dayIndex]: cleanDayMeals.filter(s => s !== slot)
-      };
-    } else {
-      // Add if not completed (deduplicated)
-      updated = {
-        ...completedMeals,
-        [dayIndex]: [...cleanDayMeals, slot]
-      };
-    }
-    
-    setCompletedMeals(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_MEALS, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save completed meal:', error);
-    }
-  }
-
-  async function markSupplementTaken(dayIndex: number, id: string) {
-    const daySupps = completedSupplements[dayIndex] || [];
-    if (!daySupps.includes(id)) {
-      const updated = { ...completedSupplements, [dayIndex]: [...daySupps, id] };
-      setCompletedSupplements(updated);
-      
-      try {
-        await AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_SUPPS, JSON.stringify(updated));
-      } catch (error) {
-        console.error('Failed to save completed supplement:', error);
-      }
-    }
-  }
-
-  async function setSupplementTaken(dayIndex: number, id: string) {
-    const daySupps = completedSupplements[dayIndex] || [];
-    if (daySupps.includes(id)) return;
-    const updated = { ...completedSupplements, [dayIndex]: [...daySupps, id] };
-    setCompletedSupplements(updated);
-
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_SUPPS, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save completed supplement:', error);
-    }
-  }
-
-  async function toggleSupplementTaken(dayIndex: number, id: string) {
-    const daySupps = completedSupplements[dayIndex] || [];
-    let updated: Record<number, string[]>;
-    
-    if (daySupps.includes(id)) {
-      // Remove if already taken
-      updated = {
-        ...completedSupplements,
-        [dayIndex]: daySupps.filter(s => s !== id)
-      };
-    } else {
-      // Add if not taken
-      updated = {
-        ...completedSupplements,
-        [dayIndex]: [...daySupps, id]
-      };
-    }
-    
-    setCompletedSupplements(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.COMPLETED_SUPPS, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save completed supplement:', error);
-    }
-  }
-
-  async function addWater(liters: number) {
-    const newValue = waterIntakeLiters + liters;
-    setWaterIntakeLiters(newValue);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.WATER, newValue.toString());
-    } catch (error) {
-      console.error('Failed to save water intake:', error);
-    }
-  }
-
-  async function setWater(liters: number) {
-    setWaterIntakeLiters(liters);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.WATER, liters.toString());
-    } catch (error) {
-      console.error('Failed to save water intake:', error);
-    }
-  }
-
-  async function setActivityScore(value: number) {
-    setActivityScoreState(value);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY, value.toString());
-    } catch (error) {
-      console.error('Failed to save activity score:', error);
-    }
-  }
-
-  async function setSleepHours(value: number) {
-    setSleepHoursState(value);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.SLEEP, value.toString());
-    } catch (error) {
-      console.error('Failed to save sleep hours:', error);
-    }
-  }
-
-  async function setBloodValues(values: BloodValues) {
-    setBloodValuesState(values);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.BLOOD, JSON.stringify(values));
-    } catch (error) {
-      console.error('Failed to save blood values:', error);
-    }
-  }
-
-  // Day-based functions
-  async function addWaterByDay(dayIndex: number, amountMl: number) {
-    const current = waterIntakeByDay[dayIndex] || 0;
-    const updated = { ...waterIntakeByDay, [dayIndex]: current + amountMl };
-    setWaterIntakeByDay(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.WATER_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save water by day:', error);
-    }
-  }
-
-  async function resetWaterByDay(dayIndex: number) {
-    const updated = { ...waterIntakeByDay, [dayIndex]: 0 };
-    setWaterIntakeByDay(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.WATER_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to reset water by day:', error);
-    }
-  }
-
-  async function addActivityByDay(dayIndex: number, minutes: number) {
-    const current = activityMinutesByDay[dayIndex] || 0;
-    const updated = { ...activityMinutesByDay, [dayIndex]: current + minutes };
-    setActivityMinutesByDay(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save activity by day:', error);
-    }
-  }
-
-  async function resetActivityByDay(dayIndex: number) {
-    const updated = { ...activityMinutesByDay, [dayIndex]: 0 };
-    setActivityMinutesByDay(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to reset activity by day:', error);
-    }
-  }
-
-  async function setSleepByDay(dayIndex: number, hours: number) {
-    const updated = { ...sleepHoursByDay, [dayIndex]: hours };
-    setSleepHoursByDay(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.SLEEP_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save sleep by day:', error);
-    }
-  }
-
-  async function addSleepByDay(dayIndex: number, deltaHours: number) {
-    const current = sleepHoursByDay[dayIndex] || 0;
-    const updated = { ...sleepHoursByDay, [dayIndex]: current + deltaHours };
-    setSleepHoursByDay(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.SLEEP_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to add sleep by day:', error);
-    }
-  }
-
-  async function resetSleepByDay(dayIndex: number) {
-    const updated = { ...sleepHoursByDay, [dayIndex]: 0 };
-    setSleepHoursByDay(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.SLEEP_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to reset sleep by day:', error);
-    }
-  }
-
-  async function setGlucoseByDay(dayIndex: number, mgdl: number) {
-    const updated = { ...glucoseByDay, [dayIndex]: mgdl };
-    setGlucoseByDayState(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.GLUCOSE_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save glucose by day:', error);
-    }
-  }
-
-  async function resetGlucoseByDay(dayIndex: number) {
-    const updated = { ...glucoseByDay };
-    delete updated[dayIndex];
-    setGlucoseByDayState(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.GLUCOSE_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to reset glucose by day:', error);
-    }
-  }
-
-  async function setWeightByDay(dayIndex: number, kg: number) {
-    const updated = { ...weightByDay, [dayIndex]: kg };
-    setWeightByDayState(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.WEIGHT_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to save weight by day:', error);
-    }
-  }
-
-  async function resetWeightByDay(dayIndex: number) {
-    const updated = { ...weightByDay };
-    delete updated[dayIndex];
-    setWeightByDayState(updated);
-    
-    try {
-      await AsyncStorage.setItem(STORAGE_KEYS.WEIGHT_BY_DAY, JSON.stringify(updated));
-    } catch (error) {
-      console.error('Failed to reset weight by day:', error);
-    }
-  }
-
-  async function resetProgram() {
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  const resetProgram = useCallback(async () => {
+    const today = new Date().toISOString().split('T')[0];
     setStartISOState(today);
-    
-    // Reset all progress data
     setCompletedMeals({});
     setCompletedSupplements({});
     setWaterIntakeByDay({});
@@ -633,7 +497,6 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
     setSleepHoursByDay({});
     setGlucoseByDayState({});
     setWeightByDayState({});
-    
     try {
       await Promise.all([
         AsyncStorage.setItem(STORAGE_KEYS.START_DATE, today),
@@ -643,69 +506,107 @@ export function DefenseProgramProvider({ children }: { children: ReactNode }) {
         AsyncStorage.setItem(STORAGE_KEYS.ACTIVITY_BY_DAY, JSON.stringify({})),
         AsyncStorage.setItem(STORAGE_KEYS.SLEEP_BY_DAY, JSON.stringify({})),
         AsyncStorage.setItem(STORAGE_KEYS.GLUCOSE_BY_DAY, JSON.stringify({})),
-        AsyncStorage.setItem(STORAGE_KEYS.WEIGHT_BY_DAY, JSON.stringify({}))
+        AsyncStorage.setItem(STORAGE_KEYS.WEIGHT_BY_DAY, JSON.stringify({})),
       ]);
     } catch (error) {
       console.error('Failed to reset program:', error);
     }
-  }
+  }, []);
 
-  const value: DefenseProgramContextType = {
-    program,
-    startISO,
-    currentDayIndex,
-    currentDayPlan,
-    completedMeals,
-    completedSupplements,
-    waterIntakeLiters,
-    activityScore,
-    sleepHours,
-    waterIntakeByDay,
-    activityMinutesByDay,
-    sleepHoursByDay,
-    glucoseByDay,
-    weightByDay,
-    bloodValues,
-    mealRatio,
-    supplementRatio,
-    waterRatio,
-    activityRatio,
-    sleepRatio,
-    bloodModifier,
-    defenseScore,
-    monsterState,
-    defiMood,
-    defiMessage,
-    setStartISO,
-    markMealCompleted,
-    toggleMealCompleted,
-    markSupplementTaken,
-    setSupplementTaken,
-    toggleSupplementTaken,
-    addWater,
-    setWater,
-    setActivityScore,
-    setSleepHours,
-    addWaterByDay,
-    resetWaterByDay,
-    addActivityByDay,
-    resetActivityByDay,
-    setSleepByDay,
-    addSleepByDay,
-    resetSleepByDay,
-    setGlucoseByDay,
-    resetGlucoseByDay,
-    setWeightByDay,
-    resetWeightByDay,
-    setBloodValues,
-    resetDailyProgress,
-    resetProgram
-  };
+  // ─── Stable context value ────────────────────────────────────────────────────
+  const value = useMemo(
+    (): DefenseProgramContextType => ({
+      program,
+      startISO,
+      currentDayIndex,
+      currentDayPlan,
+      completedMeals,
+      completedSupplements,
+      waterIntakeLiters,
+      activityScore,
+      sleepHours,
+      waterIntakeByDay,
+      activityMinutesByDay,
+      sleepHoursByDay,
+      glucoseByDay,
+      weightByDay,
+      bloodValues,
+      ...metrics,
+      setStartISO,
+      markMealCompleted,
+      toggleMealCompleted,
+      markSupplementTaken,
+      setSupplementTaken,
+      toggleSupplementTaken,
+      addWater,
+      setWater,
+      setActivityScore,
+      setSleepHours,
+      addWaterByDay,
+      resetWaterByDay,
+      addActivityByDay,
+      resetActivityByDay,
+      setSleepByDay,
+      addSleepByDay,
+      resetSleepByDay,
+      setGlucoseByDay,
+      resetGlucoseByDay,
+      setWeightByDay,
+      resetWeightByDay,
+      setBloodValues,
+      resetDailyProgress,
+      resetProgram,
+      sakatatRestriction,
+      updateSakatatRestriction,
+    }),
+    [
+      program,
+      startISO,
+      currentDayIndex,
+      currentDayPlan,
+      completedMeals,
+      completedSupplements,
+      waterIntakeLiters,
+      activityScore,
+      sleepHours,
+      waterIntakeByDay,
+      activityMinutesByDay,
+      sleepHoursByDay,
+      glucoseByDay,
+      weightByDay,
+      bloodValues,
+      metrics,
+      setStartISO,
+      markMealCompleted,
+      toggleMealCompleted,
+      markSupplementTaken,
+      setSupplementTaken,
+      toggleSupplementTaken,
+      addWater,
+      setWater,
+      setActivityScore,
+      setSleepHours,
+      addWaterByDay,
+      resetWaterByDay,
+      addActivityByDay,
+      resetActivityByDay,
+      setSleepByDay,
+      addSleepByDay,
+      resetSleepByDay,
+      setGlucoseByDay,
+      resetGlucoseByDay,
+      setWeightByDay,
+      resetWeightByDay,
+      setBloodValues,
+      resetDailyProgress,
+      resetProgram,
+      sakatatRestriction,
+      updateSakatatRestriction,
+    ],
+  );
 
   return (
-    <DefenseProgramContext.Provider value={value}>
-      {children}
-    </DefenseProgramContext.Provider>
+    <DefenseProgramContext.Provider value={value}>{children}</DefenseProgramContext.Provider>
   );
 }
 

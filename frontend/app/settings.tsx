@@ -13,7 +13,7 @@ export default function SettingsScreen() {
   const router = useRouter();
   const [aboutModalVisible, setAboutModalVisible] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const { startISO, setStartISO, resetProgram } = useDefenseProgram();
+  const { startISO, setStartISO, resetProgram, sakatatRestriction, updateSakatatRestriction } = useDefenseProgram();
   
   const programStarted = !!startISO;
 
@@ -137,6 +137,28 @@ export default function SettingsScreen() {
             </View>
             <Ionicons name="chevron-forward" size={20} color="#5FAF86" />
           </TouchableOpacity>
+        </Card>
+
+        {/* Diyet Kısıtlamaları Section */}
+        <Text style={styles.sectionTitle}>Diyet Kısıtlamaları</Text>
+        <Card>
+          <View style={styles.menuItem}>
+            <View style={styles.menuItemLeft}>
+              <Ionicons name="ban-outline" size={24} color="#6B7280" />
+              <View style={styles.menuItemTextGroup}>
+                <Text style={styles.menuItemText}>Sakatat Yemiyorum</Text>
+                <Text style={styles.menuItemSubtext}>
+                  Açıksa sakatat içeren öğünler için Defi alternatif öneriler sunar.
+                </Text>
+              </View>
+            </View>
+            <Switch
+              value={sakatatRestriction}
+              onValueChange={updateSakatatRestriction}
+              trackColor={{ false: '#E2E8F0', true: '#4F9B78' }}
+              thumbColor="#FFFFFF"
+            />
+          </View>
         </Card>
 
         {/* Uygulama Section */}

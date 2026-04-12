@@ -2,6 +2,7 @@
  * Tüm tarif görselleri: assets/recipes/
  * Cache temiz başlatma: npx expo start --dev-client -c
  */
+
 const RECIPE_IMAGES = {
   'paca-corbasi': require('../../assets/recipes/paca-corbasi.png'),
   'soguk-domates-corbasi': require('../../assets/recipes/soguk-domates-corbasi.png'),
@@ -47,6 +48,7 @@ const RECIPE_IMAGES = {
   'tavuk-sote': require('../../assets/recipes/tavuk-sote.jpg'),
   'sebze-turlusu': require('../../assets/recipes/sebze-turlusu.jpg'),
   'sevket-i-bostan': require('../../assets/recipes/sevket-i-bostan.jpg'),
+  'kiymali-ispanak': require('../../assets/recipes/kiymali-ispanak.jpg'),
   'peynirli-domates-dolmasi': require('../../assets/recipes/peynirli-domates-dolmasi.png'),
   'day31': require('../../assets/images/day31.jpg'),
   'yogurtlu-pancar-salatasi': require('../../assets/images/yogurtlu-pancar.jpg'),

@@ -497,4 +497,40 @@ export const DAY_INFO_BOARD: Record<number, { cards: DayInfoCardData[] }> = {
       }
     ]
   },
+  42: {
+    cards: [
+      {
+        id: 'faq-day-42',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '“Evde yoğurt yapmaya, turşu kurmaya vaktim yok. Bunları marketten alsam olmaz mı?”',
+        contentBody: 'Faydalı bakterilerden yana zengin bir bağırsak florasının sağlığın temeli olduğunu her fırsatta dile getiriyorum. Düşman bakterilerin diyabet riskini artırdığını, probiyotiklerin ise diyabete karşı etkili bir savunma kalkanı oluşturduklarını gösteren birçok bilimsel çalışma var. Peki, dost bakterileri nereden alacağız? Ev yoğurdundan, ev turşusundan, evde hazırladığınız kefirden, sirkeden, şirden mayasıyla yapılmış peynirden. Endüstriyel olarak üretilmiş gıda maddelerinde probiyotik falan bulamazsınız. Evde yoğurt yapmak, turşu kurmak hem kolay hem de keyifli bir deneyim. Bir kez deneyin göreceksiniz.',
+      },
+      {
+        id: 'warning-day-42',
+        title: 'Dikkat Okuyunuz',
+        variant: 'red',
+        contentTitle: 'Aman Dikkat',
+        contentBody: 'Her sabah uyanır uyanmaz açlık şekerinizi, akşam yemeğindeki ilk lokmanızdan tam iki saat sonra tokluk şekerinizi ölçüp not almalısınız.',
+      },
+    ]
+  },
+  43: {
+    cards: [
+      {
+        id: 'merak-ettikleriniz',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '"Bu beslenme modeli ile şekerim normale döndü. Ara sıra ekmek, pilav yiyebilirim değil mi?"',
+        contentBody: 'Eğer aynı yanlışlara geri dönerseniz, yine kendinizi Tip 2 diyabetin pençesinde bulursunuz. Bu beslenme modelini yaşam tarzınız haline getirmeniz gerekiyor. Hem gluten hassasiyetini hem de diyabet hastalığını tetikleyen ekmekten, börekten, çörekten, kan şekerini bir anda fırlatan glisemik indeksi yüksek pilavdan, patatesten her zaman uzak durmalısınız. Sağlıklı yaşam, bir süre uygulayıp sonra askıya alabileceğiniz bir paket değildir.',
+      },
+      {
+        id: 'gunun-tarifi',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Keten Tohumu Bazlama',
+        contentBody: 'Malzemeler: 1 adet orta boy serbest gezen tavuk yumurtası, 4 çorba kaşığı çekilmiş keten tohumu, 1 çorba kaşığı su, 1 küçük diş sarımsak rendesi (isteğe bağlı), 1 fiske kaya tuzu, 1/4 çay kaşığı karbonat, 1 tatlı kaşığı ev yapımı elma sirkesi. Yapılışı: Orta boy bir kasede yumurta ve tuzu çırpın. Diğer malzemeleri sırasıyla ekleyin, homojen olana dek karıştırın. Hamurun yarısını streç filme sarıp ertesi gün yemek üzere buzdolabına kaldırın. Orta boy bir tavayı hafifçe zeytinyağıyla yağlayın. Karışımın yarısını tavaya dökün. Kabarcıklar oluşana dek 2-3 dakika pişirin, ters çevirip diğer yüzünü de pişirin. Afiyet olsun.',
+      },
+    ],
+  },
 };

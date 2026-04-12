@@ -22,7 +22,47 @@ const baseMeals = {
   },
 };
 
-export const MENUS = Array.from({ length: 91 }, (_, i) => {
+export type DefiInsightSwapRule = {
+  trigger: string;
+  alternatives: string[];
+  reason: string;
+};
+
+export type DefiInsight = {
+  focus: string;
+  goal: string;
+  primaryFoods: string[];
+  metabolicTags: string[];
+  explanation: string;
+  swapRules?: DefiInsightSwapRule[];
+};
+
+export type MenuMeal = {
+  title: string;
+  description: string;
+  recipeId: string | null;
+  shoppingItems: string[];
+  imageKey: string | null;
+  tags?: string[];
+};
+
+export type MenuDay = {
+  day: number;
+  dayTitle: string;
+  daySummary: string;
+  metabolicLine: string;
+  defenseFocus: string;
+  focusTag: string;
+  heroImageKey: string | null;
+  meals: {
+    breakfast: MenuMeal;
+    lunch: MenuMeal;
+    dinner: MenuMeal;
+  };
+  defiInsight?: DefiInsight;
+};
+
+export const MENUS: MenuDay[] = Array.from({ length: 91 }, (_, i) => {
   const day = i + 1;
   if (day === 1) {
     return {
@@ -139,6 +179,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ceviz',
             'Tuz',
           ],
+          tags: ['sakatat'],
         },
         dinner: {
           title: 'Palamut Izgara veya Deniz Levreği',
@@ -389,6 +430,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ceviz',
             'Yeşillik',
           ],
+          tags: ['sakatat'],
         },
         dinner: {
           title: 'Kapuska + Mevsim Salatası',
@@ -532,6 +574,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Kırmızı lahana veya mevsim sebzeleri',
             'Ceviz',
           ],
+          tags: ['sakatat'],
         },
         dinner: {
           title: 'Sucuk Köfte + Patlıcan Salatası',
@@ -676,6 +719,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
           description:
             'Ciğer yahni. Yanında mevsim salatası veya kırmızı soğanlı domates salatası, ayrıca ev turşusu.',
           recipeId: 'ciger-yahni',
+          tags: ['sakatat'],
           shoppingItems: [
             'Kuzu ciğeri',
             'Soğan',
@@ -810,6 +854,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Turşu',
           ],
           imageKey: 'iskembe-corbasi',
+          tags: ['sakatat'],
         },
 
         dinner: {
@@ -937,6 +982,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ceviz',
           ],
           imageKey: 'paca-corbasi',
+          tags: ['sakatat'],
         },
 
         dinner: {
@@ -1102,6 +1148,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
           description: 'Izgara böbrek, yanında sumak ve pul biberle çeşitlendirilmiş ince doğranmış kuru soğan ile mevsim salatası.',
           recipeId: null,
           imageKey: 'dinner-default',
+          tags: ['sakatat'],
         },
       },
     };
@@ -1262,6 +1309,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ev turşusu',
           ],
           imageKey: 'sebzeli-paca-corbasi',
+          tags: ['sakatat'],
         },
         dinner: {
           title: 'Pirinçsiz Biber Dolması',
@@ -1573,6 +1621,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Salata malzemeleri',
           ],
           imageKey: 'iskembe-corbasi',
+          tags: ['sakatat'],
         },
         dinner: {
           title: 'Sebzeli Tavuk Sote',
@@ -1773,6 +1822,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ev turşusu',
           ],
           imageKey: 'dinner-default',
+          tags: ['sakatat'],
         },
       },
     };
@@ -1822,6 +1872,13 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Glisemik Denge',
       focusTag: 'Sağlıklı Yağlar',
       heroImageKey: 'day31',
+      defiInsight: {
+        focus: 'Düşük karbonhidrat dengesi',
+        goal: 'Kan şekeri dalgalanmasını azaltıp daha dengeli tokluk sağlamak',
+        primaryFoods: ['yumurta', 'zeytinyağı', 'ceviz'],
+        metabolicTags: ['lowCarb', 'glucoseStability', 'satietySupport'],
+        explanation: 'Bugünün menüsü protein, lif ve dengeli yağ kombinasyonuyla daha kontrollü bir enerji akışı hedefler.',
+      },
       meals: {
         breakfast: {
           title: 'Sahanda Kıymalı Yumurta',
@@ -1886,6 +1943,20 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Doğal Denge',
       focusTag: 'Denge',
       heroImageKey: 'yogurt-corbasi',
+      defiInsight: {
+        focus: 'Protein ve fermente denge',
+        goal: 'Öğün ritmini koruyarak uzun süreli tokluk desteği sağlamak',
+        primaryFoods: ['yumurta', 'yoğurt çorbası', 'zeytinyağlı sebzeler'],
+        metabolicTags: ['proteinBalance', 'satietySupport', 'lowCarb'],
+        explanation: 'Günün yapısı, düşük karbonhidrat çizgisini bozmadan öğünler arasında enerji dengesini korumaya odaklanır.',
+        swapRules: [
+          {
+            trigger: 'yoğurt',
+            alternatives: ['kefir', 'yumurta', 'zeytinyağlı sebze'],
+            reason: 'tokluk ve dengeli içerik etkisini korumak',
+          },
+        ],
+      },
       meals: {
         breakfast: {
           title: 'Haşlanmış Yumurta',
@@ -2089,6 +2160,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ev yoğurdu',
           ],
           imageKey: 'sebzeli-paca-corbasi',
+          tags: ['sakatat'],
         },
         dinner: {
           title: 'Çeşnili Tavuk Izgara + Dövmeç',
@@ -2119,6 +2191,20 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Denge ve Süreklilik',
       focusTag: 'Otuz altıncı gün',
       heroImageKey: 'bobrek-sote',
+      defiInsight: {
+        focus: 'Protein yoğunluk ve glisemik kontrol',
+        goal: 'Karbonhidrat yükünü düşük tutarken tokluk süresini uzatmak',
+        primaryFoods: ['pastırma', 'menemen', 'böbrek sote'],
+        metabolicTags: ['proteinBalance', 'glucoseStability', 'satietySupport'],
+        explanation: 'Günlük plan protein odağını koruyarak gün içi açlık dalgalanmalarını azaltmayı hedefler.',
+        swapRules: [
+          {
+            trigger: 'sakatat',
+            alternatives: ['yumurta', 'ızgara et', 'zeytinyağlı sebze yanında protein'],
+            reason: 'protein ve tokluk desteğini korumak',
+          },
+        ],
+      },
       meals: {
         breakfast: {
           title: 'Pastırma Tabağı',
@@ -2165,6 +2251,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Kök salata veya çoban salata malzemeleri',
           ],
           imageKey: 'bobrek-sote',
+          tags: ['sakatat'],
         },
       },
     };
@@ -2238,6 +2325,20 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Denge ve Süreklilik',
       focusTag: 'Otuz sekizinci gün',
       heroImageKey: 'sarimsakli-et-suyu-corbasi',
+      defiInsight: {
+        focus: 'Hafif akşam ve denge',
+        goal: 'Akşam öğününde yükü artırmadan ritmi korumak',
+        primaryFoods: ['et suyu çorbası', 'zeytinyağlı sebze', 'cacık'],
+        metabolicTags: ['eveningLightness', 'glucoseStability', 'satietySupport'],
+        explanation: 'Plan, günün ikinci yarısında daha kontrollü bir tabakla metabolik ritmin dengede kalmasını destekler.',
+        swapRules: [
+          {
+            trigger: 'yoğurt',
+            alternatives: ['kefir', 'haşlanmış yumurta', 'zeytinyağlı salata'],
+            reason: 'hafif akşam dengesini ve tokluk desteğini korumak',
+          },
+        ],
+      },
       meals: {
         breakfast: {
           title: 'Yumurta Dolması',
@@ -2361,6 +2462,13 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
       defenseFocus: 'Denge ve Süreklilik',
       focusTag: 'Kırkıncı gün',
       heroImageKey: 'sebze-turlusu',
+      defiInsight: {
+        focus: 'Protein + lif dengesi',
+        goal: 'Gün boyu daha stabil enerji ve kontrollü açlık sağlamak',
+        primaryFoods: ['menemen', 'sebze türlüsü', 'yoğurt'],
+        metabolicTags: ['fiberSupport', 'glucoseStability', 'proteinBalance'],
+        explanation: 'Bugünün tabak kurgusu, lif ve protein kombinasyonunu kullanarak ani enerji düşüşlerini azaltmayı hedefler.',
+      },
       meals: {
         breakfast: {
           title: 'Peynirli Menemen',
@@ -2465,6 +2573,7 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ev yoğurdu',
           ],
           imageKey: 'paca-corbasi',
+          tags: ['sakatat'],
         },
         dinner: {
           title: 'Etli Şevket-i Bostan',
@@ -2481,6 +2590,123 @@ export const MENUS = Array.from({ length: 91 }, (_, i) => {
             'Ev turşusu',
           ],
           imageKey: 'sevket-i-bostan',
+        },
+      },
+    };
+  }
+
+  if (day === 42) {
+    return {
+      day,
+      dayTitle: 'Gün 42 — Kırk ikinci gün',
+      daySummary: 'Protein ağırlıklı kahvaltı, sebzeli öğle ve sakatat akşamıyla güçlü bir kapanış.',
+      metabolicLine: 'Yüksek protein ve düşük glisemik yük ile metabolik denge korunur.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk ikinci gün',
+      heroImageKey: 'ciger-yahni',
+      meals: {
+        breakfast: {
+          title: 'Kavurmalı Yumurta',
+          description: 'Kavurmalı yumurta, iki adet yumurta ile hazırlanmış. Mevsim salatası. Kaşar, beyaz ya da tulum peyniri, peynir şirden mayası ile hazırlanmış olmalı. 10-15 adet siyah ya da yeşil zeytin. 5-6 adet ceviz. Şekersiz çay, yeşil çay ya da sade Türk kahvesi. Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü. Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mevsim salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Çay veya kahve',
+          ],
+          imageKey: 'pastirmali-yumurta',
+        },
+        lunch: {
+          title: 'Kıymalı Ispanak veya Kıymalı Kabak',
+          description: 'Kıymalı ıspanak yemeği ya da kıymalı kabak yemeği, pirinç kullanmadan geleneksel usulde pişirebilirsiniz. Yanında ev yoğurdu. Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'Kıyma',
+            'Ispanak veya kabak',
+            'Soğan',
+            'Sarımsak',
+            'Domates salçası',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'kiymali-ispanak',
+        },
+        dinner: {
+          title: 'Ciğer Sote',
+          description: 'Ciğer sote. Mevsim salatası. Ev turşusu. Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü. Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'Ciğer',
+            'Soğan',
+            'Domates',
+            'Biber',
+            'Tereyağı',
+            'Mevsim salata malzemeleri',
+            'Ev turşusu',
+          ],
+          imageKey: 'ciger-yahni',
+          tags: ['sakatat'],
+        },
+      },
+    };
+  }
+
+  if (day === 43) {
+    return {
+      day,
+      dayTitle: 'Gün 43 — Kırk üçüncü gün',
+      daySummary: 'Keten tohumu bazlama ile güne başla, fermente destekli öğle ve klasik kapuska ile güçlü bir akşam.',
+      metabolicLine: 'Düşük glisemik yük, probiyotik destek ve sebze ağırlıklı öğünlerle metabolik denge korunur.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk üçüncü gün',
+      heroImageKey: 'kapuska',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Kıymalı Yumurta + Keten Tohumu Bazlama',
+          description: 'Sahanda kıymalı yumurta. Keten tohumu bazlama. Yeşil salata ya da çoban salata, biber, salatalık, domates, bol sızma zeytinyağı, limon ve kekikle hazırlanmış. Kaşar, beyaz ya da tulum peyniri, şirden mayası ile hazırlanmış olmalı. 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ fındık ya da badem. Şekersiz çay, yeşil çay ya da sade Türk kahvesi. Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü. Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'Kıyma',
+            'Yumurta',
+            'Keten tohumu',
+            'Yeşil salata malzemeleri',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Fındık veya badem',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'İşkembe Çorbası veya Paça Çorbası',
+          description: 'İşkembe çorbası ya da paça çorbası. Yoğurtlu biber kızartma ya da yoğurtlu patlıcan. Mevsim yeşillikleri ile hazırlanmış salata. Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+          recipeId: null,
+          shoppingItems: [
+            'İşkembe veya paça',
+            'Biber veya patlıcan',
+            'Ev yoğurdu',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'lunch-default',
+          tags: ['sakatat'],
+        },
+        dinner: {
+          title: 'Kapuska',
+          description: 'Kapuska. Mevsim salata. Ev yoğurdu. Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü. Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+          recipeId: 'kapuska',
+          shoppingItems: [
+            'Beyaz lahana',
+            'Kemikli kuzu eti',
+            'Soğan',
+            'Domates salçası',
+            'Zeytinyağı',
+            'Kırmızı biber',
+            'Ev yoğurdu',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'kapuska',
         },
       },
     };
