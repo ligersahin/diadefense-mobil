@@ -52,6 +52,22 @@ const RECIPE_IMAGES = {
   'peynirli-domates-dolmasi': require('../../assets/recipes/peynirli-domates-dolmasi.png'),
   'day31': require('../../assets/images/day31.jpg'),
   'yogurtlu-pancar-salatasi': require('../../assets/images/yogurtlu-pancar.jpg'),
+  'enginarli-tavuk': require('../../assets/recipes/enginarli-tavuk.jpg'),
+  'izgara-kokorec': require('../../assets/recipes/izgara-kokorec.jpg'),
+  'zeytinyagli-ispanak-koku': require('../../assets/recipes/zeytinyagli-ispanak-koku.jpg'),
+  'yogurt-marineli-tavuk': require('../../assets/recipes/yogurt-marineli-tavuk.jpg'),
+  'terbiyeli-dil-corbasi': require('../../assets/recipes/terbiyeli-dil-corbasi.jpg'),
+  'dana-haslama': require('../../assets/recipes/dana-haslama.jpg'),
+  'firinda-kabak-mucver': require('../../assets/recipes/firinda-kabak-mucver.jpg'),
+  'yogurtlu-kereviz-salatasi': require('../../assets/recipes/yogurtlu-kereviz-salatasi.jpg'),
+  'zeytinyagli-enginar': require('../../assets/recipes/zeytinyagli-enginar.jpg'),
+  'butun-lahana-dolmasi': require('../../assets/recipes/butun-lahana-dolmasi.jpg'),
+  'palamut-pilaki': require('../../assets/recipes/palamut-pilaki.jpg'),
+  'firinda-sebze-guvec': require('../../assets/recipes/firinda-sebze-guvec.jpg'),
+  'yogurt-toplari': require('../../assets/recipes/yogurt-toplari.jpg'),
+  'soganli-yahni': require('../../assets/recipes/soganli-yahni.jpg'),
+  'kiymali-corba': require('../../assets/recipes/kiymali-corba.jpg'),
+  'kuru-fasulye': require('../../assets/recipes/kuru-fasulye.jpg'),
 };
 
 export type RecipeImageKey = keyof typeof RECIPE_IMAGES;

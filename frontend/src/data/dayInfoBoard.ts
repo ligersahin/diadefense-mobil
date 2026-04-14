@@ -533,4 +533,283 @@ export const DAY_INFO_BOARD: Record<number, { cards: DayInfoCardData[] }> = {
       },
     ],
   },
+  55: {
+    cards: [
+      {
+        id: 'recipe-day-55',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Bütün Lahana Dolması',
+        recipeId: 'butun-lahana-dolmasi',
+        imageKey: 'butun-lahana-dolmasi',
+      },
+    ],
+  },
+  54: {
+    cards: [
+      {
+        id: 'recipe-day-54',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Peynirli Domates Dolması',
+        recipeId: 'peynirli-domates-dolmasi',
+        imageKey: 'peynirli-domates-dolmasi',
+      },
+      {
+        id: 'merak-ettikleriniz-day-54',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '"Bu beslenme modelinin üç aylık olmasının özel bir nedeni var mı?"',
+        contentBody: 'Tip 2 diyabeti yenmek üzere çıktığınız bu yolculukta düzenli olarak açlık ve tokluk kan şekerinizi ölçmenin son derece önemli olduğunu biliyorsunuz. Ölçüm yaptıktan sonra bunları not etmenizin de hastalığın seyrini gözlemleyebilmek adına büyük önem taşıdığını farkındasınız. Kan şekerinizin nasıl seyrettiğini gösteren bir test daha var: HbA1C. Kan şekerine bağlı olarak alyuvarlarda oluşan bir proteini ölçen bu test üç aylık ortalama kan şekeri hakkında bilgi verir. Üç ay süren doğru bir beslenme modelinin sonunda HbA1C testindeki olumlu gelişmeyi de gözlemleme olanağınız olacaktır. Ama unutmayın 91 günlük bu süreç yolculuğun sadece başlangıcı; amaç bu beslenme modelini tüm yaşamınıza adapte etmekte.',
+      },
+    ],
+  },
+  53: {
+    cards: [
+      {
+        id: 'recipe-day-53',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Palamut Pilaki',
+        recipeId: 'palamut-pilaki',
+        imageKey: 'palamut-pilaki',
+      },
+    ],
+  },
+  52: {
+    cards: [
+      {
+        id: 'recipe-day-52',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Zeytinyağlı Enginar',
+        recipeId: 'zeytinyagli-enginar',
+        imageKey: 'zeytinyagli-enginar',
+      },
+      {
+        id: 'aman-dikkat-day-52',
+        title: 'Dikkat Okuyunuz',
+        variant: 'red',
+        contentTitle: 'Diyabet İlacı Kullananlar İçin',
+        contentBody: 'Diyabet ilacı kullanan hastalarda ani kan düşmeleri görülebilir. Hipoglisemi ataklarına karşı yanınızda hep bir kesme şeker bulundurun.',
+      },
+    ],
+  },
+  51: {
+    cards: [
+      {
+        id: 'recipe-day-51',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Yoğurtlu Kereviz Salatası',
+        recipeId: 'yogurtlu-kereviz-salatasi',
+        imageKey: 'yogurtlu-kereviz-salatasi',
+      },
+      {
+        id: 'puf-noktasi-day-51',
+        title: 'Püf Noktası',
+        variant: 'yellow',
+        contentTitle: 'Egzersiz',
+        contentBody: 'Tekrar tekrar hatırlatmak istiyorum: Yürüyüş yapmanız, daha hareketli bir yaşam sürmeniz son derece önemli. Tip 2 diyabetle savaşın olmazsa olmazı egzersizdir. Vücuttaki insülin direncini kırmanın iki şartı vardır: Glutensiz, şekersiz, glisemik indeksi düşük bir beslenme modeli ve egzersiz. Egzersiz dediğimde lütfen gözünüz korkmasın. En güzel hareket yürümektir. Günde 15 dakika ile başlayın. Yavaş yavaş 30 dakikaya kadar çıkın ve 45-60 dakikayı hedefleyin.',
+      },
+    ],
+  },
+  50: {
+    cards: [
+      {
+        id: 'recipe-day-50',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Fırında Kabak Mücver',
+        recipeId: 'firinda-kabak-mucver',
+        imageKey: 'firinda-kabak-mucver',
+      },
+    ],
+  },
+  49: {
+    cards: [
+      {
+        id: 'recipe-day-49',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Dana Haşlama',
+        recipeId: 'dana-haslama',
+        imageKey: 'dana-haslama',
+      },
+      {
+        id: 'merak-ettikleriniz-day-49',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '"Yemeklerimde marketlerde satılan dondurulmuş sebzeleri kullanabilir miyim?"',
+        contentBody: 'Evet. Marketlerde satılan, pakete girmiş hiçbir yiyeceği tavsiye etmediğimi sık sık tekrarlıyorum. Neden? Çünkü raf ömrü olan tüm yiyecekler sizin ömrünüzden çalar da ondan. İçleri katkı maddeleri, lezzet artırıcı kimyasallar, boyalarla dolu yiyecekler hiçbir sağlıklı beslenme modelinin parçası olamazlar. Tek bir istisna var, o da dondurulmuş sebzeler. Mevsiminde taze taze dalından koparılıp şoklama yöntemiyle dondurulup paketlenen bu besinleri gönül ferahlığıyla kullanabilirsiniz. Derin dondurucu alıp kendiniz de sebzeleri mevsiminde alıp dondurmayı deneyin. Çok daha hesaplı bir seçenek.',
+      },
+    ],
+  },
+  48: {
+    cards: [
+      {
+        id: 'recipe-day-48',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Terbiyeli Dil Çorbası',
+        recipeId: 'terbiyeli-dil-corbasi',
+        imageKey: 'terbiyeli-dil-corbasi',
+      },
+      {
+        id: 'merak-ettikleriniz-day-48',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '"Şeker hastasıyım ve çok kiloluyum. Mide ameliyatı yaptırmayı düşünüyorum. Ne dersiniz?"',
+        contentBody: 'Sakın! Bu beslenme modelini uyguluyorsanız ve bugüne kadar gelmeyi başardıysanız doğru yoldasınız. Devam edin. Bu bir diyet değil, tüm yaşamınıza uyarlamanız gereken bir beslenme modelidir. Kan şekerini dengelemeye, insülin direncini kırmaya yönelik düşük glisemik indeksli, sizi sadece diyabet değil tüm hastalıklardan koruyacak besinlerden oluşuyor. Merak etmeyin kilo vereceksiniz, hem de hiç aç kalmadan. Mide ameliyatları ciddi ölüm riski taşıyan ameliyatlardır. Ne kadar gelişmiş teknoloji uygulanırsa uygulansın son derece tehlikelidirler. Operasyondan bir-iki sene sonra aniden kriz geçirip hayatını kaybedenler ameliyatla ilişkilendirilmediğinden tehlikenin boyutu örtbas ediliyor.',
+      },
+    ],
+  },
+  47: {
+    cards: [
+      {
+        id: 'recipe-day-47',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Yoğurt Marineli Tavuk',
+        recipeId: 'yogurt-marineli-tavuk',
+        imageKey: 'yogurt-marineli-tavuk',
+      },
+    ],
+  },
+  46: {
+    cards: [
+      {
+        id: 'recipe-day-46',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Zeytinyağlı Ispanak Kökü',
+        recipeId: 'zeytinyagli-ispanak-koku',
+        imageKey: 'zeytinyagli-ispanak-koku',
+      },
+      {
+        id: 'oneri-day-46',
+        title: 'Günün Önerisi',
+        variant: 'yellow',
+        contentTitle: 'Kurutulmuş Sebzeler',
+        contentBody: 'Her zaman mevsim sebzeleri tüketmenizi öneriyorum. Çünkü serada yetişmiş sebzeler bol miktarda zirai ilaç içerirler. Normalde sahip olması gereken vitamin, mineral ve fitobesinleri bir sera sebzesinde bulamazsınız. Mevsimi dışında tüketmek istiyorsanız dondurarak ya da kurutarak saklayabilirsiniz. Maalesef her yöre sebze kurutmaya müsait değildir. Nemli iklimlerde kurutulan sebzelerde aflatoksin oluşur; nemli ortamlarda kurutulmuş kuruyemiş ve baharatlarda da aynı risk söz konusudur. Önerim: bu işlem için geliştirilmiş makinelerden yararlanın, kat kat olan modelleri tercih edin. Böylece her kata farklı bir sebze koyarak birkaç mevsim sebzesini aynı anda kurutabilirsiniz. Kurutulurken besin maddeleri yok olur mu? İçiniz ferah olsun. Bu işlem sadece sebzenin suyunu yok etmeye yöneliktir; sebzeye özgü besin maddelerine hiçbir zarar vermez.',
+      },
+    ],
+  },
+  45: {
+    cards: [
+      {
+        id: 'motivasyon-day-45',
+        title: 'Motivasyon',
+        variant: 'yellow',
+        contentTitle: 'Kırk beşinci gündesiniz!',
+        contentBody: 'Kırk küsur gündür doğru besleniyor, beslenme yanlışları yüzünden ortaya çıkmış ve ömürden ömür çalan bir hastalığı kontrol altına alıyorsunuz. Kan şekeriniz düzenli seyrediyor. Açlık krizleri, tatlı krizleri yaşamıyorsunuz. Vücudunuz size doğru yolda olduğunuzu anlatıyor. Yapmanız gereken şey sizi sadece diyabetten değil tüm hastalıklardan koruyacak bu beslenme modelini bir yaşam tarzına dönüştürmeniz.',
+      },
+      {
+        id: 'dikkat-day-45',
+        title: 'Dikkat Okuyunuz',
+        variant: 'red',
+        contentTitle: 'İlaç kullanıyorsanız dikkat!',
+        contentBody: 'Diyabet ilacı kullanıyorsanız, sakın doktorunuzla görüşmeden ilacı kesmeyin. Her ilaçta olduğu gibi diyabet ilaçları da ancak bir doktor denetiminde bırakılmalıdır.',
+      },
+    ],
+  },
+  60: {
+    cards: [
+      {
+        id: 'motivasyon-day-60',
+        title: 'Motivasyon',
+        variant: 'yellow',
+        contentTitle: 'İkinci ayı tamamladınız!',
+        contentBody: 'Sizi yürekten kutluyorum. Hayatınızı tamamen değiştirecek, ömürden ömür çalan bir hastalığı alt etmenizi sağlayacak bir yaşam şeklinin ikinci ayındasınız. Enerjiniz arttı, kan şekeriniz düzenli seyrediyor, tatlı krizlerine girmiyorsunuz. Hastalarımdan sık sık duyduğum cümleleri sizinle de paylaşmak istiyorum: "Eskiden baklavasız, böreksiz yaşayamam sanırdım. Şimdi ise aklıma bile gelmiyorlar."',
+      },
+      {
+        id: 'merak-ettikleriniz-day-60',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '"Şirden mayasıyla yapılmış peyniri nasıl bulacağım? Normal peynir yesem olmaz mı?"',
+        contentBody: 'Biraz araştırdığınızda şirden mayasıyla peynir imalatı yapan üreticilere kolayca ulaşabilirsiniz. Sağlığınız için biraz özen, biraz zaman ayırmak zor olmasa gerek. Üstelik işini hakkıyla yapan bir üreticiyi bir defa bulduğunuzda peynirini gönül rahatlığıyla artık hep ondan satın alabilirsiniz. Bu peynirler sağlıklı yaşam için elzem olan probiyotikler içerirler. Probiyotik zengini bir beslenme modeli vücuttaki tüm metabolik faaliyetlerin düzgün bir şekilde çalışmasını sağlar. Endüstriyel peynirlerde probiyotik bulamazsınız; peynire kıvam veren ama diyabeti derinleştiren nişasta ya da süt tozu ve margarin gibi tuzaklarla karşılaşabilirsiniz.',
+      },
+    ],
+  },
+  59: {
+    cards: [
+      {
+        id: 'recipe-day-59',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Kıymalı Çorba',
+        recipeId: 'kiymali-corba',
+        imageKey: 'kiymali-corba',
+      },
+    ],
+  },
+  58: {
+    cards: [
+      {
+        id: 'recipe-day-58',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Soğanlı Yahni',
+        recipeId: 'soganli-yahni',
+        imageKey: 'soganli-yahni',
+      },
+      {
+        id: 'dikkat-day-58',
+        title: 'Dikkat Okuyunuz',
+        variant: 'red',
+        contentTitle: 'Hipoglisemi ataklarına dikkat!',
+        contentBody: 'Diyabet hastalarında ani kan düşmeleri görülebilir. Hipoglisemi ataklarına karşı yanınızda hep bir kesme şeker bulundurun.',
+      },
+    ],
+  },
+  57: {
+    cards: [
+      {
+        id: 'recipe-day-57',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Yoğurt Topları',
+        recipeId: 'yogurt-toplari',
+        imageKey: 'yogurt-toplari',
+      },
+    ],
+  },
+  56: {
+    cards: [
+      {
+        id: 'recipe-day-56',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Fırında Sebze Güveç',
+        recipeId: 'firinda-sebze-guvec',
+        imageKey: 'firinda-sebze-guvec',
+      },
+      {
+        id: 'merak-ettikleriniz-day-56',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '"Sebze yemeklerine zeytinyağı koymaktan çekiniyorum, kilo yapar mı?"',
+        contentBody: 'Zeytinyağı sağlıklı yağlar içerir ve diyabet yönetiminde olumlu etkileri vardır. Akdeniz diyetinin temel taşlarından biridir. Ölçülü kullanıldığında, yani yemek başına 1-2 yemek kaşığı, kilo almaya yol açmaz. Tam tersine sebzelerin besin değerini artırır ve doygunluk hissini uzatır.',
+      },
+    ],
+  },
+  44: {
+    cards: [
+      {
+        id: 'recipe-day-44',
+        title: 'Günün Tarifi',
+        variant: 'green',
+        contentTitle: 'Enginarlı Tavuk',
+        recipeId: 'enginarli-tavuk',
+        imageKey: 'enginarli-tavuk',
+      },
+      {
+        id: 'merak-ettikleriniz-day-44',
+        title: 'Merak Ettikleriniz',
+        variant: 'yellow',
+        contentTitle: '"Diyeti uyguluyorum. Ama egzersize vakit bulamıyorum. Yapmasam olur mu? Zaten fazla kilom da yok."',
+        contentBody: 'Mutlaka egzersiz yapmalısınız. Çünkü egzersiz diyabete karşı en etkili silahlarınızdan biridir. Düzenli egzersiz kan şekerini kontrol altında tutar. Egzersiz sırasında kandaki şeker kaslar tarafından kullanılır, dolayısıyla da kan şekeri seviyesi dengelenmiş olur. Egzersiz kelimesini duyup da korkmayın lütfen. Her gün düzenli olarak yürümeye gayret edin ve bir saati hedefleyin.',
+      },
+    ],
+  },
 };

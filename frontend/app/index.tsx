@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    transform: [{ translateY: 110 }],
+    transform: [{ translateY: 200 }],
   },
   title: {
     color: "#fff",

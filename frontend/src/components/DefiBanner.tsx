@@ -1,31 +1,46 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Pressable, Animated, Easing } from 'react-native';
-import { hideDefiForToday } from '../defi/defiVisibility';
+import { View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
+
+type SwapItem = {
+  mealKey: string;
+  label: string;
+  alternatives: string[];
+};
 
 type DefiMessage = {
   title: string;
   body: string;
   detail?: string;
+  swaps?: SwapItem[];
 };
 
 type DefiBannerProps = {
   message: DefiMessage | null;
   onOpenPlan?: () => void;
+  onSwapSelect?: (mealKey: string, alternative: string) => void;
+  swappedMeals?: Record<string, string>;
   todayISO?: string;
   onHidden?: () => void;
   screenId: string;
+  resetKey?: number | string;
   enableTypewriter?: boolean;
   enableIdleReplay?: boolean;
   variant?: 'card' | 'plain';
 };
 
-export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, screenId, enableTypewriter = true, enableIdleReplay = true, variant = 'card' }: DefiBannerProps) {
+export default function DefiBanner({ message, onOpenPlan, onSwapSelect, swappedMeals, todayISO, onHidden, screenId, resetKey, enableTypewriter = true, enableIdleReplay = true, variant = 'card' }: DefiBannerProps) {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [displayBody, setDisplayBody] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [bodyExpanded, setBodyExpanded] = useState(false);
   const lastRunAtRef = useRef(0);
+
+  useEffect(() => {
+    setHidden(false);
+    setOpen(false);
+    setBodyExpanded(false);
+  }, [resetKey]);
   const typingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const pulse = useRef(new Animated.Value(0)).current;
   const pulseLoopRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -157,19 +172,28 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
     outputRange: [0.5, 1],
   });
 
-  const handleHideForToday = async () => {
-    if (!todayISO) return;
-    await hideDefiForToday(todayISO, screenId);
+  const handleHideForToday = () => {
     setHidden(true);
     onHidden?.();
   };
 
+  const hasSwaps = !!(message.swaps && message.swaps.length > 0 && onSwapSelect);
+
   const content = (
     <>
-      <Pressable
-        onPress={() => setOpen((prev) => !prev)}
-        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-      >
+      {/* × gizle butonu — sağ üstte her zaman görünür */}
+      {todayISO ? (
+        <TouchableOpacity
+          onPress={handleHideForToday}
+          activeOpacity={0.7}
+          style={styles.closeButton}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Text style={styles.closeButtonText}>×</Text>
+        </TouchableOpacity>
+      ) : null}
+
+      <View style={styles.messageArea}>
         <View style={styles.titleRow}>
           <Text style={styles.title}>{message.title}</Text>
           <View style={styles.dotSlot}>
@@ -204,28 +228,62 @@ export default function DefiBanner({ message, onOpenPlan, todayISO, onHidden, sc
             </Text>
           </TouchableOpacity>
         )}
-      </Pressable>
+      </View>
 
-      {open && (
-        <View style={styles.detailBlock}>
-          {message.detail ? <Text style={styles.detail}>{message.detail}</Text> : null}
-          <View style={styles.actions}>
-            {onOpenPlan ? (
-              <TouchableOpacity onPress={onOpenPlan} style={styles.actionButton} activeOpacity={0.85}>
-                <Text style={styles.actionText}>Planı aç</Text>
-              </TouchableOpacity>
-            ) : null}
-            {todayISO ? (
-              <View>
-                <TouchableOpacity onLongPress={handleHideForToday} delayLongPress={500} activeOpacity={0.85} style={styles.actionButton}>
-                  <Text style={styles.actionTextMuted}>Bugün gizle</Text>
-                </TouchableOpacity>
-                <Text style={styles.hideHint}>Gizlemek için basılı tut</Text>
-              </View>
-            ) : null}
-          </View>
-        </View>
+      {hasSwaps && !open && (
+        <TouchableOpacity
+          onPress={() => setOpen(true)}
+          activeOpacity={0.8}
+          style={styles.swapCta}
+        >
+          <Text style={styles.swapCtaText}>Alternatif seç →</Text>
+        </TouchableOpacity>
       )}
+
+      {open && hasSwaps && onSwapSelect ? (
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => setOpen(false)}
+          style={styles.swapContainer}
+        >
+          <Text style={styles.swapHeading}>Alternatif seç:</Text>
+          {message.swaps!.map((swap) => {
+            const chosen = swappedMeals?.[swap.mealKey];
+            return (
+              <View key={swap.mealKey} style={styles.swapRow}>
+                <Text style={styles.swapLabel}>{swap.label}</Text>
+                <View style={styles.swapChips}>
+                  {swap.alternatives.map((alt) => {
+                    const isSelected = chosen === alt;
+                    return (
+                      <TouchableOpacity
+                        key={alt}
+                        onPress={() => onSwapSelect(swap.mealKey, alt)}
+                        activeOpacity={0.8}
+                        style={[styles.swapChip, isSelected && styles.swapChipSelected]}
+                      >
+                        <Text style={[styles.swapChipText, isSelected && styles.swapChipTextSelected]}>
+                          {isSelected ? '✓ ' : ''}{alt}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                  {chosen ? (
+                    <TouchableOpacity
+                      onPress={() => onSwapSelect(swap.mealKey, '')}
+                      activeOpacity={0.8}
+                      style={styles.swapResetChip}
+                    >
+                      <Text style={styles.swapResetChipText}>Orijinale dön</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View>
+            );
+          })}
+          <Text style={styles.swapCollapseHint}>Kapatmak için dokun ↑</Text>
+        </TouchableOpacity>
+      ) : null}
     </>
   );
 
@@ -246,6 +304,24 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 6 },
     elevation: 2,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 12,
+    zIndex: 10,
+    width: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeButtonText: {
+    fontSize: 18,
+    color: '#94A3B8',
+    lineHeight: 22,
+  },
+  messageArea: {
+    paddingRight: 28,
   },
   title: {
     fontSize: 14,
@@ -275,40 +351,6 @@ const styles = StyleSheet.create({
     color: '#334155',
     lineHeight: 20
   },
-  detailBlock: {
-    marginTop: 10
-  },
-  detail: {
-    fontSize: 13,
-    color: '#475569',
-    lineHeight: 18,
-    marginBottom: 10
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: 10
-  },
-  actionButton: {
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    backgroundColor: '#F1F5F9'
-  },
-  actionText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#0F172A'
-  },
-  actionTextMuted: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#64748B'
-  },
-  hideHint: {
-    fontSize: 10,
-    color: '#94A3B8',
-    marginTop: 4
-  },
   expandButton: {
     marginTop: 6,
     alignSelf: 'flex-start',
@@ -317,5 +359,82 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: '#0F5A4E',
+  },
+  swapCta: {
+    marginTop: 10,
+    alignSelf: 'flex-start',
+    backgroundColor: '#0F5A4E',
+    borderRadius: 20,
+    paddingVertical: 7,
+    paddingHorizontal: 14,
+  },
+  swapCtaText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  swapContainer: {
+    marginBottom: 10,
+    backgroundColor: 'rgba(15, 90, 78, 0.05)',
+    borderRadius: 12,
+    padding: 10,
+  },
+  swapHeading: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0F5A4E',
+    marginBottom: 8,
+  },
+  swapRow: {
+    marginBottom: 8,
+  },
+  swapLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569',
+    marginBottom: 4,
+  },
+  swapChips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  swapChip: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    backgroundColor: '#F1F5F9',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+  },
+  swapChipSelected: {
+    backgroundColor: '#0F5A4E',
+    borderColor: '#0F5A4E',
+  },
+  swapChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#334155',
+  },
+  swapChipTextSelected: {
+    color: '#FFFFFF',
+  },
+  swapResetChip: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#94A3B8',
+  },
+  swapResetChipText: {
+    fontSize: 11,
+    color: '#64748B',
+  },
+  swapCollapseHint: {
+    fontSize: 11,
+    color: '#94A3B8',
+    textAlign: 'center',
+    marginTop: 8,
   },
 });

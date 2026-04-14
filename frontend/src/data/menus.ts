@@ -2712,6 +2712,1155 @@ export const MENUS: MenuDay[] = Array.from({ length: 91 }, (_, i) => {
     };
   }
 
+  if (day === 44) {
+    return {
+      day,
+      dayTitle: 'Gün 44 — Kırk dördüncü gün',
+      daySummary: 'Enginar ve tavuğun buluştuğu Ege mutfağından protein odaklı, düşük glisemik yüklü bir gün.',
+      metabolicLine: 'Zeytinyağı, enginar ve fermente besinlerle metabolik denge ve kan şekeri kontrolü.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk dördüncü gün',
+      heroImageKey: 'enginarli-tavuk',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Sucuk + Keten Tohumu Bazlama',
+          description:
+            'Sahanda sucuk ve keten tohumu bazlama. Mevsimine göre sızma zeytinyağı, kekik ve limonla çeşnilendirilmiş çoban salatası ya da yeşil salata. 10-15 adet siyah ya da yeşil zeytin, 5-6 adet ceviz.',
+          recipeId: null,
+          shoppingItems: [
+            'Sucuk',
+            'Keten tohumu',
+            'Biber, domates, salatalık',
+            'Zeytin (siyah ya da yeşil)',
+            'Ceviz',
+            'Zeytinyağı',
+            'Kekik',
+            'Limon',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Beyaz Peynirli Omlet + Avokado Salatası',
+          description:
+            'Beyaz peynirli maydanozlu omlet, 2 adet yumurta ve bol tereyağı ile. Yanında marul, dereotu, taze soğan ve avokado salatası; sızma zeytinyağı ve limonla çeşnilendirilmiş.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Beyaz peynir',
+            'Maydanoz',
+            'Tereyağı',
+            'Avokado',
+            'Marul',
+            'Dereotu',
+            'Taze soğan',
+            'Sarımsak',
+            'Limon',
+            'Zeytinyağı',
+          ],
+          imageKey: 'lunch-default',
+        },
+        dinner: {
+          title: 'Enginarlı Tavuk',
+          description:
+            'Ege mutfağından enginarlı tavuk. Yanında zeytinyağlı bamya ya da buharda pişmiş brokoli ve ev yoğurdu.',
+          recipeId: 'enginarli-tavuk',
+          shoppingItems: [
+            'Tavuk göğsü (½ kg)',
+            'Enginar (7-8 adet)',
+            'Taze soğan',
+            'Limon',
+            'Tereyağı',
+            'Kaya tuzu',
+            'Bamya ya da brokoli',
+            'Ev yoğurdu',
+            'Dereotu',
+            'Zeytinyağı',
+          ],
+          imageKey: 'enginarli-tavuk',
+        },
+      },
+    };
+  }
+
+  if (day === 45) {
+    return {
+      day,
+      dayTitle: 'Gün 45 — Kırk beşinci gün',
+      daySummary: 'Kırk beşinci günde menemen kahvaltısı, mercimek çorbası ve ızgara kokoreçle güçlü bir devam.',
+      metabolicLine: 'Düşük glisemik yük, fermente destek ve sakatat proteiniyle metabolik ritim korunur.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk beşinci gün',
+      heroImageKey: 'izgara-kokorec',
+      meals: {
+        breakfast: {
+          title: 'Menemen + Keten Tohumu Bazlama',
+          description:
+            'Menemen, 2 adet yumurta ile hazırlanmış. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri, şirden mayalı. 10-15 adet siyah ya da yeşil zeytin, 10-15 adet çiğ badem ya da fındık.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Domates, biber, soğan (menemen için)',
+            'Keten tohumu',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Badem veya fındık',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Kırmızı Mercimek Çorbası',
+          description:
+            'Kırmızı mercimek çorbası, geleneksel usulde; içine un ya da pirinç koymadan hazırlayın. Mevsim salatası ve ev yoğurdu ile.',
+          recipeId: null,
+          shoppingItems: [
+            'Kırmızı mercimek',
+            'Soğan',
+            'Sarımsak',
+            'Domates salçası',
+            'Zeytinyağı',
+            'Mevsim salata malzemeleri',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'mercimek-corbasi',
+        },
+        dinner: {
+          title: 'Izgara Kokoreç',
+          description:
+            'Izgara kokoreç. Tereyağında sote edilmiş mevsim sebzesi; kabak, biber, taze fasulye, karnabahar, beyaz lahana ya da pazı. Kaya tuzu ve baharatlarla çeşnilendirilmiş. Ev turşusu.',
+          recipeId: null,
+          shoppingItems: [
+            'Kokoreç',
+            'Mevsim sebzeleri (kabak, biber, taze fasulye, karnabahar vb.)',
+            'Tereyağı',
+            'Kaya tuzu',
+            'Baharatlar',
+            'Ev turşusu',
+          ],
+          imageKey: 'izgara-kokorec',
+          tags: ['sakatat'],
+        },
+      },
+    };
+  }
+
+  if (day === 46) {
+    return {
+      day,
+      dayTitle: 'Gün 46 — Kırk altıncı gün',
+      daySummary: 'Haşlanmış yumurta, paça çorbası ve mevsim balığıyla protein ağırlıklı dengeli bir gün.',
+      metabolicLine: 'Omega-3, fermente destek ve zeytinyağlı sebzelerle metabolik denge korunur.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk altıncı gün',
+      heroImageKey: 'zeytinyagli-ispanak-koku',
+      meals: {
+        breakfast: {
+          title: 'Haşlanmış Yumurta + Keten Tohumu Bazlama',
+          description:
+            'İki adet haşlanmış yumurta, kayısı kıvamında. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri, şirden mayalı. 10-15 adet siyah ya da yeşil zeytin, 4-5 adet ceviz.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Keten tohumu',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Terbiyeli Paça Çorbası + Ispanak Kökü',
+          description:
+            'Terbiyeli paça çorbası. Mevsimine göre zeytinyağlı ıspanak kökü yemeği ya da buharda pişmiş zeytinyağlı brokoli. Ev yoğurdu.',
+          recipeId: 'zeytinyagli-ispanak-koku',
+          shoppingItems: [
+            'Paça',
+            'Ispanak kökü veya brokoli',
+            'Zeytinyağı',
+            'Soğan',
+            'Domates',
+            'Kaya tuzu',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'zeytinyagli-ispanak-koku',
+          tags: ['sakatat'],
+        },
+        dinner: {
+          title: 'Izgara / Buğulama Mevsim Balığı',
+          description:
+            'Mevsim balığı, deniz balığı olmasına özen gösterin; ızgara ya da buğulama olarak hazırlayın. Soğuk avokado püresi. Çoban salata ya da yeşil salata.',
+          recipeId: null,
+          shoppingItems: [
+            'Mevsim deniz balığı',
+            'Avokado',
+            'Limon',
+            'Zeytinyağı',
+            'Çoban salata malzemeleri (biber, domates, salatalık)',
+          ],
+          imageKey: 'lunch-default',
+        },
+      },
+    };
+  }
+
+  if (day === 47) {
+    return {
+      day,
+      dayTitle: 'Gün 47 — Kırk yedinci gün',
+      daySummary: 'Pastırmalı kahvaltı, dana dil söğüş ve yoğurt marineli tavukla protein dolu bir gün.',
+      metabolicLine: 'Fermente destek, sakatat proteini ve baharatlı marinasyonla metabolik denge.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk yedinci gün',
+      heroImageKey: 'yogurt-marineli-tavuk',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Pastırmalı Yumurta + Keten Tohumu Bazlama',
+          description:
+            'Sahanda pastırmalı yumurta. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri, şirden mayalı. 10-15 adet siyah ya da yeşil zeytin.',
+          recipeId: null,
+          shoppingItems: [
+            'Pastırma',
+            'Yumurta',
+            'Keten tohumu',
+            'Kaşar / beyaz / tulum peyniri',
+            'Zeytin',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'pastirmali-yumurta',
+        },
+        lunch: {
+          title: 'Dana Dil Söğüş + Kök Salata',
+          description:
+            'Dana dil söğüş — dilden birkaç dilim kesip ayırın, haşlama suyunu saklayın. Turp, kereviz kökü ve kereviz yapraklarıyla kök salata ya da çoban salata. Kuruyemiş ve tarçınlı ev yoğurdu.',
+          recipeId: null,
+          shoppingItems: [
+            'Dana dil',
+            'Turp',
+            'Kereviz kökü ve yaprakları',
+            'Ceviz, fındık, badem',
+            'Ev yoğurdu',
+            'Tarçın',
+          ],
+          imageKey: 'lunch-default',
+          tags: ['sakatat'],
+        },
+        dinner: {
+          title: 'Yoğurt Marineli Tavuk',
+          description:
+            'Yoğurt marineli tavuk. Mevsimine göre taze börülce salatası ya da sızma zeytinyağı, limon ve kaya tuzu ile çeşnilendirilmiş buharda az haşlanmış Brüksel lahanası salatası. Ev turşusu.',
+          recipeId: 'yogurt-marineli-tavuk',
+          shoppingItems: [
+            'Tavuk baget (½ kg)',
+            'Ev yoğurdu',
+            'Zeytinyağı',
+            'Limon',
+            'Köri, kimyon, kırmızı biber, pul biber',
+            'Sarımsak',
+            'Zencefil',
+            'Börülce veya Brüksel lahanası',
+            'Ev turşusu',
+          ],
+          imageKey: 'yogurt-marineli-tavuk',
+        },
+      },
+    };
+  }
+
+  if (day === 48) {
+    return {
+      day,
+      dayTitle: 'Gün 48 — Kırk sekizinci gün',
+      daySummary: 'Beyaz peynirli omlet, terbiyeli dil çorbası ve ızgara ciğerle protein ve fermente destekli bir gün.',
+      metabolicLine: 'Sakatat proteini, fermente destek ve düşük glisemik yük ile metabolik denge.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk sekizinci gün',
+      heroImageKey: 'terbiyeli-dil-corbasi',
+      meals: {
+        breakfast: {
+          title: 'Beyaz Peynirli Omlet + Keten Tohumu Bazlama',
+          description:
+            'Beyaz peynirli omlet, iki yumurta ile hazırlanmış. Keten tohumu bazlama. Mevsim salata. 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ fındık ya da badem.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Beyaz peynir',
+            'Keten tohumu',
+            'Zeytin',
+            'Fındık veya badem',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Terbiyeli Dil Çorbası + Fırında Peynirli Mantar',
+          description:
+            'Terbiyeli dil çorbası (dün haşlanan dana dilin suyu kullanılıyor). Fırında peynirli mantar: içini kaşar peyniri ile doldurup tereyağı, tuz ve karabiberle 180°C fırında pişirin. Çoban salata ya da ıspanak salatası.',
+          recipeId: 'terbiyeli-dil-corbasi',
+          shoppingItems: [
+            'Dil haşlama suyu (dünden)',
+            'Dana dil eti (dünden)',
+            'Yumurta sarısı',
+            'Limon',
+            'Maydanoz',
+            'Ev sirkesi',
+            'Sarımsak',
+            'Mantar',
+            'Kaşar peyniri',
+            'Tereyağı',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'terbiyeli-dil-corbasi',
+        },
+        dinner: {
+          title: 'Izgara Ciğer',
+          description:
+            'Izgara ciğer. Karamelize soğan kavurma: jülyen kesilmiş soğanları hafif pembeleşinceye kadar tereyağında sote edin, kaya tuzu ve kimyonla çeşnilendirin. Mevsim salata.',
+          recipeId: null,
+          shoppingItems: [
+            'Ciğer',
+            'Soğan',
+            'Tereyağı',
+            'Kimyon',
+            'Kaya tuzu',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'ciger-yahni',
+          tags: ['sakatat'],
+        },
+      },
+    };
+  }
+
+  if (day === 49) {
+    return {
+      day,
+      dayTitle: 'Gün 49 — Kırk dokuzuncu gün',
+      daySummary: 'Sahanda sucuklu yumurta, terbiyeli tavuk suyu çorbası ve dana haşlamayla zengin bir gün.',
+      metabolicLine: 'Kollajen bakımından zengin dana haşlama, bağırsak duvarını güçlendirir.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Kırk dokuzuncu gün',
+      heroImageKey: 'dana-haslama',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Sucuklu Yumurta + Keten Tohumu Bazlama',
+          description:
+            'Sahanda sucuklu yumurta, iki yumurta ile hazırlanmış. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 4-5 adet ceviz. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Sucuk',
+            'Keten tohumu',
+            'Kaşar, beyaz veya tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Terbiyeli Tavuk Suyu Çorbası + Zeytinyağlı Taze Fasulye',
+          description:
+            'Terbiyeli tavuk suyu çorbası. Zeytinyağlı taze fasulye ya da zeytinyağlı pırasa. Ev yoğurdu.',
+          recipeId: null,
+          shoppingItems: [
+            'Tavuk suyu',
+            'Yumurta sarısı',
+            'Limon',
+            'Taze fasulye veya pırasa',
+            'Zeytinyağı',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'zeytinyagli-ispanak-koku',
+        },
+        dinner: {
+          title: 'Dana Haşlama',
+          description:
+            'Dana haşlama: 1 kg kemikli dana etini kereviz, arpacık soğan, pırasa, defneyaprağı, havuç, maydanoz, soğan, sarımsak, tane karabiber ve kaya tuzuyla birlikte 10 bardak suda 1 saat haşlayın. Süzgeçten geçirip 45 dakika daha pişirin. Servis öncesi taze soğan ve maydanoz ekleyin. Ev turşusu. Mevsim salata.',
+          recipeId: 'dana-haslama',
+          shoppingItems: [
+            'Kemikli dana eti (1 kg)',
+            'Kereviz',
+            'Arpacık soğanı',
+            'Pırasa',
+            'Defneyaprağı',
+            'Havuç',
+            'Maydanoz',
+            'Soğan',
+            'Sarımsak',
+            'Tane karabiber',
+            'Kaya tuzu',
+            'Ev turşusu',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'dana-haslama',
+        },
+      },
+    };
+  }
+
+  if (day === 50) {
+    return {
+      day,
+      dayTitle: 'Gün 50 — Ellinci gün',
+      daySummary: 'Sahanda yumurta, fırında kabak mücver ve izgara bonfile ile hafif ama doyurucu bir gün.',
+      metabolicLine: 'Kabak ve bonfile kombinasyonu düşük karbonhidrat, yüksek protein ile insülin dengesini destekler.',
+      defenseFocus: 'Süreklilik',
+      focusTag: 'Ellinci gün',
+      heroImageKey: 'firinda-kabak-mucver',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Yumurta + Keten Tohumu Bazlama',
+          description:
+            'Sahanda yumurta, iki yumurta ve bol tereyağı ile hazırlanmış. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ fındık ya da badem. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Tereyağı',
+            'Keten tohumu',
+            'Kaşar, beyaz veya tulum peyniri',
+            'Zeytin',
+            'Fındık veya badem',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Fırında Kabak Mücver',
+          description:
+            'Fırında kabak mücver: rendelenmiş kabak, sivri biber, kaşar peyniri, maydanoz, dereotu, yumurta ve baharatlarla hazırlanmış. Ev yoğurdu. Mevsim salatası.',
+          recipeId: 'firinda-kabak-mucver',
+          shoppingItems: [
+            'Kabak',
+            'Sivri biber',
+            'Kaşar peyniri',
+            'Maydanoz',
+            'Dereotu',
+            'Yumurta',
+            'Taze soğan',
+            'Kaya tuzu',
+            'Karabiber',
+            'Ev yoğurdu',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'firinda-kabak-mucver',
+        },
+        dinner: {
+          title: 'Soğuk Domates Çorbası + Izgara Bonfile',
+          description:
+            'Soğuk domates çorbası. Izgara bonfile. Tereyağında sote edilmiş mevsim sebzeleri.',
+          recipeId: 'soguk-domates-corbasi',
+          shoppingItems: [
+            'Domates',
+            'Bonfile',
+            'Mevsim sebzeleri',
+            'Tereyağı',
+            'Kaya tuzu',
+            'Karabiber',
+          ],
+          imageKey: 'soguk-domates-corbasi',
+        },
+      },
+    };
+  }
+
+  if (day === 51) {
+    return {
+      day,
+      dayTitle: 'Gün 51 — Elli birinci gün',
+      daySummary: 'Yumurta dolması kahvaltı, ızgara köfte öğle ve patlıcan musakka ile doyurucu bir gün.',
+      metabolicLine: 'Yumurta ve kıyma kombinasyonu yüksek protein, düşük glisemik yük ile insülin dengesini destekler.',
+      defenseFocus: 'Egzersiz ve süreklilik',
+      focusTag: 'Elli birinci gün',
+      heroImageKey: 'yogurtlu-kereviz-salatasi',
+      meals: {
+        breakfast: {
+          title: 'Yumurta Dolması + Keten Tohumu Bazlama',
+          description:
+            'Yumurta dolması, iki yumurta ile hazırlanmış. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 4-5 adet ceviz. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Keten tohumu',
+            'Kaşar, beyaz veya tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Izgara Köfte + Yoğurtlu Kereviz Salatası',
+          description:
+            'Izgara köfte (köfte harcını hazırlarken ekmek içi yerine yumurta kullanın). Yoğurtlu kereviz salatası ya da yoğurtlu bamya kızartması. Çoban salata ya da mevsim salata.',
+          recipeId: 'yogurtlu-kereviz-salatasi',
+          shoppingItems: [
+            'Kıyma',
+            'Yumurta',
+            'Soğan',
+            'Maydanoz',
+            'Baharat',
+            'Kereviz',
+            'Süzme yoğurt',
+            'Ceviz',
+            'Dereotu',
+            'Sarımsak',
+            'Limon',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'yogurtlu-kereviz-salatasi',
+        },
+        dinner: {
+          title: 'Patlıcan Musakka',
+          description:
+            'Patlıcan musakka ya da kıymalı karnabahar. Ev yoğurdu. Ev turşusu.',
+          recipeId: null,
+          shoppingItems: [
+            'Patlıcan',
+            'Kıyma',
+            'Domates',
+            'Soğan',
+            'Sarımsak',
+            'Zeytinyağı',
+            'Baharat',
+            'Ev yoğurdu',
+            'Ev turşusu',
+          ],
+          imageKey: 'breakfast-default',
+        },
+      },
+    };
+  }
+
+  if (day === 52) {
+    return {
+      day,
+      dayTitle: 'Gün 52 — Elli ikinci gün',
+      daySummary: 'Menemen kahvaltı, kıymalı yeşil mercimek öğle ve zeytinyağlı enginar ile ızgara tavuk akşam.',
+      metabolicLine: 'Enginar karaciğeri destekler, bağırsak florasını besler; mercimek protein ve lif açısından zengindir.',
+      defenseFocus: 'Karaciğer ve bağırsak sağlığı',
+      focusTag: 'Elli ikinci gün',
+      heroImageKey: 'zeytinyagli-enginar',
+      meals: {
+        breakfast: {
+          title: 'Menemen + Keten Tohumu Bazlama',
+          description:
+            'Menemen, iki yumurta ile hazırlanmış. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ fındık ya da badem. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Domates',
+            'Sivri biber veya kapya biber',
+            'Zeytinyağı',
+            'Keten tohumu',
+            'Kaşar, beyaz veya tulum peyniri',
+            'Zeytin',
+            'Fındık veya badem',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Kıymalı Yeşil Mercimek Yemeği',
+          description:
+            'Kıymalı yeşil mercimek yemeği. Ev yoğurdu. Ev turşusu.',
+          recipeId: null,
+          shoppingItems: [
+            'Yeşil mercimek',
+            'Kıyma',
+            'Soğan',
+            'Domates',
+            'Zeytinyağı',
+            'Baharat',
+            'Ev yoğurdu',
+            'Ev turşusu',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        dinner: {
+          title: 'Izgara Tavuk + Zeytinyağlı Enginar',
+          description:
+            'Izgara tavuk, kimyon, kırmızı pul biber, kekik ve kaya tuzu ile çeşnilendirilmiş. Zeytinyağlı enginar. Cacık, sızma zeytinyağı ve kuru nane ile çeşnilendirilmiş.',
+          recipeId: 'zeytinyagli-enginar',
+          shoppingItems: [
+            'Tavuk',
+            'Kimyon',
+            'Kırmızı pul biber',
+            'Kekik',
+            'Kaya tuzu',
+            'Enginar',
+            'Taze soğan',
+            'Dereotu',
+            'Zeytinyağı',
+            'Limon',
+            'Yoğurt',
+            'Salatalık',
+            'Nane',
+          ],
+          imageKey: 'zeytinyagli-enginar',
+        },
+      },
+    };
+  }
+
+  if (day === 53) {
+    return {
+      day,
+      dayTitle: 'Gün 53 — Elli üçüncü gün',
+      daySummary: 'Sahanda kavurma kahvaltı, çılbır ve sebzeli çorba öğle, palamut pilaki ile omega-3 destekli bir gün.',
+      metabolicLine: 'Palamut omega-3 yağ asitleri bakımından zengindir; pilaki pişirme yöntemi besin değerini korur.',
+      defenseFocus: 'Omega-3 ve kalp sağlığı',
+      focusTag: 'Elli üçüncü gün',
+      heroImageKey: 'palamut-pilaki',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Kavurma + Keten Tohumu Bazlama',
+          description:
+            'Sahanda kavurma. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 4-5 adet ceviz. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Et (kavurmalık)',
+            'Keten tohumu',
+            'Kaşar, beyaz veya tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Sebzeli Tavuk Suyu Çorbası + Çılbır',
+          description:
+            'Sebzeli tavuk suyu çorbası. Çılbır. Mevsimine göre semizotu salatası ya da sızma zeytinyağı, limon ve kaya tuzuyla çeşnilendirilmiş hindiba salatası.',
+          recipeId: 'cilbir',
+          shoppingItems: [
+            'Tavuk suyu',
+            'Mevsim sebzeleri',
+            'Yumurta',
+            'Süzme yoğurt',
+            'Sarımsak',
+            'Tereyağı',
+            'Pul biber',
+            'Semizotu veya hindiba',
+            'Zeytinyağı',
+            'Limon',
+          ],
+          imageKey: 'cilbir',
+        },
+        dinner: {
+          title: 'Palamut Pilaki',
+          description:
+            'Palamut pilaki. Izgara sebze tabağı. Mevsim salata.',
+          recipeId: 'palamut-pilaki',
+          shoppingItems: [
+            'Palamut',
+            'Soğan',
+            'Domates',
+            'Ev salçası',
+            'Kereviz sapı',
+            'Sarımsak',
+            'Defneyaprağı',
+            'Tane karabiber',
+            'Zeytinyağı',
+            'Maydanoz',
+            'Limon',
+            'Mevsim sebzeleri (ızgara için)',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'palamut-pilaki',
+        },
+      },
+    };
+  }
+
+  if (day === 54) {
+    return {
+      day,
+      dayTitle: 'Gün 54 — Elli dördüncü gün',
+      daySummary: 'Mantarlı omlet kahvaltı, fırında peynirli domates dolması öğle ve böbrek sote ile besin açısından yoğun bir gün.',
+      metabolicLine: 'Böbrek ve mantar kombinasyonu B vitaminleri ve mineraller açısından zengin, metabolizmayı destekler.',
+      defenseFocus: 'B vitamini ve mineral desteği',
+      focusTag: 'Elli dördüncü gün',
+      heroImageKey: 'peynirli-domates-dolmasi',
+      meals: {
+        breakfast: {
+          title: 'Mantarlı Omlet + Keten Tohumu Bazlama',
+          description:
+            'Mantarlı omlet, ince kıyılmış maydanoz ve taze soğanla çeşnilendirilmiş. Keten tohumu bazlama. Mevsim salatası ya da 1 adet avokado — sızma zeytinyağı, limon suyu ve kaya tuzu ile çeşnilendirilmiş. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ fındık ya da badem. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mantar',
+            'Maydanoz',
+            'Taze soğan',
+            'Keten tohumu',
+            'Avokado veya mevsim salata malzemeleri',
+            'Kaşar, beyaz veya tulum peyniri',
+            'Zeytin',
+            'Fındık veya badem',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Izgara Tavuklu Mevsim Salata + Fırında Peynirli Domates Dolması',
+          description:
+            'Izgara tavuklu mevsim salata. Fırında peynirli domates dolması. Ev yoğurdu.',
+          recipeId: 'peynirli-domates-dolmasi',
+          shoppingItems: [
+            'Tavuk göğsü',
+            'Mevsim salata malzemeleri',
+            'Domates',
+            'Beyaz peynir veya kaşar',
+            'Dereotu',
+            'Zeytinyağı',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'peynirli-domates-dolmasi',
+        },
+        dinner: {
+          title: 'Böbrek Sote',
+          description:
+            'Böbrek sote. Taze soğanlı marul salatası ya da turp salatası. Ev turşusu.',
+          recipeId: 'bobrek-sote',
+          shoppingItems: [
+            'Kuzu böbrek',
+            'Soğan',
+            'Domates',
+            'Biber',
+            'Tereyağı',
+            'Baharat',
+            'Marul veya turp',
+            'Taze soğan',
+            'Ev turşusu',
+          ],
+          imageKey: 'bobrek-sote',
+          tags: ['sakatat'],
+        },
+      },
+    };
+  }
+
+  if (day === 55) {
+    return {
+      day,
+      dayTitle: 'Gün 55 — Elli beşinci gün',
+      daySummary: 'Sahanda sucuk kahvaltı, mantarlı omlet ve kefir öğle, bütün lahana dolması ile doyurucu bir akşam.',
+      metabolicLine: 'Lahana dolması lif ve kollajen açısından zengin; kefir bağırsak florasını destekler.',
+      defenseFocus: 'Bağırsak sağlığı ve fermente destek',
+      focusTag: 'Elli beşinci gün',
+      heroImageKey: 'butun-lahana-dolmasi',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Sucuk + Keten Tohumu Bazlama',
+          description:
+            'Sahanda sucuk, geleneksel yöntemle hazırlanmış sucukları tercih edin. Keten tohumu bazlama. Mevsim salatası. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 4-5 adet ceviz. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Sucuk (geleneksel yöntemle hazırlanmış)',
+            'Keten tohumu',
+            'Kaşar, beyaz veya tulum peyniri',
+            'Zeytin',
+            'Ceviz',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Mantarlı Omlet + Ege Salatası',
+          description:
+            'Mantarlı omlet. Ege salatası — beyaz peynirli ve zeytinli — ya da roka, maydanoz, taze soğan, taze nane ile hazırlanmış yeşil salata. Bir bardak kefir kokteyli — kefir, öğütülmüş keten tohumu, taze nane ya da kuru nane ile hazırlanmış.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mantar',
+            'Beyaz peynir',
+            'Zeytin',
+            'Roka veya marul',
+            'Maydanoz',
+            'Taze soğan',
+            'Taze nane veya kuru nane',
+            'Kefir',
+            'Keten tohumu',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        dinner: {
+          title: 'Bütün Lahana Dolması',
+          description:
+            'Bütün lahana dolması. Pratik pancar turşusu ya da çoban salata. Ev yoğurdu ya da cacık.',
+          recipeId: 'butun-lahana-dolmasi',
+          shoppingItems: [
+            'Orta boy lahana',
+            'Kuşbaşı dana eti (½ kg)',
+            'Soğan',
+            'Ev salçası',
+            'Pazı yaprağı',
+            'Kekik',
+            'Sarımsak',
+            'Tane karabiber',
+            'Limon',
+            'Zeytinyağı',
+            'Kuru nane',
+            'Kırmızı pul biber',
+            'Kaya tuzu',
+            'Pancar veya domates (salata için)',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'butun-lahana-dolmasi',
+        },
+      },
+    };
+  }
+
+  if (day === 60) {
+    return {
+      day,
+      dayTitle: 'Gün 60 — Altmışıncı gün',
+      daySummary: 'Sahanda yumurta kahvaltı, sarımsaklı et suyu çorbası öğle ve kemikli kuru fasulye akşam.',
+      metabolicLine: 'Kemik suyu bağırsak duvarını onarır; kuru fasulye lif ve bitkisel protein açısından zengindir.',
+      defenseFocus: 'Bağırsak sağlığı ve bitkisel protein',
+      focusTag: 'Altmışıncı gün',
+      heroImageKey: 'kuru-fasulye',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Yumurta + Keten Tohumu Bazlama',
+          description:
+            'Sahanda yumurta, iki yumurta ve bol tereyağı ile hazırlanmış. Keten tohumu bazlama. Mevsim salatası. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Tereyağı',
+            'Keten tohumu',
+            'Beyaz peynir veya kaşar',
+            'Zeytin',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+            '300.000 IU Devit-3 D vitamini ampul',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Sarımsaklı Et Suyu Çorbası + Ege Salatası',
+          description:
+            'Sarımsaklı et suyu çorbası. Mevsimine göre beyaz lahana salatası ya da beyaz peynirli ve zeytinli Ege Salatası. Kuruyemiş ve tarçınlı ev yoğurdu.',
+          recipeId: 'sarimsakli-et-suyu-corbasi',
+          shoppingItems: [
+            'Kemik suyu',
+            'Sarımsak',
+            'Kaya tuzu',
+            'Beyaz lahana veya Ege salatası malzemeleri',
+            'Beyaz peynir',
+            'Zeytin',
+            'Ev yoğurdu',
+            'Karışık kuruyemiş',
+            'Tarçın',
+          ],
+          imageKey: 'sarimsakli-et-suyu-corbasi',
+        },
+        dinner: {
+          title: 'Kemikli Kuru Fasulye',
+          description:
+            'Kemikli etle hazırlanmış kuru fasulye, geleneksel usulde pişirilmiş. Cacık, ev yoğurdu ile hazırlanmış, sızma zeytinyağı ve kuru nane ile çeşnilendirilmiş. Ev turşusu.',
+          recipeId: null,
+          shoppingItems: [
+            'Kuru fasulye',
+            'Kemikli et (kaburga veya kemik)',
+            'Domates',
+            'Biber',
+            'Soğan',
+            'Sarımsak',
+            'Zeytinyağı',
+            'Yoğurt (cacık için)',
+            'Salatalık',
+            'Kuru nane',
+            'Ev turşusu',
+          ],
+          imageKey: 'kuru-fasulye',
+        },
+      },
+    };
+  }
+
+  if (day === 59) {
+    return {
+      day,
+      dayTitle: 'Gün 59 — Elli dokuzuncu gün',
+      daySummary: 'Sahanda kavurmalı yumurta kahvaltı, kıymalı çorba öğle ve kimyonlu tavuk sote akşam.',
+      metabolicLine: 'Kıymalı çorba protein ve lif dengesi sağlar; kimyonlu tavuk sote sindirim dostu baharatlar içerir.',
+      defenseFocus: 'Protein dengesi ve sindirim desteği',
+      focusTag: 'Elli dokuzuncu gün',
+      heroImageKey: 'kiymali-corba',
+      meals: {
+        breakfast: {
+          title: 'Sahanda Kavurmalı Yumurta + Keten Tohumu Bazlama',
+          description:
+            'Sahanda kavurmalı yumurta, iki yumurta ile hazırlanmış. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 5-6 adet ceviz. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Keten tohumu',
+            'Beyaz peynir veya kaşar',
+            'Zeytin',
+            'Ceviz',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Kıymalı Çorba + Zeytinyağlı Taze Fasulye',
+          description:
+            'Kıymalı çorba. Zeytinyağlı taze fasulye ya da zeytinyağlı kereviz yemeği, geleneksel usulde hazırlanmış. Ev yoğurdu.',
+          recipeId: 'kiymali-corba',
+          shoppingItems: [
+            'Kıyma',
+            'Nohut',
+            'Ev salçası',
+            'Ev sirkesi',
+            'Kekik',
+            'Et suyu',
+            'Taze fasulye veya kereviz',
+            'Zeytinyağı',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'kiymali-corba',
+        },
+        dinner: {
+          title: 'Kimyonlu Tavuk Sote',
+          description:
+            'Kimyonlu tavuk sote. Mevsim salatası. Cacık, kuru nane ve sızma zeytinyağı ile çeşnilendirilmiş. Ev turşusu.',
+          recipeId: 'kimyonlu-tavuk-sote',
+          shoppingItems: [
+            'Tavuk but veya göğüs',
+            'Kimyon',
+            'Sarımsak',
+            'Zeytinyağı',
+            'Kırmızı biber',
+            'Mevsim salata malzemeleri',
+            'Yoğurt (cacık için)',
+            'Salatalık',
+            'Kuru nane',
+            'Ev turşusu',
+          ],
+          imageKey: 'tavuk-sote',
+        },
+      },
+    };
+  }
+
+  if (day === 58) {
+    return {
+      day,
+      dayTitle: 'Gün 58 — Elli sekizinci gün',
+      daySummary: 'Sebzeli omlet kahvaltı, paça çorbası ve kereviz öğle, soğanlı yahni akşam. Günün tarifi soğanlı yahni.',
+      metabolicLine: 'Soğanlı yahni kollajen ve mineral açısından zengin; kemik suyu bağırsak duvarını onarır.',
+      defenseFocus: 'Kollajen ve bağırsak sağlığı',
+      focusTag: 'Elli sekizinci gün',
+      heroImageKey: 'soganli-yahni',
+      meals: {
+        breakfast: {
+          title: 'Sebzeli Omlet + Keten Tohumu Bazlama',
+          description:
+            'Sebzeli omlet. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ fındık ya da badem. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Mevsim sebzeleri (biber, mantar, ıspanak)',
+            'Keten tohumu',
+            'Beyaz peynir veya kaşar',
+            'Zeytin',
+            'Fındık veya badem',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Paça Çorbası + Terbiyeli Kereviz',
+          description:
+            'Paça çorbası. Terbiyeli kereviz yemeği ya da pirinçsiz biber dolma. Ev yoğurdu ya da cacık.',
+          recipeId: 'paca-corbasi',
+          shoppingItems: [
+            'Paça (koyun paçası)',
+            'Sarımsak',
+            'Limon',
+            'Yumurta sarısı (terbiye için)',
+            'Kereviz',
+            'Havuç',
+            'Soğan',
+            'Biber (dolma için)',
+            'Kıyma',
+            'Ev yoğurdu',
+          ],
+          imageKey: 'paca-corbasi',
+          tags: ['sakatat'],
+        },
+        dinner: {
+          title: 'Soğanlı Yahni',
+          description:
+            'Dana eti, kemik suyu, arpacık soğan ve sarımsakla hazırlanmış soğanlı yahni. Çoban salata ya da yeşil salata. Ev turşusu.',
+          recipeId: 'soganli-yahni',
+          shoppingItems: [
+            'Dana eti',
+            'Kemik suyu',
+            'Arpacık soğan',
+            'Sarımsak',
+            'Ev sirkesi',
+            'Tereyağı',
+            'Yenibahar',
+            'Karabiber',
+            'Domates, salatalık, maydanoz (salata için)',
+            'Ev turşusu',
+          ],
+          imageKey: 'soganli-yahni',
+        },
+      },
+    };
+  }
+
+  if (day === 57) {
+    return {
+      day,
+      dayTitle: 'Gün 57 — Elli yedinci gün',
+      daySummary: 'Haşlanmış yumurta kahvaltı, kıymalı ıspanak öğle ve izgara somon akşam. Günün tarifi yoğurt topları.',
+      metabolicLine: 'Izgara somon omega-3 açısından zengin; yoğurt topları bağırsak florasını destekler.',
+      defenseFocus: 'Omega-3 ve probiyotik desteği',
+      focusTag: 'Elli yedinci gün',
+      heroImageKey: 'yogurt-toplari',
+      meals: {
+        breakfast: {
+          title: 'Haşlanmış Yumurta + Keten Tohumu Bazlama',
+          description:
+            'İki adet haşlanmış yumurta, kayısı kıvamında. Keten tohumu bazlama. Mevsim salata. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 4-5 adet ceviz. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Keten tohumu',
+            'Beyaz peynir veya kaşar',
+            'Zeytin',
+            'Ceviz',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Kıymalı Ispanak + Yoğurt Topları ile Mevsim Salata',
+          description:
+            'Kıymalı ıspanak ya da kıymalı kabak yemeği, pirinç kullanmadan geleneksel usulde hazırlanmış. Yoğurt topları ile hazırlanmış mevsim salata. Ev turşusu.',
+          recipeId: null,
+          shoppingItems: [
+            'Kıyma',
+            'Ispanak veya kabak',
+            'Soğan',
+            'Domates',
+            'Zeytinyağı',
+            'Mevsim salata malzemeleri',
+            'Süzme yoğurt (yoğurt topları için)',
+            'Ev turşusu',
+          ],
+          imageKey: 'lunch-default',
+        },
+        dinner: {
+          title: 'Izgara Somon + Közlenmiş Kırmızı Biber Salatası',
+          description:
+            'Izgara somon, somon dilimlerini dövülmüş bir diş sarımsak, limon suyu ve ince doğranmış maydanozla harmanlayın. Közlenmiş kırmızı çan biberi, sirke ve dövülmüş sarımsakla çeşnilendirilmiş ya da brokoli salatası.',
+          recipeId: null,
+          shoppingItems: [
+            'Somon fileto',
+            'Sarımsak',
+            'Limon',
+            'Maydanoz',
+            'Kırmızı çan biber veya brokoli',
+            'Sirke',
+            'Zeytinyağı',
+          ],
+          imageKey: 'dinner-default',
+        },
+      },
+    };
+  }
+
+  if (day === 56) {
+    return {
+      day,
+      dayTitle: 'Gün 56 — Elli altıncı gün',
+      daySummary: 'Peynirli menemen kahvaltı, fırında sebze güveç öğle ve kokoreç ya da sucuk köfte akşam.',
+      metabolicLine: 'Fırında sebze güveç lif bakımından zengin; kokoreç ise yüksek protein ve mineral içerir.',
+      defenseFocus: 'Lif ve mineral desteği',
+      focusTag: 'Elli altıncı gün',
+      heroImageKey: 'firinda-sebze-guvec',
+      meals: {
+        breakfast: {
+          title: 'Peynirli Menemen + Keten Tohumu Bazlama',
+          description:
+            'Peynirli menemen, iki yumurta ile hazırlanmış. Keten tohumu bazlama. Mevsim salatası. Kaşar, beyaz ya da tulum peyniri (şirden mayalı). 10-15 adet siyah ya da yeşil zeytin. 10-15 adet çiğ fındık ya da badem. Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+          recipeId: null,
+          shoppingItems: [
+            'Yumurta',
+            'Domates',
+            'Biber',
+            'Beyaz peynir veya kaşar',
+            'Keten tohumu',
+            'Zeytin',
+            'Fındık veya badem',
+            'Mevsim salata malzemeleri',
+            'Çay veya kahve',
+          ],
+          imageKey: 'breakfast-default',
+        },
+        lunch: {
+          title: 'Fırında Sebze Güveç',
+          description:
+            'Yaz sebzeleriyle hazırlanan fırında sebze güveç ya da kıymalı bamya yemeği. Ev yoğurdu. Mevsim salata.',
+          recipeId: 'firinda-sebze-guvec',
+          shoppingItems: [
+            'Kabak',
+            'Patlıcan',
+            'Tarla biberi',
+            'Kuru soğan',
+            'Domates',
+            'Sarımsak',
+            'Zeytinyağı',
+            'Kaşar peyniri',
+            'Kaya tuzu',
+            'Ev yoğurdu',
+            'Mevsim salata malzemeleri',
+          ],
+          imageKey: 'firinda-sebze-guvec',
+        },
+        dinner: {
+          title: 'Kokoreç ya da Sucuk Köfte',
+          description:
+            'Kokoreç ya da sucuk köfte. Pratik pancar turşusu ya da yalancı salatalık turşusu. Cacık.',
+          recipeId: 'sucuk-kofte',
+          shoppingItems: [
+            'Kokoreç veya sucuk',
+            'Kıyma (köfte için)',
+            'Pancar veya salatalık (turşu için)',
+            'Yoğurt',
+            'Salatalık',
+            'Sarımsak',
+            'Nane',
+            'Zeytinyağı',
+          ],
+          imageKey: 'sucuk-kofte',
+          tags: ['sakatat'],
+        },
+      },
+    };
+  }
+
   return {
     day,
     dayTitle: `Gün ${day} — Rutin`,

@@ -1123,6 +1123,464 @@ const DAY43_INFO: InfoMap = {
   ],
 };
 
+const DAY48_INFO: InfoMap = {
+  breakfast: [
+    'Beyaz peynirli omlet, iki yumurta ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Terbiyeli dil çorbası — dün haşlanan dana dilin suyuyla hazırlanıyor.',
+    'Fırında peynirli mantar: içini kaşar peyniri ile doldurun, tereyağı, tuz ve karabiberle 180°C fırında pişirin.',
+    'Mevsimine göre çoban salata veya sızma zeytinyağı ve sirke ile ıspanak salatası.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Izgara ciğer.',
+    'Karamelize soğan kavurma: jülyen kesilmiş soğanları tereyağında pembeleşinceye kadar sote edin, kaya tuzu ve kimyonla çeşnilendirin.',
+    'Mevsim salata.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY60_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda yumurta, iki yumurta ve bol tereyağı ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salatası.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+    'Kahvaltıdan 1.5 saat sonra 300.000 IU Devit-3 D vitamini ampul, ampülü kırıp 1 yemek kaşığı sızma zeytinyağının içine döküp için.',
+  ],
+  lunch: [
+    'Sarımsaklı et suyu çorbası.',
+    'Mevsimine göre beyaz lahana salatası ya da beyaz peynirli ve zeytinli Ege Salatası.',
+    'Kuruyemiş ve tarçınlı ev yoğurdu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Kemikli etle hazırlanmış kuru fasulye, geleneksel usulde pişirilmiş.',
+    'Cacık, ev yoğurdu ile hazırlanmış, sızma zeytinyağı ve kuru nane ile çeşnilendirilmiş.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY59_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda kavurmalı yumurta, iki yumurta ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '5-6 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Kıymalı çorba.',
+    'Zeytinyağlı taze fasulye ya da zeytinyağlı kereviz yemeği, geleneksel usulde hazırlanmış.',
+    'Ev yoğurdu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Kimyonlu tavuk sote.',
+    'Mevsim salatası.',
+    'Cacık, kuru nane ve sızma zeytinyağı ile çeşnilendirilmiş.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY58_INFO: InfoMap = {
+  breakfast: [
+    'Sebzeli omlet.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Paça çorbası.',
+    'Terbiyeli kereviz yemeği ya da pirinçsiz biber dolma.',
+    'Ev yoğurdu ya da ev yoğurdu ile hazırlanmış cacık.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Soğanlı yahni.',
+    'Mevsimine göre çoban salata ya da kabaca dövülmüş badem ile çeşnilendirilmiş yeşil salata.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY57_INFO: InfoMap = {
+  breakfast: [
+    'İki adet haşlanmış yumurta, kayısı kıvamında.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '4-5 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Kıymalı ıspanak ya da kıymalı kabak yemeği, pirinç kullanmadan geleneksel usulde hazırlanmış.',
+    'Yoğurt topları ile hazırlanmış mevsim salata.',
+    'Ev turşusu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Izgara somon, somon dilimlerini dövülmüş bir diş sarımsak, limon suyu ve ince doğranmış maydanozla harmanlayın.',
+    'Közlenmiş kırmızı çan biberi, sirke ve dövülmüş sarımsakla çeşnilendirilmiş ya da brokoli salatası.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY56_INFO: InfoMap = {
+  breakfast: [
+    'Peynirli menemen (2 yumurta ile hazırlanmış).',
+    'Keten tohumu bazlama.',
+    'Mevsim salatası.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Fırında sebze güveç ya da kıymalı bamya yemeği.',
+    'Ev yoğurdu.',
+    'Mevsim salata.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Kokoreç ya da sucuk köfte.',
+    'Pratik pancar turşusu ya da yalancı salatalık turşusu.',
+    'Cacık.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY55_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda sucuk (geleneksel yöntemle hazırlanmış sucukları tercih edin).',
+    'Keten tohumu bazlama.',
+    'Mevsim salatası.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '4-5 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Mantarlı omlet.',
+    'Ege salatası — beyaz peynirli ve zeytinli — ya da roka, maydanoz, taze soğan, taze nane ile yeşil salata.',
+    'Bir bardak kefir kokteyli — kefir, öğütülmüş keten tohumu ve taze ya da kuru nane ile hazırlanmış.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Bütün lahana dolması.',
+    'Pratik pancar turşusu ya da çoban salata.',
+    'Ev yoğurdu ya da cacık.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY54_INFO: InfoMap = {
+  breakfast: [
+    'Mantarlı omlet, ince kıyılmış maydanoz ve taze soğanla çeşnilendirilmiş.',
+    'Keten tohumu bazlama.',
+    'Mevsim salatası ya da 1 adet avokado (sızma zeytinyağı, limon suyu ve kaya tuzu ile).',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Izgara tavuklu mevsim salata.',
+    'Fırında peynirli domates dolması.',
+    'Ev yoğurdu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Böbrek sote.',
+    'Taze soğanlı marul salatası ya da turp salatası.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY53_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda kavurma.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '4-5 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Sebzeli tavuk suyu çorbası.',
+    'Çılbır.',
+    'Mevsimine göre semizotu salatası ya da sızma zeytinyağı, limon ve kaya tuzuyla çeşnilendirilmiş hindiba salatası.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Palamut pilaki.',
+    'Izgara sebze tabağı.',
+    'Mevsim salata.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY52_INFO: InfoMap = {
+  breakfast: [
+    'Menemen, iki yumurta ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Kıymalı yeşil mercimek yemeği.',
+    'Ev yoğurdu.',
+    'Ev turşusu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Izgara tavuk, kimyon, kırmızı pul biber, kekik ve kaya tuzu ile çeşnilendirilmiş.',
+    'Zeytinyağlı enginar.',
+    'Cacık, sızma zeytinyağı ve kuru nane ile çeşnilendirilmiş.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY51_INFO: InfoMap = {
+  breakfast: [
+    'Yumurta dolması, iki yumurta ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '4-5 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Izgara köfte (köfte harcında ekmek içi yerine yumurta kullanın).',
+    'Yoğurtlu kereviz salatası ya da yoğurtlu bamya kızartması.',
+    'Çoban salata ya da mevsim salata.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Patlıcan musakka ya da kıymalı karnabahar.',
+    'Ev yoğurdu.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY50_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda yumurta, iki yumurta ve bol tereyağı ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ fındık ya da badem.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Fırında kabak mücver.',
+    'Ev yoğurdu.',
+    'Mevsim salatası.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Soğuk domates çorbası.',
+    'Izgara bonfile.',
+    'Tereyağında sote edilmiş mevsim sebzeleri.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY49_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda sucuklu yumurta, iki yumurta ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri (şirden mayalı olmalı).',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '4-5 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Terbiyeli tavuk suyu çorbası.',
+    'Zeytinyağlı taze fasulye ya da zeytinyağlı pırasa.',
+    'Ev yoğurdu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Dana haşlama.',
+    'Ev turşusu.',
+    'Mevsim salata.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY47_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda pastırmalı yumurta.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri, şirden mayalı olmalı.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Dana dil söğüş — dilden birkaç dilim kesip ayırın. Haşlama suyunu saklayın, yarın çorba yapacağız.',
+    'Turp, kereviz kökü ve ince doğranmış kereviz yapraklarıyla kök salata ya da çoban salata.',
+    'Kuruyemiş ve tarçınlı ev yoğurdu: kabaca dövülmüş ceviz, fındık ve bademleri yoğurdun içine ekleyin, üstüne bolca tarçın serpin.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Yoğurt marineli tavuk.',
+    'Mevsimine göre taze börülce salatası ya da buharda az haşlanmış Brüksel lahanası salatası (sızma zeytinyağı, limon, kaya tuzu ile).',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY46_INFO: InfoMap = {
+  breakfast: [
+    'İki adet haşlanmış yumurta, kayısı kıvamında.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri, şirden mayalı olmalı.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '4-5 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Terbiyeli paça çorbası.',
+    'Mevsimine göre zeytinyağlı ıspanak kökü yemeği ya da buharda pişmiş zeytinyağlı brokoli.',
+    'Ev yoğurdu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Mevsim balığı, deniz balığı olmasına özen gösterin; ızgara ya da buğulama olarak hazırlayın.',
+    'Soğuk avokado püresi.',
+    'Çoban salata ya da yeşil salata.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY45_INFO: InfoMap = {
+  breakfast: [
+    'Menemen, 2 adet yumurta ile hazırlanmış.',
+    'Keten tohumu bazlama.',
+    'Mevsim salata.',
+    'Kaşar, beyaz ya da tulum peyniri, şirden mayalı olmalı.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '10-15 adet çiğ badem ya da fındık.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+    'Kahvaltıdan 1.5 saat sonra 300.000 IU Devit-3 D vitamini ampul; ampulü kırıp 1 yemek kaşığı sızma zeytinyağının içine döküp için.',
+  ],
+  lunch: [
+    'Kırmızı mercimek çorbası, geleneksel usulde; içine un ya da pirinç koymayın.',
+    'Mevsim salatası.',
+    'Ev yoğurdu.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Izgara kokoreç.',
+    'Tereyağında sote edilmiş mevsim sebzesi; kabak, biber, taze fasulye, karnabahar, beyaz lahana ya da pazı olabilir.',
+    'Kaya tuzu ve baharatlarla çeşnilendirebilirsiniz.',
+    'Ev turşusu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
+const DAY44_INFO: InfoMap = {
+  breakfast: [
+    'Sahanda sucuk ve keten tohumu bazlama.',
+    'Mevsimine göre sızma zeytinyağı, kekik ve limonla çeşnilendirilmiş çoban salatası ya da yeşil salata.',
+    '10-15 adet siyah ya da yeşil zeytin.',
+    '5-6 adet ceviz.',
+    'Şekersiz çay, yeşil çay ya da sade Türk kahvesi.',
+    'Kahvaltıdan 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Kahvaltıdan 1 saat sonra krill yağı kapsülü, 200 mg magnezyum kapsülü.',
+  ],
+  lunch: [
+    'Beyaz peynirli maydanozlu omlet, 2 adet yumurta ve bol tereyağı ile hazırlanmış.',
+    'Avokado salatası: marul, dereotu, taze soğan, 1 diş dövülmüş sarımsak ve ince dilimlenmiş olgun avokado.',
+    'Sızma zeytinyağı, limon ve rendelenmiş limon kabuğu ile çeşnilendirin.',
+    'Öğlen yemeğinden 30 dakika önce çemen otu kapsülü.',
+  ],
+  dinner: [
+    'Enginarlı tavuk.',
+    'Enginarları mevsiminde satın alıp dondurucuda saklayabilirsiniz.',
+    'Mevsimine göre zeytinyağlı bamya ya da buharda az pişmiş brokoli (sızma zeytinyağı, limon, kaya tuzu).',
+    'Ev yoğurdu.',
+    'Akşam yemeğinden 30 dakika önce enterik probiyotik kapsülü, zeytin yaprağı kapsülü.',
+    'Akşam yemeğinden 1 saat sonra krill yağı kapsülü.',
+  ],
+};
+
 function MealCard({ title, description, recipeId, infoLines, isCompleted, onToggle, thumbKey, showSupplementsAction, onSupplementsPress, supplementSummary, mealKey, resetSignal }: MealCardProps & { infoLines?: string[] }) {
   const [open, setOpen] = useState(false);
   const infoLinesToRender = infoLines || [];
@@ -1247,6 +1705,9 @@ export default function MenusScreen() {
   const daySelectorViewportWidthRef = useRef(0);
   const [isDaySelectorAtStart, setIsDaySelectorAtStart] = useState(true);
   const [isDaySelectorAtEnd, setIsDaySelectorAtEnd] = useState(false);
+  const daySelectorAtStartRef = useRef(true);
+  const daySelectorAtEndRef = useRef(false);
+  const daySelectorInitialScrollDoneRef = useRef(false);
   const [defiBannerMessage, setDefiBannerMessage] = useState<{ title: string; body: string; detail?: string } | null>(null);
   const [defiMessage, setDefiMessage] = useState<string | null>(null);
   const hasShownOnceRef = useRef(false);
@@ -1262,6 +1723,7 @@ export default function MenusScreen() {
   const [manualDay, setManualDay] = useState(false);
   const [activeInfoId, setActiveInfoId] = useState<string | null>(null);
   const [panelResetTick, setPanelResetTick] = useState(0);
+  const [swappedMeals, setSwappedMeals] = useState<Record<string, string>>({});
   const days = useMemo(() => MENUS.map((item) => item.day), []);
   const dayFromRoute = useMemo(() => {
     const raw = Array.isArray(dayParam) ? dayParam[0] : dayParam;
@@ -1390,27 +1852,25 @@ export default function MenusScreen() {
     if (!sakatatRestriction || !localDayMenu) return null;
 
     const mealEntries = [
-      { label: 'Kahvaltı', meal: localDayMenu.meals.breakfast },
-      { label: 'Öğlen', meal: localDayMenu.meals.lunch },
-      { label: 'Akşam', meal: localDayMenu.meals.dinner },
+      { mealKey: 'breakfast', label: 'Kahvaltı', meal: localDayMenu.meals.breakfast },
+      { mealKey: 'lunch', label: 'Öğlen', meal: localDayMenu.meals.lunch },
+      { mealKey: 'dinner', label: 'Akşam', meal: localDayMenu.meals.dinner },
     ];
 
-    const affected = mealEntries
-      .map(({ label, meal }) => ({
+    const swaps = mealEntries
+      .map(({ mealKey, label, meal }) => ({
+        mealKey,
         label,
         alternatives: getSwapAlternatives('sakatat', meal.title),
       }))
-      .filter((e) => e.alternatives !== null) as { label: string; alternatives: string[] }[];
+      .filter((e) => e.alternatives !== null) as { mealKey: string; label: string; alternatives: string[] }[];
 
-    if (!affected.length) return null;
-
-    const body = affected
-      .map(({ label, alternatives }) => `${label}: ${alternatives.join(' veya ')}`)
-      .join('\n');
+    if (!swaps.length) return null;
 
     return {
       title: 'Defi',
-      body: `Bugünkü menüde sakatat var ama sen yemiyorsun — sorun değil, alternatiflerini hazırladım:\n${body}`,
+      body: 'Bugünkü menüde sakatat var ama sen yemiyorsun — sorun değil.',
+      swaps,
     };
   }, [sakatatRestriction, localDayMenu]);
 
@@ -1428,12 +1888,25 @@ export default function MenusScreen() {
     router.push('/(tabs)/defense');
   };
 
+  const handleSwapSelect = useCallback((mealKey: string, alternative: string) => {
+    setSwappedMeals((prev) => {
+      if (!alternative) {
+        const next = { ...prev };
+        delete next[mealKey];
+        return next;
+      }
+      return { ...prev, [mealKey]: alternative };
+    });
+  }, []);
+
   useEffect(() => {
     loadSupabaseMenu();
   }, [selectedDay]);
 
   useEffect(() => {
     selectedDayRef.current = selectedDay;
+    setSwappedMeals({});
+    setDefiVisible(true);
   }, [selectedDay]);
 
   useEffect(() => {
@@ -1570,8 +2043,16 @@ export default function MenusScreen() {
     const contentWidth = daySelectorContentWidthRef.current;
     const viewportWidth = daySelectorViewportWidthRef.current;
     const maxX = Math.max(contentWidth - viewportWidth, 0);
-    setIsDaySelectorAtStart(x <= 0);
-    setIsDaySelectorAtEnd(x >= maxX - 4);
+    const atStart = x <= 0;
+    const atEnd = x >= maxX - 4;
+    if (atStart !== daySelectorAtStartRef.current) {
+      daySelectorAtStartRef.current = atStart;
+      setIsDaySelectorAtStart(atStart);
+    }
+    if (atEnd !== daySelectorAtEndRef.current) {
+      daySelectorAtEndRef.current = atEnd;
+      setIsDaySelectorAtEnd(atEnd);
+    }
   }, []);
 
   const handleDaySelectorScroll = useCallback((e: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -1772,10 +2253,15 @@ export default function MenusScreen() {
         <View style={styles.daySelectorWrap}>
           <Text style={styles.sectionTitle}>Gün Seç</Text>
           <View style={styles.daySelectorRow}>
-            {!isDaySelectorAtStart ? (
+            {selectedDay > 1 ? (
               <TouchableOpacity
                 style={styles.dayNavButton}
-                onPress={() => scrollDaySelectorBy(-100)}
+                onPress={() => {
+                  const prev = selectedDay - 1;
+                  setSelectedDay(prev);
+                  setManualDay(true);
+                  scrollDaySelectorToDay(prev);
+                }}
                 activeOpacity={0.8}
               >
                 <Ionicons name="chevron-back" size={16} color="#475569" />
@@ -1787,16 +2273,18 @@ export default function MenusScreen() {
               style={styles.daySelectorScroll}
               showsHorizontalScrollIndicator={false}
               onScroll={handleDaySelectorScroll}
-              scrollEventThrottle={16}
+              scrollEventThrottle={100}
               onContentSizeChange={(w) => {
                 daySelectorContentWidthRef.current = w;
                 updateDaySelectorEdges(daySelectorXRef.current);
-                scrollDaySelectorToDay(selectedDay);
+                if (!daySelectorInitialScrollDoneRef.current && daySelectorViewportWidthRef.current > 0) {
+                  daySelectorInitialScrollDoneRef.current = true;
+                  scrollDaySelectorToDay(selectedDay);
+                }
               }}
               onLayout={(e) => {
                 daySelectorViewportWidthRef.current = e.nativeEvent.layout.width;
                 updateDaySelectorEdges(daySelectorXRef.current);
-                scrollDaySelectorToDay(selectedDay);
               }}
             >
               {days.map((day) => {
@@ -1817,10 +2305,15 @@ export default function MenusScreen() {
                 );
               })}
             </ScrollView>
-            {!isDaySelectorAtEnd ? (
+            {selectedDay < 91 ? (
               <TouchableOpacity
                 style={styles.dayNavButton}
-                onPress={() => scrollDaySelectorBy(100)}
+                onPress={() => {
+                  const next = selectedDay + 1;
+                  setSelectedDay(next);
+                  setManualDay(true);
+                  scrollDaySelectorToDay(next);
+                }}
                 activeOpacity={0.8}
               >
                 <Ionicons name="chevron-forward" size={16} color="#475569" />
@@ -1851,7 +2344,7 @@ export default function MenusScreen() {
               {selectedCard ? (() => {
             const card = selectedCard as DayInfoCardData | undefined;
             if (!card) return null;
-            const isRecipeInfoCard = card.id === 'menu-day-9' || card.id === 'recipe-day-13' || card.id === 'recipe-day-15' || card.id === 'recipe-day-16' || card.id === 'recipe-day-20' || card.id === 'recipe-day-21' || card.id === 'recipe-day-23' || card.id === 'recipe-day-24' || card.id === 'recipe-day-31' || card.id === 'recipe-day-32' || card.id === 'recipe-day-34' || card.id === 'recipe-day-35' || card.recipeId === 'sote-edilmis-karnabahar' || card.recipeId === 'yesil-biberli-tavuk' || card.recipeId === 'cevizli-kuru-domates-mezesi' || card.recipeId === 'terbiyeli-karalahana-corbasi' || card.recipeId === 'pirincsiz-biber-dolmasi' || card.recipeId === 'ev-yogurdu' || card.recipeId === 'yogurtlu-pirasa' || card.recipeId === 'acili-lahana-corbasi' || card.recipeId === 'yogurtlu-pancar-salatasi' || card.recipeId === 'yogurt-corbasi' || card.recipeId === 'taze-soganli-biftek' || card.recipeId === 'dovmec' || card.recipeId === 'cevizli-lahana-salatasi';
+            const isRecipeInfoCard = !!card.recipeId;
             if (!isRecipeInfoCard && !card.contentBody) return null;
             return (
               <View style={styles.infoDetailPanel}>
@@ -1917,9 +2410,12 @@ export default function MenusScreen() {
             <DefiBanner
               message={defiBannerMessage}
               onOpenPlan={handleOpenPlan}
+              onSwapSelect={sakatatDefiMessage ? handleSwapSelect : undefined}
+              swappedMeals={sakatatDefiMessage ? swappedMeals : undefined}
               todayISO={todayISO}
               onHidden={() => setDefiVisible(false)}
               screenId="meals"
+              resetKey={selectedDay}
               enableTypewriter={true}
               enableIdleReplay={true}
               variant="card"
@@ -1987,7 +2483,7 @@ export default function MenusScreen() {
 
         {SECTION_META.map((section) => {
           const meal = dayMenu.meals[section.key as MealKey];
-          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : selectedDay === 2 ? DAY2_INFO[section.key] : selectedDay === 3 ? DAY3_INFO[section.key] : selectedDay === 4 ? DAY4_INFO[section.key] : selectedDay === 5 ? DAY5_INFO[section.key] : selectedDay === 6 ? DAY6_INFO[section.key] : selectedDay === 7 ? DAY7_INFO[section.key] : selectedDay === 8 ? DAY8_INFO[section.key] : selectedDay === 9 ? DAY9_INFO[section.key] : selectedDay === 10 ? DAY10_INFO[section.key] : selectedDay === 11 ? DAY11_INFO[section.key] : selectedDay === 12 ? DAY12_INFO[section.key] : selectedDay === 13 ? DAY13_INFO[section.key] : selectedDay === 14 ? DAY14_INFO[section.key] : selectedDay === 15 ? DAY15_INFO[section.key] : selectedDay === 16 ? DAY16_INFO[section.key] : selectedDay === 17 ? DAY17_INFO[section.key] : selectedDay === 18 ? DAY18_INFO[section.key] : selectedDay === 19 ? DAY19_INFO[section.key] : selectedDay === 20 ? DAY20_INFO[section.key] : selectedDay === 21 ? DAY21_INFO[section.key] : selectedDay === 22 ? DAY22_INFO[section.key] : selectedDay === 23 ? DAY23_INFO[section.key] : selectedDay === 24 ? DAY24_INFO[section.key] : selectedDay === 25 ? DAY25_INFO[section.key] : selectedDay === 26 ? DAY26_INFO[section.key] : selectedDay === 27 ? DAY27_INFO[section.key] : selectedDay === 28 ? DAY28_INFO[section.key] : selectedDay === 29 ? DAY29_INFO[section.key] : selectedDay === 30 ? DAY30_INFO[section.key] : selectedDay === 31 ? DAY31_INFO[section.key] : selectedDay === 32 ? DAY32_INFO[section.key] : selectedDay === 33 ? DAY33_INFO[section.key] : selectedDay === 34 ? DAY34_INFO[section.key] : selectedDay === 35 ? DAY35_INFO[section.key] : selectedDay === 36 ? DAY36_INFO[section.key] : selectedDay === 37 ? DAY37_INFO[section.key] : selectedDay === 38 ? DAY38_INFO[section.key] : selectedDay === 39 ? DAY39_INFO[section.key] : selectedDay === 40 ? DAY40_INFO[section.key] : selectedDay === 41 ? DAY41_INFO[section.key] : selectedDay === 42 ? DAY42_INFO[section.key] : selectedDay === 43 ? DAY43_INFO[section.key] : undefined;
+          const infoLines = selectedDay === 1 ? DAY1_INFO[section.key] : selectedDay === 2 ? DAY2_INFO[section.key] : selectedDay === 3 ? DAY3_INFO[section.key] : selectedDay === 4 ? DAY4_INFO[section.key] : selectedDay === 5 ? DAY5_INFO[section.key] : selectedDay === 6 ? DAY6_INFO[section.key] : selectedDay === 7 ? DAY7_INFO[section.key] : selectedDay === 8 ? DAY8_INFO[section.key] : selectedDay === 9 ? DAY9_INFO[section.key] : selectedDay === 10 ? DAY10_INFO[section.key] : selectedDay === 11 ? DAY11_INFO[section.key] : selectedDay === 12 ? DAY12_INFO[section.key] : selectedDay === 13 ? DAY13_INFO[section.key] : selectedDay === 14 ? DAY14_INFO[section.key] : selectedDay === 15 ? DAY15_INFO[section.key] : selectedDay === 16 ? DAY16_INFO[section.key] : selectedDay === 17 ? DAY17_INFO[section.key] : selectedDay === 18 ? DAY18_INFO[section.key] : selectedDay === 19 ? DAY19_INFO[section.key] : selectedDay === 20 ? DAY20_INFO[section.key] : selectedDay === 21 ? DAY21_INFO[section.key] : selectedDay === 22 ? DAY22_INFO[section.key] : selectedDay === 23 ? DAY23_INFO[section.key] : selectedDay === 24 ? DAY24_INFO[section.key] : selectedDay === 25 ? DAY25_INFO[section.key] : selectedDay === 26 ? DAY26_INFO[section.key] : selectedDay === 27 ? DAY27_INFO[section.key] : selectedDay === 28 ? DAY28_INFO[section.key] : selectedDay === 29 ? DAY29_INFO[section.key] : selectedDay === 30 ? DAY30_INFO[section.key] : selectedDay === 31 ? DAY31_INFO[section.key] : selectedDay === 32 ? DAY32_INFO[section.key] : selectedDay === 33 ? DAY33_INFO[section.key] : selectedDay === 34 ? DAY34_INFO[section.key] : selectedDay === 35 ? DAY35_INFO[section.key] : selectedDay === 36 ? DAY36_INFO[section.key] : selectedDay === 37 ? DAY37_INFO[section.key] : selectedDay === 38 ? DAY38_INFO[section.key] : selectedDay === 39 ? DAY39_INFO[section.key] : selectedDay === 40 ? DAY40_INFO[section.key] : selectedDay === 41 ? DAY41_INFO[section.key] : selectedDay === 42 ? DAY42_INFO[section.key] : selectedDay === 43 ? DAY43_INFO[section.key] : selectedDay === 44 ? DAY44_INFO[section.key] : selectedDay === 45 ? DAY45_INFO[section.key] : selectedDay === 46 ? DAY46_INFO[section.key] : selectedDay === 47 ? DAY47_INFO[section.key] : selectedDay === 48 ? DAY48_INFO[section.key] : selectedDay === 49 ? DAY49_INFO[section.key] : selectedDay === 50 ? DAY50_INFO[section.key] : selectedDay === 51 ? DAY51_INFO[section.key] : selectedDay === 52 ? DAY52_INFO[section.key] : selectedDay === 53 ? DAY53_INFO[section.key] : selectedDay === 54 ? DAY54_INFO[section.key] : selectedDay === 55 ? DAY55_INFO[section.key] : selectedDay === 56 ? DAY56_INFO[section.key] : selectedDay === 57 ? DAY57_INFO[section.key] : selectedDay === 58 ? DAY58_INFO[section.key] : selectedDay === 59 ? DAY59_INFO[section.key] : selectedDay === 60 ? DAY60_INFO[section.key] : undefined;
           const isCompleted = safeCompleted.includes(section.key);
           return (
             <View key={section.key} style={styles.section}>
@@ -1995,7 +2491,7 @@ export default function MenusScreen() {
                 <Text style={styles.sectionTitle}>{section.title}</Text>
               </View>
               <MealCard
-                title={meal.title}
+                title={swappedMeals[section.key] ? `${swappedMeals[section.key]} ✓` : meal.title}
                 description={meal.description}
                 recipeId={meal.recipeId}
                 infoLines={infoLines}
@@ -2045,11 +2541,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#E2E8F0',
-    maxHeight: 200,
+    maxHeight: 320,
     overflow: 'hidden',
   },
   infoDetailScroll: {
-    maxHeight: 200,
+    maxHeight: 320,
   },
   infoDetailScrollContent: {
     padding: 12,
